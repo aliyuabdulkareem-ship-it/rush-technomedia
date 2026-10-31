@@ -1,7 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Bolt, PlayCircle, TrendingUp, Star, Terminal, MonitorPlay, Psychology, Globe, CheckCircle2, ShieldCheck, Clock, Handshake } from "lucide-react";
+import { ArrowRight, Bolt, PlayCircle, TrendingUp, Star, Terminal, MonitorPlay, Brain, Globe, ShieldCheck, Clock, Handshake, CheckCircle } from "lucide-react";
 import Link from "next/link";
 
 const fadeInUp = {
@@ -10,6 +11,36 @@ const fadeInUp = {
 };
 
 export default function Home() {
+  const [contactStatus, setContactStatus] = useState<"idle" | "loading" | "success">("idle");
+  const [email, setEmail] = useState("");
+  const [subStatus, setSubStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+  const handleContact = (e: React.FormEvent) => {
+    e.preventDefault();
+    setContactStatus("loading");
+    setTimeout(() => setContactStatus("success"), 1500);
+  };
+
+  const handleSubscribe = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubStatus("loading");
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        setSubStatus("success");
+        setEmail("");
+      } else {
+        setSubStatus("error");
+      }
+    } catch {
+      setSubStatus("error");
+    }
+  };
+
   return (
     <main className="relative min-h-screen bg-background overflow-x-hidden">
       {/* Ambient Background */}
@@ -68,7 +99,6 @@ export default function Home() {
         {/* Hero Visual Showcase */}
         <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }} className="relative w-full max-w-5xl mx-auto mt-8">
           <div className="relative rounded-2xl bg-surface-container/60 backdrop-blur-xl border border-outline-variant/20 p-4 md:p-8 shadow-[0_16px_36px_-8px_rgba(11,21,54,0.8),0_0_24px_-2px_rgba(20,71,230,0.2)] overflow-hidden">
-            {/* Floating Badges */}
             <div className="absolute -top-3 -right-3 md:top-12 md:-right-6 bg-surface-container/90 backdrop-blur-md border border-outline-variant/30 px-4 py-3 rounded-xl shadow-xl animate-float-slow flex items-center gap-3 z-20">
               <div className="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-white"><TrendingUp className="w-5 h-5" /></div>
               <div><p className="text-caption text-outline">Client Revenue</p><p className="text-label-md text-white font-bold">Sales Growth +140%</p></div>
@@ -114,7 +144,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* Founder & Story Section (New) */}
+      {/* Founder & Story Section */}
       <section id="about" className="py-24 px-6 md:px-12 max-w-7xl mx-auto border-t border-outline-variant/20">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} variants={fadeInUp} className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-6">
@@ -143,7 +173,7 @@ export default function Home() {
             ].map((item, i) => (
               <div key={i} className="group p-6 rounded-xl bg-surface-container/40 border border-outline-variant/20 hover:border-primary/50 hover:bg-surface-container/80 transition-all duration-300 hover:-translate-y-1">
                 <item.icon className="w-6 h-6 text-primary mb-3 group-hover:scale-110 transition-transform" />
-                <h3 className="text-headline-sm text-on-surface mb-2">{item.title}</h3>
+                <h3 className="font-display text-headline-sm text-on-surface mb-2">{item.title}</h3>
                 <p className="text-body-sm text-on-surface-variant">{item.desc}</p>
               </div>
             ))}
@@ -166,8 +196,8 @@ export default function Home() {
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           {[
             { col: "md:col-span-7", icon: Terminal, title: "Modern Web Development & Engineering", desc: "Custom, lightning-fast, and mobile-responsive websites. We combine sleek UI/UX design with robust backend structures (Next.js, Rust, Edge Computing) to deliver seamless user experiences.", tags: ["Micro-Frontends", "Sub-second Latency", "Edge-Cached GraphQL"] },
-            { col: "md:col-span-5", icon: MonitorPlay, title: "Strategic SEO & Digital Visibility", desc: "Moving beyond basic web design, we audit, engineer, and execute data-driven SEO strategies. We ensure your brand dominates SERPs, turning organic traffic into high-converting leads.", tags: ["Technical SEO Audits", "Content Strategy", "SERP Domination"] },
-            { col: "md:col-span-5", icon: Psychology, title: "Digital Media Publishing & Content", desc: "Leveraging our background in digital journalism (via Rush Online), we help organizations craft compelling brand narratives and manage digital content workflows.", tags: ["Brand Storytelling", "Content Distribution", "Thought Leadership"] },
+            { col: "md:col-span-5", icon: Brain, title: "Strategic SEO & Digital Visibility", desc: "Moving beyond basic web design, we audit, engineer, and execute data-driven SEO strategies. We ensure your brand dominates SERPs, turning organic traffic into high-converting leads.", tags: ["Technical SEO Audits", "Content Strategy", "SERP Domination"] },
+            { col: "md:col-span-5", icon: MonitorPlay, title: "Digital Media Publishing & Content", desc: "Leveraging our background in digital journalism (via Rush Online), we help organizations craft compelling brand narratives and manage digital content workflows.", tags: ["Brand Storytelling", "Content Distribution", "Thought Leadership"] },
             { col: "md:col-span-7", icon: Globe, title: "Cloud Architecture & High-Scale Infra", desc: "Battle-tested Kubernetes clustering, multi-region database sharding, and serverless compute configured to effortlessly withstand hyper-growth surges.", tags: ["SOC2 Compliant", "Multi-Region AWS/GCP", "Zero-Downtime CI/CD"] }
           ].map((card, i) => (
             <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className={`${card.col} group relative rounded-2xl bg-surface-container/40 backdrop-blur-sm border border-outline-variant/20 p-8 hover:border-primary/50 hover:bg-surface-container/80 transition-all duration-300 hover:-translate-y-1 overflow-hidden`}>
@@ -209,11 +239,11 @@ export default function Home() {
             </div>
             <div className="lg:col-span-6 bg-surface-container-lowest/80 rounded-2xl p-6 md:p-8 border border-outline-variant/30 shadow-2xl">
               <h3 className="font-display text-headline-sm text-on-surface mb-2">Claim Your Strategy Session</h3>
-              <form className="space-y-5" onSubmit={(e) => { e.preventDefault(); alert("Session requested! A partner will reach out within 24 hours."); }}>
+              <form onSubmit={handleContact} className="space-y-5">
                 <div className="grid grid-cols-2 gap-2">
                   {["Web & Mobile Apps", "SEO & Visibility", "Media & Content", "Full Product Pod"].map((scope) => (
                     <label key={scope} className="flex items-center justify-center p-3 rounded-lg border border-outline-variant/40 bg-surface-container-high/40 cursor-pointer text-xs font-semibold text-on-surface hover:border-primary/60 hover:bg-surface-container-high transition-all">
-                      <input type="radio" name="scope" className="hidden" /> {scope}
+                      <input type="radio" name="scope" className="hidden" defaultChecked={scope === "Web & Mobile Apps"} /> {scope}
                     </label>
                   ))}
                 </div>
@@ -225,8 +255,9 @@ export default function Home() {
                   <label className="text-caption text-outline uppercase tracking-wider">Work Email</label>
                   <input required type="email" placeholder="alex@company.com" className="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-4 py-3 text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
                 </div>
-                <button type="submit" className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-lg bg-primary-container text-white font-label-md font-bold shadow-[0_8px_30px_-4px_rgba(20,71,230,0.5)] hover:brightness-110 active:scale-[0.98] transition-all">
-                  Claim Free Strategy Session <ArrowRight className="w-4 h-4" />
+                <button type="submit" disabled={contactStatus !== "idle"} className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-lg bg-primary-container text-white font-label-md font-bold shadow-[0_8px_30px_-4px_rgba(20,71,230,0.5)] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed">
+                  {contactStatus === "loading" ? "Processing..." : contactStatus === "success" ? "Session Claimed!" : "Claim Free Strategy Session"} 
+                  <ArrowRight className="w-4 h-4" />
                 </button>
                 <p className="text-center text-caption text-outline">No spam ever. 100% confidential.</p>
               </form>
@@ -263,10 +294,27 @@ export default function Home() {
             <div className="md:col-span-4 space-y-3">
               <p className="text-label-md text-on-surface font-bold">Technomedia Dispatch</p>
               <p className="text-body-sm">Bi-weekly engineering memos and generative media insights read by 24,000+ tech leaders.</p>
-              <form action="/api/subscribe" method="POST" className="flex gap-2">
-                <input name="email" required type="email" placeholder="Enter work email" className="flex-1 bg-surface-container border border-outline-variant/40 rounded-lg px-3 py-2 text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:border-primary-container transition-colors" />
-                <button type="submit" className="px-4 py-2 bg-primary-container text-white text-body-sm font-bold rounded-lg hover:brightness-110 active:scale-95 transition-all shadow-sm">Subscribe</button>
+              <form onSubmit={handleSubscribe} className="flex gap-2">
+                <input 
+                  name="email" 
+                  required 
+                  type="email" 
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter work email" 
+                  disabled={subStatus === "loading" || subStatus === "success"}
+                  className="flex-1 bg-surface-container border border-outline-variant/40 rounded-lg px-3 py-2 text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:border-primary-container transition-colors disabled:opacity-50" 
+                />
+                <button 
+                  type="submit" 
+                  disabled={subStatus === "loading" || subStatus === "success"}
+                  className="px-4 py-2 bg-primary-container text-white text-body-sm font-bold rounded-lg hover:brightness-110 active:scale-95 transition-all shadow-sm disabled:opacity-70 disabled:cursor-not-allowed min-w-[100px]"
+                >
+                  {subStatus === "loading" ? "..." : subStatus === "success" ? "✓" : "Subscribe"}
+                </button>
               </form>
+              {subStatus === "error" && <p className="text-xs text-error mt-2">Failed to subscribe. Please try again.</p>}
+              {subStatus === "success" && <p className="text-xs text-tertiary mt-2">Welcome to the dispatch!</p>}
             </div>
           </div>
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-body-sm text-outline">
