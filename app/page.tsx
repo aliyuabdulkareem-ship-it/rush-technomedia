@@ -49,29 +49,34 @@ export default function Home() {
         <div className="absolute top-1/3 right-0 w-[600px] h-[600px] bg-tertiary/5 rounded-full blur-[100px]" />
       </div>
 
+      
+
       {/* Navigation */}
-      <header className="sticky top-0 z-50 w-full border-b border-outline-variant/20 bg-background/80 backdrop-blur-xl">
+      <header className="sticky top-0 z-50 w-full border-b border-outline-variant/20 bg-white">
         <div className="flex justify-between items-center w-full px-6 md:px-12 max-w-7xl mx-auto h-20">
           <Link href="/" className="flex items-center gap-3 transition-transform active:scale-95">
-            <span className="font-display font-bold text-xl text-on-surface tracking-tight">Rush<span className="text-primary-container">Technomedia</span></span>
+            <img src="/logo.png" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
           </Link>
           <nav className="hidden md:flex items-center gap-8">
-            {["Services", "Work", "About", "Pricing"].map((item) => (
-              <Link key={item} href={`#${item.toLowerCase()}`} className="text-label-md text-on-surface-variant hover:text-primary transition-colors duration-200">
+            {["Services", "Work", "Solutions", "Pricing", "Company"].map((item) => (
+              <Link key={item} href={`#${item.toLowerCase()}`} className="text-label-md text-slate-800 hover:text-primary-container transition-colors duration-200 font-medium">
                 {item}
               </Link>
             ))}
           </nav>
           <div className="flex items-center gap-3">
-            <Link href="#portal" className="hidden sm:inline-flex items-center justify-center px-4 py-2 rounded-lg text-label-md text-on-surface border border-outline-variant/30 hover:border-primary-container hover:text-primary transition-all duration-200">
+            <Link href="#portal" className="hidden sm:inline-flex items-center justify-center px-4 py-2 rounded-lg text-label-md text-slate-700 border border-slate-300 hover:border-primary-container hover:text-primary-container transition-all duration-200 bg-white">
               Client Portal
             </Link>
-            <Link href="#kickoff" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-primary-container text-white text-label-md font-bold shadow-[0_8px_30px_-4px_rgba(20,71,230,0.5)] hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all duration-200">
+            <Link href="#kickoff" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-primary-container text-white text-label-md font-bold hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all duration-200">
               Get Started <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         </div>
       </header>
+
+
+      
 
       {/* Hero Section */}
       <section className="relative pt-12 pb-24 md:pt-20 md:pb-32 px-6 md:px-12 max-w-7xl mx-auto z-10">
