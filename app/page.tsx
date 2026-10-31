@@ -2,7 +2,11 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Bolt, PlayCircle, TrendingUp, Star, Terminal, MonitorPlay, Brain, Globe, ShieldCheck, Clock, Handshake, CheckCircle } from "lucide-react";
+
+
+import { ArrowRight, Bolt, PlayCircle, TrendingUp, Star, Terminal, MonitorPlay, Brain, Globe, ShieldCheck, Clock, Handshake, CheckCircle, ExternalLink } from "lucide-react";
+
+
 import Link from "next/link";
 
 const fadeInUp = {
