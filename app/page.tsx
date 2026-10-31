@@ -274,8 +274,86 @@ export default function Home() {
         </motion.div>
       </section>
 
+
+
+
+      {/* Portfolio Section */}
+      <section id="work" className="py-24 px-6 md:px-12 max-w-7xl mx-auto border-t border-outline-variant/20">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Featured Production</span>
+          <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface mt-2 mb-4">Engineered Case Studies</h2>
+          <p className="text-on-surface-variant text-body-md">Measurable, high-velocity outcomes delivered for media enterprises, civic organizations, and global brands.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
+            { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
+            { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
+            { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
+            { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" }
+          ].map((site, i) => (
+            <a key={i} href={site.url} target="_blank" rel="noopener noreferrer" className="group relative rounded-2xl bg-surface-container/40 border border-outline-variant/20 overflow-hidden hover:border-primary/50 hover:bg-surface-container/80 transition-all duration-300 hover:-translate-y-1">
+              {/* Fake Browser Top Bar */}
+              <div className="flex items-center gap-2 px-4 py-3 bg-surface-container-lowest border-b border-outline-variant/20">
+                <div className="flex gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-error/50"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-secondary/50"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-primary/30"></div>
+                </div>
+                <div className="flex-1 bg-surface-container-high rounded-md px-3 py-1 text-[10px] text-outline font-mono truncate text-center">
+                  {site.url}
+                </div>
+              </div>
+              {/* Preview Content */}
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-display text-headline-sm text-on-surface group-hover:text-primary transition-colors">{site.name}</h3>
+                  <ExternalLink className="w-4 h-4 text-outline group-hover:text-primary transition-colors" />
+                </div>
+                <p className="text-body-sm text-on-surface-variant">{site.desc}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq" className="py-24 px-6 md:px-12 max-w-4xl mx-auto border-t border-outline-variant/20">
+        <div className="text-center mb-16">
+          <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Common Questions</span>
+          <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface mt-2">Frequently Asked Questions</h2>
+        </div>
+        <div className="space-y-4">
+          {[
+            { q: "How long does a typical web development project take?", a: "A standard MVP or corporate website takes 4–6 weeks from discovery to launch. Complex, custom web applications or AI integrations may take 8–12 weeks. We provide a detailed timeline during our initial strategy session." },
+            { q: "Do you offer ongoing SEO and maintenance after launch?", a: "Absolutely. We don't just build and leave. We offer flexible monthly retainers for technical SEO monitoring, content updates, security patching, and performance optimization to ensure your site continues to rank and convert." },
+            { q: "What makes Rush Technomedia different from other agencies?", a: "We sit at the intersection of media publishing and technical engineering. We don't just write code; we understand audience psychology, content distribution, and the specific nuances of the African digital ecosystem, ensuring global standards with local relevance." },
+            { q: "Do you work with businesses outside of Nigeria?", a: "Yes. While we are proudly rooted in Nigeria (with offices in Lagos, Ibadan, and Ilorin), we serve clients globally. Our remote-first engineering and media workflows allow us to collaborate seamlessly with international teams." }
+          ].map((faq, i) => (
+            <details key={i} className="group rounded-xl bg-surface-container/40 border border-outline-variant/20 open:bg-surface-container/80 open:border-primary/30 transition-all duration-300">
+              <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
+                <span className="font-display text-headline-sm text-on-surface group-hover:text-primary transition-colors text-left">{faq.q}</span>
+                <span className="ml-4 text-primary transition-transform duration-300 group-open:rotate-180 flex-shrink-0">
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </span>
+              </summary>
+              <div className="px-6 pb-6 text-body-md text-on-surface-variant leading-relaxed">
+                {faq.a}
+              </div>
+            </details>
+          ))}
+        </div>
+      </section>
+
+
+
+      
+
       {/* Footer */}
+      
       <footer className="w-full bg-surface-container-lowest border-t border-outline-variant/20 text-on-surface-variant">
+
+        
         <div className="w-full max-w-7xl mx-auto px-6 md:px-12 py-16">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pb-12 border-b border-outline-variant/20">
             <div className="md:col-span-4 space-y-4">
