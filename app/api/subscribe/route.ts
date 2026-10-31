@@ -1,7 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { Resend } from "resend";
-
-const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
@@ -10,8 +7,24 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
     }
 
+    const apiKey = process.env.RESEND_API_KEY;
+
+    // If no API key is set yet, simulate success so the site can deploy without crashing
+    if (!apiKey) {
+      console.log("Simulated email sent to:", email);
+      return NextResponse.json({ 
+        success: true, 
+        message: "Simulated success. Add RESEND_API_KEY in Vercel settings to send real emails." 
+      });
+    }
+
+    // Only load Resend if the key actually exists
+    const { Resend } = await import("resend");
+    const resend = new Resend(apiKey);
+
     const unsubscribeToken = Buffer.from(email).toString("base64");
-    const unsubscribeUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://rushtechnomedia.com"}/api/unsubscribe?token=${unsubscribeToken}`;
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://rushtechnomedia.com";
+    const unsubscribeUrl = `${appUrl}/api/unsubscribe?token=${unsubscribeToken}`;
 
     const { data, error } = await resend.emails.send({
       from: "Rush Technomedia <newsletter@rushtechnomedia.com>",
