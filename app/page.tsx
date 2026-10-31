@@ -55,7 +55,7 @@ export default function Home() {
       <header className="sticky top-0 z-50 w-full border-b border-outline-variant/20 bg-white">
         <div className="flex justify-between items-center w-full px-6 md:px-12 max-w-7xl mx-auto h-20">
           <Link href="/" className="flex items-center gap-3 transition-transform active:scale-95">
-            <img src="/logo.png.jpg" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
+    <img src="/logo.png.jpg" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
           </Link>
           <nav className="hidden md:flex items-center gap-8">
             {["Services", "Work", "Solutions", "Pricing", "Company"].map((item) => (
