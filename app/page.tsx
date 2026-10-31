@@ -4,8 +4,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 
 
-import { ArrowRight, Bolt, PlayCircle, TrendingUp, Star, Terminal, MonitorPlay, Brain, Globe, ShieldCheck, Clock, Handshake, CheckCircle, ExternalLink } from "lucide-react";
-
+import { ArrowRight, Bolt, PlayCircle, TrendingUp, Star, Terminal, MonitorPlay, Brain, Globe, ShieldCheck, Clock, Handshake, CheckCircle, ExternalLink, Menu, X } from "lucide-react";
 
 import Link from "next/link";
 
@@ -15,9 +14,11 @@ const fadeInUp = {
 };
 
 export default function Home() {
+  
   const [contactStatus, setContactStatus] = useState<"idle" | "loading" | "success">("idle");
   const [email, setEmail] = useState("");
   const [subStatus, setSubStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleContact = (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,12 +56,14 @@ export default function Home() {
 
       
 
-           {/* Sticky Navigation */}
+             {/* Sticky Navigation */}
       <header className="fixed top-0 left-0 right-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-sm transition-all duration-300">
         <div className="flex justify-between items-center w-full px-6 md:px-12 max-w-7xl mx-auto h-20">
           <Link href="/" className="flex items-center gap-3 transition-transform active:scale-95">
-            <img src="/newlogo.png.jpg" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
+            <img src="/logo.png.jpg" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
           </Link>
+          
+          {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {["Services", "Work", "Solutions", "Pricing", "Company"].map((item) => (
               <Link key={item} href={`#${item.toLowerCase()}`} className="text-label-md text-slate-700 hover:text-primary-container transition-colors duration-200 font-medium">
@@ -68,7 +71,8 @@ export default function Home() {
               </Link>
             ))}
           </nav>
-          <div className="flex items-center gap-3">
+          
+          <div className="hidden md:flex items-center gap-3">
             <Link href="#portal" className="hidden sm:inline-flex items-center justify-center px-4 py-2 rounded-lg text-label-md text-slate-700 border border-slate-300 hover:border-primary-container hover:text-primary-container transition-all duration-200 bg-white">
               Client Portal
             </Link>
@@ -76,7 +80,49 @@ export default function Home() {
               Get Started <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
+          
+          {/* Mobile Menu Button */}
+          <button 
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="md:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors"
+          >
+            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+          </button>
         </div>
+        
+        {/* Mobile Menu Dropdown */}
+        {mobileMenuOpen && (
+          <div className="md:hidden absolute top-20 left-0 right-0 bg-white border-b border-slate-200 shadow-lg animate-in slide-in-from-top-2 duration-200">
+            <nav className="flex flex-col px-6 py-6 space-y-4 max-w-7xl mx-auto">
+              {["Services", "Work", "Solutions", "Pricing", "Company"].map((item) => (
+                <Link 
+                  key={item} 
+                  href={`#${item.toLowerCase()}`} 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="text-body-lg text-slate-700 hover:text-primary-container font-medium py-2 border-b border-slate-100 last:border-0"
+                >
+                  {item}
+                </Link>
+              ))}
+              <div className="pt-4 space-y-3">
+                <Link 
+                  href="#portal" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block w-full text-center py-3 rounded-lg border border-slate-300 text-slate-700 font-semibold hover:border-primary-container hover:text-primary-container transition-all"
+                >
+                  Client Portal
+                </Link>
+                <Link 
+                  href="#kickoff" 
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block w-full text-center py-3 rounded-lg bg-primary-container text-white font-bold hover:brightness-110 transition-all shadow-md shadow-blue-500/20"
+                >
+                  Get Started →
+                </Link>
+              </div>
+            </nav>
+          </div>
+        )}
       </header>
 
       
