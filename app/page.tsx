@@ -59,7 +59,7 @@ export default function Home() {
       <header className="fixed top-0 left-0 right-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-sm transition-all duration-300">
         <div className="flex justify-between items-center w-full px-6 md:px-12 max-w-7xl mx-auto h-20">
           <Link href="/" className="flex items-center gap-3 transition-transform active:scale-95">
-            <img src="/logo.png.jpg" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
+            <img src="/newlogo.png.jpg" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
           </Link>
           <nav className="hidden md:flex items-center gap-8">
             {["Services", "Work", "Solutions", "Pricing", "Company"].map((item) => (
@@ -348,38 +348,50 @@ export default function Home() {
 
 
       
-
       {/* Footer */}
-      
-      <footer className="w-full bg-surface-container-lowest border-t border-outline-variant/20 text-on-surface-variant">
-
-        
+      <footer className="w-full bg-white border-t border-slate-200 text-slate-600">
         <div className="w-full max-w-7xl mx-auto px-6 md:px-12 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pb-12 border-b border-outline-variant/20">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pb-12 border-b border-slate-200">
+            {/* Brand Column */}
             <div className="md:col-span-4 space-y-4">
-              <span className="font-display font-bold text-xl text-on-surface tracking-tight">Rush<span className="text-primary-container">Technomedia</span></span>
-              <p className="text-body-sm max-w-sm leading-relaxed">Your partner in digital innovation. We design, develop, and deliver transformative media and web experiences for the modern African market. RC-7434828</p>
-              <div className="flex items-center gap-3 text-xs font-medium"><span>Offices: Lagos • Ibadan • Ilorin</span></div>
+              <img src="/newlogo.png.jpg" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
+              <p className="text-body-sm max-w-sm leading-relaxed text-slate-600">
+                Your partner in digital innovation. We design, develop, and deliver transformative media and web experiences for the modern African market.
+              </p>
+              <p className="text-caption text-slate-500">RC-7434828</p>
+              <div className="flex items-center gap-3 text-xs font-medium text-slate-500">
+                <span>Offices: Lagos • Ibadan • Ilorin</span>
+              </div>
             </div>
+            
+            {/* Solutions Column */}
             <div className="md:col-span-2 space-y-3">
-              <p className="text-label-md text-on-surface font-bold">Solutions</p>
+              <p className="text-label-md text-slate-900 font-bold">Solutions</p>
               <ul className="space-y-2 text-body-sm">
-                {["Services", "Case Studies", "SEO Consulting", "Pricing"].map(item => (
-                  <li key={item}><Link href="#" className="hover:text-primary transition-colors">{item}</Link></li>
-                ))}
+                <li><Link href="#services" className="text-slate-600 hover:text-primary-container transition-colors">Services</Link></li>
+                <li><Link href="#work" className="text-slate-600 hover:text-primary-container transition-colors">Case Studies</Link></li>
+                <li><Link href="#services" className="text-slate-600 hover:text-primary-container transition-colors">AI Solutions</Link></li>
+                <li><Link href="#pricing" className="text-slate-600 hover:text-primary-container transition-colors">Pricing</Link></li>
               </ul>
             </div>
+            
+            {/* Company Column */}
             <div className="md:col-span-2 space-y-3">
-              <p className="text-label-md text-on-surface font-bold">Company</p>
+              <p className="text-label-md text-slate-900 font-bold">Company</p>
               <ul className="space-y-2 text-body-sm">
-                {["About Rush", "Careers", "Client Portal", "Contact Us"].map(item => (
-                  <li key={item}><Link href="#" className="hover:text-primary transition-colors">{item}</Link></li>
-                ))}
+                <li><Link href="#about" className="text-slate-600 hover:text-primary-container transition-colors">About Rush</Link></li>
+                <li><Link href="#" className="text-slate-600 hover:text-primary-container transition-colors">Careers</Link></li>
+                <li><Link href="#portal" className="text-slate-600 hover:text-primary-container transition-colors">Client Portal</Link></li>
+                <li><Link href="#kickoff" className="text-slate-600 hover:text-primary-container transition-colors">Contact Us</Link></li>
               </ul>
             </div>
+            
+            {/* Newsletter Column */}
             <div className="md:col-span-4 space-y-3">
-              <p className="text-label-md text-on-surface font-bold">Technomedia Dispatch</p>
-              <p className="text-body-sm">Bi-weekly engineering memos and generative media insights read by 24,000+ tech leaders.</p>
+              <p className="text-label-md text-slate-900 font-bold">Technomedia Dispatch</p>
+              <p className="text-body-sm text-slate-600">
+                Bi-weekly engineering memos and generative media insights read by 24,000+ tech leaders.
+              </p>
               <form onSubmit={handleSubscribe} className="flex gap-2">
                 <input 
                   name="email" 
@@ -389,30 +401,34 @@ export default function Home() {
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Enter work email" 
                   disabled={subStatus === "loading" || subStatus === "success"}
-                  className="flex-1 bg-surface-container border border-outline-variant/40 rounded-lg px-3 py-2 text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:border-primary-container transition-colors disabled:opacity-50" 
+                  className="flex-1 bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-body-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-primary-container focus:bg-white transition-colors disabled:opacity-50" 
                 />
                 <button 
                   type="submit" 
                   disabled={subStatus === "loading" || subStatus === "success"}
-                  className="px-4 py-2 bg-primary-container text-white text-body-sm font-bold rounded-lg hover:brightness-110 active:scale-95 transition-all shadow-sm disabled:opacity-70 disabled:cursor-not-allowed min-w-[100px]"
+                  className="px-4 py-2 bg-primary-container text-white text-body-sm font-bold rounded-lg hover:brightness-110 active:scale-95 transition-all shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
                 >
                   {subStatus === "loading" ? "..." : subStatus === "success" ? "✓" : "Subscribe"}
                 </button>
               </form>
-              {subStatus === "error" && <p className="text-xs text-error mt-2">Failed to subscribe. Please try again.</p>}
-              {subStatus === "success" && <p className="text-xs text-tertiary mt-2">Welcome to the dispatch!</p>}
+              {subStatus === "error" && <p className="text-xs text-red-500 mt-2">Failed to subscribe. Please try again.</p>}
+              {subStatus === "success" && <p className="text-xs text-green-600 mt-2">Welcome to the dispatch!</p>}
             </div>
           </div>
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-body-sm text-outline">
+          
+          {/* Bottom Row */}
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-body-sm text-slate-500">
             <p>© 2026 Rush Technomedia LTD. All rights reserved.</p>
             <div className="flex items-center gap-6">
-              <Link href="/legal/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
-              <Link href="/legal/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
-              <Link href="/legal/cookies" className="hover:text-primary transition-colors">Cookie Policy</Link>
+              <Link href="/legal/privacy" className="text-slate-500 hover:text-primary-container transition-colors">Privacy Policy</Link>
+              <Link href="/legal/terms" className="text-slate-500 hover:text-primary-container transition-colors">Terms of Service</Link>
             </div>
           </div>
         </div>
       </footer>
+      
+
+      
 
       {/* Floating WhatsApp Button */}
       <a 
