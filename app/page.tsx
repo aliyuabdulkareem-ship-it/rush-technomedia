@@ -334,7 +334,7 @@ export default function Home() {
 
       {/* Floating WhatsApp Button */}
       <a 
-        href="https://wa.me/2348000000000" 
+        href="https://wa.me/2348108031437" 
         target="_blank" 
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-[#25D366] text-white pl-3 pr-4 py-3 rounded-full shadow-[0_8px_30px_-4px_rgba(37,211,102,0.6)] hover:scale-105 hover:shadow-[0_12px_40px_-4px_rgba(37,211,102,0.8)] transition-all duration-300 group"
