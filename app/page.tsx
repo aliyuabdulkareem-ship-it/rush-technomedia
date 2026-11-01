@@ -1,11 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-
-
-import { ArrowRight, Bolt, PlayCircle, TrendingUp, Star, Terminal, MonitorPlay, Brain, Globe, ShieldCheck, Clock, Handshake, CheckCircle, ExternalLink, Menu, X } from "lucide-react";
-
+import { ArrowRight, Bolt, PlayCircle, TrendingUp, Star, Terminal, MonitorPlay, Brain, Globe, ShieldCheck, Clock, Handshake, ExternalLink, Menu, X, Search, Facebook, Twitter, Linkedin, Instagram, Plus, Minus, Quote } from "lucide-react";
 import Link from "next/link";
 
 const fadeInUp = {
@@ -13,12 +10,104 @@ const fadeInUp = {
   visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } },
 };
 
+// Blog posts data - Easy to edit! Add more posts here.
+// For a full admin backend later, integrate Sanity.io or Contentful CMS.
+const blogPosts = [
+  {
+    title: "Why 90% of Nigerian Businesses Fail at SEO (And How to Fix It)",
+    excerpt: "Most businesses build beautiful websites that nobody can find. Here's the data-driven framework we use to fix that.",
+    category: "SEO Strategy",
+    readTime: "5 min read",
+    date: "Oct 28, 2026"
+  },
+  {
+    title: "The Visibility Economy: How Being Found Online Became Your Biggest Asset",
+    excerpt: "In 2026, digital visibility isn't marketing—it's survival. Learn why 'if you can't be found, you don't exist' is the new business law.",
+    category: "Digital Strategy",
+    readTime: "7 min read",
+    date: "Oct 22, 2026"
+  },
+  {
+    title: "From 0 to 10,000 Monthly Visitors: A Lagos Startup's SEO Journey",
+    excerpt: "How a small fintech in Yaba tripled their organic traffic in 6 months using technical SEO and content clusters.",
+    category: "Case Study",
+    readTime: "6 min read",
+    date: "Oct 15, 2026"
+  },
+  {
+    title: "AI-Powered Content: How to Scale Your Brand Without Losing Your Voice",
+    excerpt: "Generative AI can 10x your content output—but only if you know how to guide it. Our framework for authentic AI-assisted publishing.",
+    category: "AI & Media",
+    readTime: "8 min read",
+    date: "Oct 10, 2026"
+  }
+];
+
+// Testimonials data
+const testimonials = [
+  {
+    name: "David Kim",
+    role: "CTO @ HyperFlow Systems",
+    initials: "DK",
+    color: "bg-blue-500",
+    quote: "Rush Technomedia operates like an elite special forces team for software. Their execution speed on our platform rebuild was unmatched.",
+    rating: 5
+  },
+  {
+    name: "Elena Rostova",
+    role: "VP Marketing @ OmniCloud",
+    initials: "ER",
+    color: "bg-purple-500",
+    quote: "The design aesthetics and technical robustness they delivered transformed our conversion rates overnight. +140% growth within 90 days.",
+    rating: 5
+  },
+  {
+    name: "Marcus Sterling",
+    role: "Managing Director @ Apex Partners",
+    initials: "MS",
+    color: "bg-emerald-500",
+    quote: "Their AI workflow automation cut our manual research overhead down from 18 hours per account to under 8 minutes.",
+    rating: 5
+  },
+  {
+    name: "Adaeze Okafor",
+    role: "Founder @ Rush Online",
+    initials: "AO",
+    color: "bg-rose-500",
+    quote: "Aliyu and his team understand the African digital ecosystem like no one else. They delivered a platform that truly represents our brand.",
+    rating: 5
+  }
+];
+
+// Tools data for marquee
+const tools = [
+  "Meta Business Suite", "Adobe Creative Cloud", "Google Ads", "Google Analytics",
+  "WordPress", "Mailchimp", "GoHighLevel", "HTML5", "CSS3", "JavaScript", "Shopify", "Next.js"
+];
+
 export default function Home() {
-  
   const [contactStatus, setContactStatus] = useState<"idle" | "loading" | "success">("idle");
   const [email, setEmail] = useState("");
   const [subStatus, setSubStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [headerVisible, setHeaderVisible] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const [searchOpen, setSearchOpen] = useState(false);
+
+  // Smart header: hide on scroll down, show on scroll up
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+      if (currentScrollY > lastScrollY && currentScrollY > 100) {
+        setHeaderVisible(false);
+      } else {
+        setHeaderVisible(true);
+      }
+      setLastScrollY(currentScrollY);
+    };
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, [lastScrollY]);
 
   const handleContact = (e: React.FormEvent) => {
     e.preventDefault();
@@ -54,15 +143,13 @@ export default function Home() {
         <div className="absolute top-1/3 right-0 w-[600px] h-[600px] bg-tertiary/5 rounded-full blur-[100px]" />
       </div>
 
-      
-
-             {/* Sticky Navigation */}
-      <header className="fixed top-0 left-0 right-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-sm transition-all duration-300">
+      {/* Smart Sticky Navigation */}
+      <header className={`fixed top-0 left-0 right-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-sm transition-transform duration-300 ${headerVisible ? "translate-y-0" : "-translate-y-full"}`}>
         <div className="flex justify-between items-center w-full px-6 md:px-12 max-w-7xl mx-auto h-20">
           <Link href="/" className="flex items-center gap-3 transition-transform active:scale-95">
-            <img src="/newlogo.png.jpg" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
+            <img src="/logo.png.jpg" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
           </Link>
-          
+
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-8">
             {["Services", "Work", "Solutions", "Pricing", "Company"].map((item) => (
@@ -70,53 +157,56 @@ export default function Home() {
                 {item}
               </Link>
             ))}
+            {/* Search icon - last on desktop */}
+            <button onClick={() => setSearchOpen(!searchOpen)} className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors">
+              <Search className="w-5 h-5" />
+            </button>
           </nav>
-          
+
           <div className="hidden md:flex items-center gap-3">
-            <Link href="#portal" className="hidden sm:inline-flex items-center justify-center px-4 py-2 rounded-lg text-label-md text-slate-700 border border-slate-300 hover:border-primary-container hover:text-primary-container transition-all duration-200 bg-white">
+            <Link href="#portal" className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-label-md text-slate-700 border border-slate-300 hover:border-primary-container hover:text-primary-container transition-all duration-200 bg-white">
               Client Portal
             </Link>
             <Link href="#kickoff" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-primary-container text-white text-label-md font-bold hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all duration-200 shadow-md shadow-blue-500/20">
               Get Started <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
-          
-          {/* Mobile Menu Button */}
-          <button 
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="md:hidden p-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors"
-          >
-            {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-          </button>
+
+          {/* Mobile: Search + Menu */}
+          <div className="flex md:hidden items-center gap-2">
+            <button onClick={() => setSearchOpen(!searchOpen)} className="p-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors">
+              <Search className="w-5 h-5" />
+            </button>
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 rounded-lg text-slate-700 hover:bg-slate-100 transition-colors">
+              {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+            </button>
+          </div>
         </div>
-        
+
+        {/* Mobile Search Bar */}
+        {searchOpen && (
+          <div className="md:hidden absolute top-20 left-0 right-0 bg-white border-b border-slate-200 px-6 py-4 shadow-lg">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+              <input type="text" placeholder="Search articles, services..." className="w-full bg-slate-50 border border-slate-200 rounded-lg pl-10 pr-4 py-2.5 text-sm text-slate-800 focus:outline-none focus:border-primary-container" />
+            </div>
+          </div>
+        )}
+
         {/* Mobile Menu Dropdown */}
         {mobileMenuOpen && (
-          <div className="md:hidden absolute top-20 left-0 right-0 bg-white border-b border-slate-200 shadow-lg animate-in slide-in-from-top-2 duration-200">
+          <div className="md:hidden absolute top-20 left-0 right-0 bg-white border-b border-slate-200 shadow-lg">
             <nav className="flex flex-col px-6 py-6 space-y-4 max-w-7xl mx-auto">
               {["Services", "Work", "Solutions", "Pricing", "Company"].map((item) => (
-                <Link 
-                  key={item} 
-                  href={`#${item.toLowerCase()}`} 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="text-body-lg text-slate-700 hover:text-primary-container font-medium py-2 border-b border-slate-100 last:border-0"
-                >
+                <Link key={item} href={`#${item.toLowerCase()}`} onClick={() => setMobileMenuOpen(false)} className="text-body-lg text-slate-700 hover:text-primary-container font-medium py-2 border-b border-slate-100 last:border-0">
                   {item}
                 </Link>
               ))}
               <div className="pt-4 space-y-3">
-                <Link 
-                  href="#portal" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block w-full text-center py-3 rounded-lg border border-slate-300 text-slate-700 font-semibold hover:border-primary-container hover:text-primary-container transition-all"
-                >
+                <Link href="#portal" onClick={() => setMobileMenuOpen(false)} className="block w-full text-center py-3 rounded-lg border border-slate-300 text-slate-700 font-semibold hover:border-primary-container hover:text-primary-container transition-all">
                   Client Portal
                 </Link>
-                <Link 
-                  href="#kickoff" 
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block w-full text-center py-3 rounded-lg bg-primary-container text-white font-bold hover:brightness-110 transition-all shadow-md shadow-blue-500/20"
-                >
+                <Link href="#kickoff" onClick={() => setMobileMenuOpen(false)} className="block w-full text-center py-3 rounded-lg bg-primary-container text-white font-bold hover:brightness-110 transition-all shadow-md shadow-blue-500/20">
                   Get Started →
                 </Link>
               </div>
@@ -125,10 +215,8 @@ export default function Home() {
         )}
       </header>
 
-      
-
       {/* Hero Section */}
-      <section className="relative pt-12 pb-24 md:pt-20 md:pb-32 px-6 md:px-12 max-w-7xl mx-auto z-10">
+      <section className="relative pt-32 pb-24 md:pt-40 md:pb-32 px-6 md:px-12 max-w-7xl mx-auto z-10">
         <motion.div initial="hidden" animate="visible" variants={fadeInUp} className="flex flex-col items-center text-center max-w-4xl mx-auto mb-16">
           <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-surface-container/80 border border-outline-variant/30 text-tertiary text-caption font-bold tracking-wider uppercase mb-8 backdrop-blur-md">
             <span className="w-2 h-2 rounded-full bg-tertiary animate-pulse" />
@@ -149,124 +237,167 @@ export default function Home() {
             </Link>
           </div>
         </motion.div>
-
-        {/* Hero Visual Showcase */}
-        <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.2 }} className="relative w-full max-w-5xl mx-auto mt-8">
-          <div className="relative rounded-2xl bg-surface-container/60 backdrop-blur-xl border border-outline-variant/20 p-4 md:p-8 shadow-[0_16px_36px_-8px_rgba(11,21,54,0.8),0_0_24px_-2px_rgba(20,71,230,0.2)] overflow-hidden">
-            <div className="absolute -top-3 -right-3 md:top-12 md:-right-6 bg-surface-container/90 backdrop-blur-md border border-outline-variant/30 px-4 py-3 rounded-xl shadow-xl animate-float-slow flex items-center gap-3 z-20">
-              <div className="w-9 h-9 rounded-lg bg-primary-container flex items-center justify-center text-white"><TrendingUp className="w-5 h-5" /></div>
-              <div><p className="text-caption text-outline">Client Revenue</p><p className="text-label-md text-white font-bold">Sales Growth +140%</p></div>
-            </div>
-            <div className="absolute -bottom-4 -left-2 md:bottom-10 md:-left-6 bg-surface-container/90 backdrop-blur-md border border-outline-variant/30 px-4 py-3 rounded-xl shadow-xl animate-float-delayed flex items-center gap-3 z-20">
-              <div className="w-9 h-9 rounded-lg bg-surface-container-high flex items-center justify-center text-tertiary"><Star className="w-5 h-5 fill-tertiary" /></div>
-              <div><p className="text-caption text-outline">Clutch & G2 Enterprise</p><p className="text-label-md text-white font-bold">Client Rating 4.9 / 5.0</p></div>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
-              <div className="md:col-span-4 bg-surface-container-lowest/80 rounded-xl p-5 border border-outline-variant/20 font-mono text-xs text-on-surface-variant">
-                <div className="flex items-center justify-between text-outline text-[11px] mb-3">
-                  <span>ORCHESTRATION PIPELINE</span>
-                  <span className="text-tertiary">STATUS: LIVE</span>
-                </div>
-                <div className="space-y-1.5 text-secondary">
-                  <p><span className="text-tertiary">const</span> engine = <span className="text-primary">initRushCluster</span>({"{"}</p>
-                  <p className="pl-4">mode: <span className="text-tertiary-fixed">'hyper-velocity'</span>,</p>
-                  <p className="pl-4">seoOptimized: <span className="text-white">true</span>,</p>
-                  <p className="pl-4">cdnLatency: <span className="text-tertiary">&lt; 14ms</span></p>
-                  <p>{"}"}</p>
-                </div>
-              </div>
-              <div className="md:col-span-8 relative rounded-xl overflow-hidden min-h-[280px] flex flex-col justify-between p-6 bg-gradient-to-br from-surface-container via-surface-container-low to-surface-container-lowest border border-outline-variant/30">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-lg bg-primary-container/20 flex items-center justify-center text-primary"><MonitorPlay className="w-4 h-4" /></div>
-                    <div>
-                      <h2 className="text-label-md text-on-surface">Autonomous Growth Engine</h2>
-                      <p className="text-caption text-on-surface-variant">Real-time engagement telemetry</p>
-                    </div>
-                  </div>
-                  <span className="px-3 py-1 rounded-full bg-primary-container/20 border border-primary/30 text-primary text-xs font-semibold">Live Feed</span>
-                </div>
-                <div className="grid grid-cols-3 gap-3 pt-4 border-t border-outline-variant/20 text-center">
-                  <div><p className="text-caption text-outline">LATENCY</p><p className="text-label-md text-tertiary">14ms</p></div>
-                  <div><p className="text-caption text-outline">CONVERSION</p><p className="text-label-md text-on-surface">+140%</p></div>
-                  <div><p className="text-caption text-outline">UPTIME</p><p className="text-label-md text-primary">100.0%</p></div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </motion.div>
       </section>
 
-      {/* Founder & Story Section */}
-      <section id="about" className="py-24 px-6 md:px-12 max-w-7xl mx-auto border-t border-outline-variant/20">
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true, margin: "-50px" }} variants={fadeInUp} className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-          <div className="space-y-6">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-container/20 text-primary text-caption font-bold uppercase tracking-wider">
-              Our Story & Leadership
-            </div>
-            <h2 className="font-display text-headline-lg text-on-surface">
-              "If you can't be found, you don't exist."
-            </h2>
-            <p className="text-on-surface-variant text-body-lg leading-relaxed">
-              Founded by digital strategist and SEO consultant <strong className="text-on-surface">Aliyu Abdulkareem</strong>, Rush Technomedia sits at the powerful intersection of modern media publishing and technical web architecture. In today’s digital-first economy, visibility is the ultimate currency.
-            </p>
-            <p className="text-on-surface-variant text-body-md leading-relaxed">
-              Operating alongside digital media initiatives like <em>Rush Online</em>, we help businesses, brands, and professionals across Nigeria and Africa scale their digital presence, build absolute market credibility, and turn online visibility into sustainable revenue.
-            </p>
-            <div className="pt-4 border-t border-outline-variant/20">
-              <p className="text-on-surface font-display text-headline-sm italic">"Investing in SEO and a robust digital presence is no longer optional—it is foundational. Our goal is to future-proof African businesses by giving them the technical infrastructure and media visibility they need to compete globally."</p>
-              <p className="text-primary text-label-md mt-2 font-bold">— Aliyu Abdulkareem, Founder</p>
-            </div>
-          </div>
-          <div className="grid grid-cols-1 gap-4">
-            {[
-              { icon: Globe, title: "The Media + Tech Advantage", desc: "We don't just write code; we understand how content, storytelling, and audience psychology drive online growth." },
-              { icon: TrendingUp, title: "Results-Driven Frameworks", desc: "Focused entirely on metrics that matter—visibility, credibility, and revenue generation." },
-              { icon: ShieldCheck, title: "Deep Local Insight, Global Standard", desc: "Tailored specifically for the realities of the African digital ecosystem while maintaining international benchmarks." }
-            ].map((item, i) => (
-              <div key={i} className="group p-6 rounded-xl bg-surface-container/40 border border-outline-variant/20 hover:border-primary/50 hover:bg-surface-container/80 transition-all duration-300 hover:-translate-y-1">
-                <item.icon className="w-6 h-6 text-primary mb-3 group-hover:scale-110 transition-transform" />
-                <h3 className="font-display text-headline-sm text-on-surface mb-2">{item.title}</h3>
-                <p className="text-body-sm text-on-surface-variant">{item.desc}</p>
+      {/* Portfolio Section */}
+      <section id="work" className="py-24 px-6 md:px-12 max-w-7xl mx-auto border-t border-outline-variant/20">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Featured Production</span>
+          <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface mt-2 mb-4">Engineered Case Studies</h2>
+          <p className="text-on-surface-variant text-body-md">Measurable, high-velocity outcomes delivered for media enterprises, civic organizations, and global brands.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {[
+            { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
+            { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
+            { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
+            { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
+            { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" }
+          ].map((site, i) => (
+            <a key={i} href={site.url} target="_blank" rel="noopener noreferrer" className="group relative rounded-2xl bg-surface-container/40 border border-outline-variant/20 overflow-hidden hover:border-primary/50 hover:bg-surface-container/80 transition-all duration-300 hover:-translate-y-1">
+              <div className="flex items-center gap-2 px-4 py-3 bg-surface-container-lowest border-b border-outline-variant/20">
+                <div className="flex gap-1.5">
+                  <div className="w-2.5 h-2.5 rounded-full bg-error/50"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-secondary/50"></div>
+                  <div className="w-2.5 h-2.5 rounded-full bg-primary/30"></div>
+                </div>
+                <div className="flex-1 bg-surface-container-high rounded-md px-3 py-1 text-[10px] text-outline font-mono truncate text-center">
+                  {site.url}
+                </div>
+              </div>
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h3 className="font-display text-headline-sm text-on-surface group-hover:text-primary transition-colors">{site.name}</h3>
+                  <ExternalLink className="w-4 h-4 text-outline group-hover:text-primary transition-colors" />
+                </div>
+                <p className="text-body-sm text-on-surface-variant">{site.desc}</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+
+      {/* Tools Marquee Section */}
+      <section className="py-20 bg-white border-y border-slate-200 overflow-hidden">
+        <div className="text-center mb-12 px-6">
+          <span className="text-slate-500 text-label-sm font-bold uppercase tracking-wider">Our Arsenal</span>
+          <h2 className="font-display text-headline-md md:text-headline-lg text-slate-900 mt-2">Some Cutting-Edge Toolkit for Digital Success</h2>
+        </div>
+        <div className="relative">
+          <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+          <div className="flex animate-[scroll_40s_linear_infinite]">
+            {[...tools, ...tools, ...tools].map((tool, i) => (
+              <div key={i} className="flex-shrink-0 mx-4 px-8 py-4 bg-slate-50 border border-slate-200 rounded-xl">
+                <span className="text-slate-500 font-semibold text-sm whitespace-nowrap">{tool}</span>
               </div>
             ))}
           </div>
-        </motion.div>
+        </div>
+        <style>{`
+          @keyframes scroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-33.333%); }
+          }
+          @media (max-width: 768px) {
+            .animate-\\[scroll_40s_linear_infinite\\] > div {
+              margin-left: 0.5rem;
+              margin-right: 0.5rem;
+            }
+          }
+        `}</style>
       </section>
 
-      {/* Services Bento Grid */}
-      <section id="services" className="py-24 md:py-32 px-6 md:px-12 max-w-7xl mx-auto">
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-6">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary-container/20 text-primary text-caption font-bold uppercase tracking-wider mb-3">
-              Engineering & Media Scope
-            </div>
-            <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface">Engineered for Unfair Competitive Advantage</h2>
-          </div>
-          <p className="text-on-surface-variant text-body-md max-w-md">We dismiss generic templates. Every deliverable is bespoke, mathematically optimized for speed, scalability, and market impact.</p>
-        </motion.div>
+      {/* Blog Section */}
+      <section id="blog" className="py-24 px-6 md:px-12 max-w-7xl mx-auto border-t border-outline-variant/20">
+        <div className="text-center max-w-3xl mx-auto mb-16">
+          <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Insights & Updates</span>
+          <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface mt-2 mb-4">Read Latest Blog Posts</h2>
+          <p className="text-on-surface-variant text-body-md">Stories on visibility, SEO, and how digital presence transforms businesses and individuals.</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {blogPosts.map((post, i) => (
+            <article key={i} className="group rounded-2xl bg-surface-container/40 border border-outline-variant/20 overflow-hidden hover:border-primary/50 hover:bg-surface-container/80 transition-all duration-300 hover:-translate-y-1">
+              <div className="h-32 bg-gradient-to-br from-primary-container/20 to-tertiary/10 flex items-center justify-center">
+                <span className="text-4xl font-display font-bold text-primary/30">0{i + 1}</span>
+              </div>
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="px-2 py-0.5 rounded-full bg-primary-container/20 text-primary text-[10px] font-bold uppercase">{post.category}</span>
+                  <span className="text-[10px] text-outline">{post.readTime}</span>
+                </div>
+                <h3 className="font-display text-headline-sm text-on-surface mb-2 group-hover:text-primary transition-colors line-clamp-2">{post.title}</h3>
+                <p className="text-body-sm text-on-surface-variant line-clamp-3 mb-4">{post.excerpt}</p>
+                <div className="flex items-center justify-between pt-3 border-t border-outline-variant/20">
+                  <span className="text-[10px] text-outline">{post.date}</span>
+                  <span className="text-xs text-primary font-semibold group-hover:translate-x-1 transition-transform">Read more →</span>
+                </div>
+              </div>
+            </article>
+          ))}
+        </div>
+        <div className="text-center mt-12">
+          <p className="text-caption text-outline uppercase tracking-wider mb-2">Admin Note</p>
+          <p className="text-body-sm text-on-surface-variant max-w-xl mx-auto">To add a visual admin backend for managing blog posts, integrate <strong className="text-primary">Sanity.io</strong> or <strong className="text-primary">Contentful</strong> CMS. Contact us for setup.</p>
+        </div>
+      </section>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+      {/* Testimonials Section */}
+      <section className="py-24 bg-white border-y border-slate-200">
+        <div className="max-w-7xl mx-auto px-6 md:px-12">
+          <div className="text-center max-w-3xl mx-auto mb-16">
+            <span className="text-primary-container text-label-sm font-bold uppercase tracking-wider">Client Stories</span>
+            <h2 className="font-display text-headline-md md:text-headline-lg text-slate-900 mt-2 mb-4">What Our Clients Say</h2>
+            <p className="text-slate-600 text-body-md">Trusted by 3,000+ forward-thinking hypergrowth teams and global enterprises worldwide.</p>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {testimonials.map((t, i) => (
+              <div key={i} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col">
+                <div className="flex gap-1 mb-4">
+                  {[...Array(t.rating)].map((_, j) => (
+                    <Star key={j} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
+                  ))}
+                </div>
+                <Quote className="w-6 h-6 text-primary-container/30 mb-3" />
+                <p className="text-slate-700 text-body-sm italic mb-6 leading-relaxed flex-1">"{t.quote}"</p>
+                <div className="flex items-center gap-3 pt-4 border-t border-slate-100">
+                  <div className={`w-10 h-10 rounded-full ${t.color} text-white flex items-center justify-center font-bold text-sm`}>{t.initials}</div>
+                  <div>
+                    <p className="text-label-md text-slate-900 font-bold">{t.name}</p>
+                    <p className="text-[11px] text-slate-500">{t.role}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq" className="py-24 px-6 md:px-12 max-w-4xl mx-auto border-t border-outline-variant/20">
+        <div className="text-center mb-16">
+          <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Common Questions</span>
+          <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface mt-2">Frequently Asked Questions</h2>
+        </div>
+        <div className="space-y-4">
           {[
-            { col: "md:col-span-7", icon: Terminal, title: "Modern Web Development & Engineering", desc: "Custom, lightning-fast, and mobile-responsive websites. We combine sleek UI/UX design with robust backend structures (Next.js, Rust, Edge Computing) to deliver seamless user experiences.", tags: ["Micro-Frontends", "Sub-second Latency", "Edge-Cached GraphQL"] },
-            { col: "md:col-span-5", icon: Brain, title: "Strategic SEO & Digital Visibility", desc: "Moving beyond basic web design, we audit, engineer, and execute data-driven SEO strategies. We ensure your brand dominates SERPs, turning organic traffic into high-converting leads.", tags: ["Technical SEO Audits", "Content Strategy", "SERP Domination"] },
-            { col: "md:col-span-5", icon: MonitorPlay, title: "Digital Media Publishing & Content", desc: "Leveraging our background in digital journalism (via Rush Online), we help organizations craft compelling brand narratives and manage digital content workflows.", tags: ["Brand Storytelling", "Content Distribution", "Thought Leadership"] },
-            { col: "md:col-span-7", icon: Globe, title: "Cloud Architecture & High-Scale Infra", desc: "Battle-tested Kubernetes clustering, multi-region database sharding, and serverless compute configured to effortlessly withstand hyper-growth surges.", tags: ["SOC2 Compliant", "Multi-Region AWS/GCP", "Zero-Downtime CI/CD"] }
-          ].map((card, i) => (
-            <motion.div key={i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }} className={`${card.col} group relative rounded-2xl bg-surface-container/40 backdrop-blur-sm border border-outline-variant/20 p-8 hover:border-primary/50 hover:bg-surface-container/80 transition-all duration-300 hover:-translate-y-1 overflow-hidden`}>
-              <div className="absolute -right-8 -bottom-8 w-44 h-44 bg-primary-container/5 rounded-full blur-2xl group-hover:bg-primary-container/10 transition-colors" />
-              <div className="w-12 h-12 rounded-xl bg-primary-container/20 border border-primary/30 flex items-center justify-center text-primary mb-6 group-hover:scale-110 transition-transform duration-300">
-                <card.icon className="w-6 h-6" />
+            { q: "How long does a typical web development project take?", a: "A standard MVP or corporate website takes 4–6 weeks from discovery to launch. Complex, custom web applications or AI integrations may take 8–12 weeks." },
+            { q: "Do you offer ongoing SEO and maintenance after launch?", a: "Absolutely. We offer flexible monthly retainers for technical SEO monitoring, content updates, security patching, and performance optimization." },
+            { q: "What makes Rush Technomedia different from other agencies?", a: "We sit at the intersection of media publishing and technical engineering. We understand audience psychology, content distribution, and the African digital ecosystem." },
+            { q: "Do you work with businesses outside of Nigeria?", a: "Yes. While we are proudly rooted in Nigeria (Lagos, Ibadan, Ilorin), we serve clients globally with remote-first workflows." }
+          ].map((faq, i) => (
+            <details key={i} className="group rounded-xl bg-surface-container/40 border border-outline-variant/20 open:bg-surface-container/80 open:border-primary/30 transition-all duration-300">
+              <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
+                <span className="font-display text-headline-sm text-on-surface group-hover:text-primary transition-colors text-left pr-4">{faq.q}</span>
+                <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary-container/20 text-primary flex items-center justify-center font-bold text-lg">
+                  <span className="group-open:hidden"><Plus className="w-5 h-5" /></span>
+                  <span className="hidden group-open:block"><Minus className="w-5 h-5" /></span>
+                </span>
+              </summary>
+              <div className="px-6 pb-6 text-body-md text-on-surface-variant leading-relaxed">
+                {faq.a}
               </div>
-              <h3 className="font-display text-headline-sm text-on-surface mb-3 group-hover:text-primary transition-colors">{card.title}</h3>
-              <p className="text-on-surface-variant text-body-md mb-6 leading-relaxed">{card.desc}</p>
-              <div className="flex flex-wrap gap-2 pt-4 border-t border-outline-variant/20">
-                {card.tags.map((tag, j) => (
-                  <span key={j} className="px-3 py-1 rounded-lg bg-surface-container-high text-xs font-medium text-secondary">{tag}</span>
-                ))}
-              </div>
-            </motion.div>
+            </details>
           ))}
         </div>
       </section>
@@ -278,7 +409,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
             <div className="lg:col-span-6 space-y-6">
               <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface">Ready to Accelerate Your Digital Velocity?</h2>
-              <p className="text-on-surface-variant text-body-lg leading-relaxed">Book a 30-minute discovery workshop directly with our engineering and creative partners. We audit your bottlenecks and map a definitive deployment blueprint within 24 hours.</p>
+              <p className="text-on-surface-variant text-body-lg leading-relaxed">Book a 30-minute discovery workshop directly with our engineering and creative partners.</p>
               <div className="space-y-3 pt-4 border-t border-outline-variant/20">
                 {[
                   { icon: ShieldCheck, text: "Strict Mutual NDA Protected Before Any File Exchange" },
@@ -310,107 +441,34 @@ export default function Home() {
                   <input required type="email" placeholder="alex@company.com" className="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-4 py-3 text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
                 </div>
                 <button type="submit" disabled={contactStatus !== "idle"} className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-lg bg-primary-container text-white font-label-md font-bold shadow-[0_8px_30px_-4px_rgba(20,71,230,0.5)] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed">
-                  {contactStatus === "loading" ? "Processing..." : contactStatus === "success" ? "Session Claimed!" : "Claim Free Strategy Session"} 
+                  {contactStatus === "loading" ? "Processing..." : contactStatus === "success" ? "Session Claimed!" : "Claim Free Strategy Session"}
                   <ArrowRight className="w-4 h-4" />
                 </button>
-                <p className="text-center text-caption text-outline">No spam ever. 100% confidential.</p>
               </form>
             </div>
           </div>
         </motion.div>
       </section>
 
-
-
-
-      {/* Portfolio Section */}
-      <section id="work" className="py-24 px-6 md:px-12 max-w-7xl mx-auto border-t border-outline-variant/20">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Featured Production</span>
-          <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface mt-2 mb-4">Engineered Case Studies</h2>
-          <p className="text-on-surface-variant text-body-md">Measurable, high-velocity outcomes delivered for media enterprises, civic organizations, and global brands.</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
-            { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
-            { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
-            { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
-            { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" }
-          ].map((site, i) => (
-            <a key={i} href={site.url} target="_blank" rel="noopener noreferrer" className="group relative rounded-2xl bg-surface-container/40 border border-outline-variant/20 overflow-hidden hover:border-primary/50 hover:bg-surface-container/80 transition-all duration-300 hover:-translate-y-1">
-              {/* Fake Browser Top Bar */}
-              <div className="flex items-center gap-2 px-4 py-3 bg-surface-container-lowest border-b border-outline-variant/20">
-                <div className="flex gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-error/50"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-secondary/50"></div>
-                  <div className="w-2.5 h-2.5 rounded-full bg-primary/30"></div>
-                </div>
-                <div className="flex-1 bg-surface-container-high rounded-md px-3 py-1 text-[10px] text-outline font-mono truncate text-center">
-                  {site.url}
-                </div>
-              </div>
-              {/* Preview Content */}
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-display text-headline-sm text-on-surface group-hover:text-primary transition-colors">{site.name}</h3>
-                  <ExternalLink className="w-4 h-4 text-outline group-hover:text-primary transition-colors" />
-                </div>
-                <p className="text-body-sm text-on-surface-variant">{site.desc}</p>
-              </div>
-            </a>
-          ))}
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section id="faq" className="py-24 px-6 md:px-12 max-w-4xl mx-auto border-t border-outline-variant/20">
-        <div className="text-center mb-16">
-          <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Common Questions</span>
-          <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface mt-2">Frequently Asked Questions</h2>
-        </div>
-        <div className="space-y-4">
-          {[
-            { q: "How long does a typical web development project take?", a: "A standard MVP or corporate website takes 4–6 weeks from discovery to launch. Complex, custom web applications or AI integrations may take 8–12 weeks. We provide a detailed timeline during our initial strategy session." },
-            { q: "Do you offer ongoing SEO and maintenance after launch?", a: "Absolutely. We don't just build and leave. We offer flexible monthly retainers for technical SEO monitoring, content updates, security patching, and performance optimization to ensure your site continues to rank and convert." },
-            { q: "What makes Rush Technomedia different from other agencies?", a: "We sit at the intersection of media publishing and technical engineering. We don't just write code; we understand audience psychology, content distribution, and the specific nuances of the African digital ecosystem, ensuring global standards with local relevance." },
-            { q: "Do you work with businesses outside of Nigeria?", a: "Yes. While we are proudly rooted in Nigeria (with offices in Lagos, Ibadan, and Ilorin), we serve clients globally. Our remote-first engineering and media workflows allow us to collaborate seamlessly with international teams." }
-          ].map((faq, i) => (
-            <details key={i} className="group rounded-xl bg-surface-container/40 border border-outline-variant/20 open:bg-surface-container/80 open:border-primary/30 transition-all duration-300">
-              <summary className="flex items-center justify-between p-6 cursor-pointer list-none">
-                <span className="font-display text-headline-sm text-on-surface group-hover:text-primary transition-colors text-left">{faq.q}</span>
-                <span className="ml-4 text-primary transition-transform duration-300 group-open:rotate-180 flex-shrink-0">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
-                </span>
-              </summary>
-              <div className="px-6 pb-6 text-body-md text-on-surface-variant leading-relaxed">
-                {faq.a}
-              </div>
-            </details>
-          ))}
-        </div>
-      </section>
-
-
-
-      
       {/* Footer */}
       <footer className="w-full bg-white border-t border-slate-200 text-slate-600">
         <div className="w-full max-w-7xl mx-auto px-6 md:px-12 py-16">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pb-12 border-b border-slate-200">
-            {/* Brand Column */}
             <div className="md:col-span-4 space-y-4">
-              <img src="/newlogo.png.jpg" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
-              <p className="text-body-sm max-w-sm leading-relaxed text-slate-600">
-                Your partner in digital innovation. We design, develop, and deliver transformative media and web experiences for the modern African market.
-              </p>
+              <img src="/logo.png.jpg" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
+              <p className="text-body-sm max-w-sm leading-relaxed text-slate-600">Your partner in digital innovation. We design, develop, and deliver transformative media and web experiences for the modern African market.</p>
               <p className="text-caption text-slate-500">RC-7434828</p>
               <div className="flex items-center gap-3 text-xs font-medium text-slate-500">
                 <span>Offices: Lagos • Ibadan • Ilorin</span>
               </div>
+              {/* Social Media Icons */}
+              <div className="flex items-center gap-3 pt-2">
+                <a href="#" className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center hover:scale-110 transition-transform"><Facebook className="w-4 h-4" /></a>
+                <a href="#" className="w-9 h-9 rounded-full bg-sky-500 text-white flex items-center justify-center hover:scale-110 transition-transform"><Twitter className="w-4 h-4" /></a>
+                <a href="#" className="w-9 h-9 rounded-full bg-blue-700 text-white flex items-center justify-center hover:scale-110 transition-transform"><Linkedin className="w-4 h-4" /></a>
+                <a href="#" className="w-9 h-9 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 text-white flex items-center justify-center hover:scale-110 transition-transform"><Instagram className="w-4 h-4" /></a>
+              </div>
             </div>
-            
-            {/* Solutions Column */}
             <div className="md:col-span-2 space-y-3">
               <p className="text-label-md text-slate-900 font-bold">Solutions</p>
               <ul className="space-y-2 text-body-sm">
@@ -420,8 +478,6 @@ export default function Home() {
                 <li><Link href="#pricing" className="text-slate-600 hover:text-primary-container transition-colors">Pricing</Link></li>
               </ul>
             </div>
-            
-            {/* Company Column */}
             <div className="md:col-span-2 space-y-3">
               <p className="text-label-md text-slate-900 font-bold">Company</p>
               <ul className="space-y-2 text-body-sm">
@@ -431,38 +487,17 @@ export default function Home() {
                 <li><Link href="#kickoff" className="text-slate-600 hover:text-primary-container transition-colors">Contact Us</Link></li>
               </ul>
             </div>
-            
-            {/* Newsletter Column */}
             <div className="md:col-span-4 space-y-3">
               <p className="text-label-md text-slate-900 font-bold">Technomedia Dispatch</p>
-              <p className="text-body-sm text-slate-600">
-                Bi-weekly engineering memos and generative media insights read by 24,000+ tech leaders.
-              </p>
+              <p className="text-body-sm text-slate-600">Bi-weekly engineering memos and generative media insights read by 24,000+ tech leaders.</p>
               <form onSubmit={handleSubscribe} className="flex gap-2">
-                <input 
-                  name="email" 
-                  required 
-                  type="email" 
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter work email" 
-                  disabled={subStatus === "loading" || subStatus === "success"}
-                  className="flex-1 bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-body-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-primary-container focus:bg-white transition-colors disabled:opacity-50" 
-                />
-                <button 
-                  type="submit" 
-                  disabled={subStatus === "loading" || subStatus === "success"}
-                  className="px-4 py-2 bg-primary-container text-white text-body-sm font-bold rounded-lg hover:brightness-110 active:scale-95 transition-all shadow-sm disabled:opacity-70 disabled:cursor-not-allowed"
-                >
+                <input name="email" required type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Enter work email" disabled={subStatus === "loading" || subStatus === "success"} className="flex-1 bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-body-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-primary-container focus:bg-white transition-colors disabled:opacity-50" />
+                <button type="submit" disabled={subStatus === "loading" || subStatus === "success"} className="px-4 py-2 bg-primary-container text-white text-body-sm font-bold rounded-lg hover:brightness-110 active:scale-95 transition-all shadow-sm disabled:opacity-70 disabled:cursor-not-allowed">
                   {subStatus === "loading" ? "..." : subStatus === "success" ? "✓" : "Subscribe"}
                 </button>
               </form>
-              {subStatus === "error" && <p className="text-xs text-red-500 mt-2">Failed to subscribe. Please try again.</p>}
-              {subStatus === "success" && <p className="text-xs text-green-600 mt-2">Welcome to the dispatch!</p>}
             </div>
           </div>
-          
-          {/* Bottom Row */}
           <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-body-sm text-slate-500">
             <p>© 2026 Rush Technomedia LTD. All rights reserved.</p>
             <div className="flex items-center gap-6">
@@ -472,30 +507,7 @@ export default function Home() {
           </div>
         </div>
       </footer>
-      
-
-      
 
       {/* Floating WhatsApp Button */}
-      <a 
-        href="https://wa.me/2348108031437" 
-        target="_blank" 
-        rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-[#25D366] text-white pl-3 pr-4 py-3 rounded-full shadow-[0_8px_30px_-4px_rgba(37,211,102,0.6)] hover:scale-105 hover:shadow-[0_12px_40px_-4px_rgba(37,211,102,0.8)] transition-all duration-300 group"
-      >
-        <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-        </svg>
-        <span className="font-semibold text-sm hidden group-hover:inline-block transition-all duration-300">Chat with us</span>
-      </a>
-
-
-
-
-
-
-
-      
-    </main>
-  );
-}
+      <a href="https://wa.me/2348000000000" target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-[#25D366] text-white pl-3 pr-4 py-3 rounded-full shadow-[0_8px_30px_-4px_rgba(37,211,102,0.6)] hover:scale-105 hover:shadow-[0_12px_40px_-4px_rgba(37,211,102,0.8)] transition-all duration-300 group">
+        <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.
