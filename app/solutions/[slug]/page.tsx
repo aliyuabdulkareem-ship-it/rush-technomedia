@@ -1,9 +1,6 @@
-"use client";
-
-import { useState } from "react";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Globe, ShoppingBag, Megaphone, Palette, Newspaper, Bot, Facebook, Twitter, Linkedin, Instagram, Menu, X, Search, ChevronDown } from "lucide-react";
+import { ArrowRight, CheckCircle2, Globe, ShoppingBag, Megaphone, Palette, Newspaper, Bot } from "lucide-react";
 
 const solutionsData: Record<string, any> = {
   "website-and-app-development": { title: "Website & Application Development", icon: Globe, color: "bg-blue-500", featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuAGXyBSWAAlSJOTBZU_STe60Uiq924sbsXXOjuYD2Al1GIo_tJ1j8eA66ClO1KTF7vdEo840XuXhTI0VFzQ4fVMj9sKpCrO2qsg-uaXRpy6lmejCvy9QrNalY8nfMbmnaBLyj4zbxk-NnrgLd9eO9fXTDOF-pqpE-6s3iU-E3wB7Jt1lEPBGukIFYaO4uzjbnmNvvf0MlNwkPbvl1-PlHNyvAYuf8mk2lARXQCczvQy", tagline: "High-velocity digital experiences engineered for scale.", description: "We don't just build websites; we engineer digital assets. From lightning-fast corporate sites to complex, data-heavy web applications and native mobile apps, our development stack is optimized for sub-second latency, SEO dominance, and bulletproof security.", features: ["Custom Website Design & Development", "Progressive Web Applications (PWA)", "Native iOS & Android Mobile Apps", "Enterprise-grade Web Portals", "API Integration & Microservices"], mediaPartners: [] },
@@ -14,47 +11,7 @@ const solutionsData: Record<string, any> = {
   "ai-and-it-solutions": { title: "AI & IT Solutions", icon: Bot, color: "bg-cyan-500", featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuC35pYO9-YsLqstNwOSo1jCqS90DbXJsJr6bTSa5rEwvlYTqoGsrvVC-WA-irMqs0BZC3OVy5BtBmc1xX4nd-orqmKO_oZ2s5BIYU2-ghdLW4-jzmkQMNXhqhb4hAcrzeVfecKHGVzMFSDoJpkSbfJwvTqhOykKtyUPJnbjevA-IeoG2cT6XgVhgmI545NX7h0bNW2eQgPvT0M-e6ripxxosippnDQERrD4M6ncszC-", tagline: "Automate the mundane. Scale the exceptional.", description: "We integrate cutting-edge Artificial Intelligence into your business workflows. From custom AI chatbots and automated customer service agents to IT infrastructure consulting, we help you work smarter, faster, and with fewer overhead costs.", features: ["AI Automation Systems", "Custom AI Chatbots & Agents", "IT Infrastructure Consulting", "Cloud Architecture & Security", "Workflow Automation (Zapier/Make)"], mediaPartners: [] }
 };
 
-export default function SolutionPage({ params }: { params: Promise<{ slug: string }> }) {
-  // Since we need client-side state for the header dropdowns, we use a workaround or just keep it simple. 
-  // For simplicity in this dynamic route, we will render the header without dropdowns or make it a client component wrapper.
-  // To keep it simple and matching your request, I'll use a simplified header that matches the style.
-  
-  const [slug, setSlug] = useState<string>("");
-  
-  // Resolve params
-  if (!slug) {
-     // This is a hack to get params in a client component if needed, but Next.js 15 requires async. 
-     // Let's just use the server component approach for the main content and a simple header.
-     return <SolutionContent params={params} />;
-  }
-  return null;
-}
-
-function SolutionContent({ params }: { params: Promise<{ slug: string }> }) {
-  // We must use a client component wrapper for the header to have dropdowns, 
-  // but to avoid complexity, I will provide the exact same header structure using standard links for now, 
-  // or you can just use the homepage header. 
-  // Actually, let's just use the exact same header code but without the dropdown state for simplicity on subpages, 
-  // OR better yet, just import the same layout. Since we can't easily, I'll use a clean header.
-  
-  // To fulfill "use the original header all round", I will make this a client component effectively by moving the whole page logic.
-  // However, Next.js 15 requires `params` to be awaited in Server Components. 
-  // I will provide the code as a Server Component with a Client Component Header.
-  
-  return <InnerSolutionPage params={params} />;
-}
-
-function InnerSolutionPage({ params }: { params: Promise<{ slug: string }> }) {
-   // We can't await params in a client component easily without Suspense. 
-   // Let's just use the server component logic for the content and a simple header.
-   return <SolutionServerPage params={params} />;
-}
-
-// Actually, the easiest way to give you the EXACT same header is to just copy the header code and make the page a client component.
-// But `params` is async in Next 15. 
-// Let's just use a clean, matching header without the complex dropdown state for the subpages to ensure it builds perfectly.
-
-async function SolutionServerPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function SolutionPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const solution = solutionsData[slug];
   if (!solution) notFound();
@@ -63,25 +20,7 @@ async function SolutionServerPage({ params }: { params: Promise<{ slug: string }
   const otherSolutions = allSlugs.filter(s => s !== slug).map(s => solutionsData[s]);
 
   return (
-    <main className="min-h-screen bg-background text-on-surface font-sans">
-      {/* MATCHING HEADER */}
-      <header className="fixed top-0 left-0 right-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-sm">
-        <div className="flex justify-between items-center w-full px-6 md:px-12 max-w-7xl mx-auto h-20">
-          <Link href="/" className="flex items-center gap-3 transition-transform active:scale-95">
-            <img src="/newlogo.png.jpg" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
-          </Link>
-          <nav className="hidden md:flex items-center gap-6">
-            <Link href="/#solutions" className="text-label-md text-slate-700 hover:text-primary-container font-medium">Services</Link>
-            <Link href="/#about" className="text-label-md text-slate-700 hover:text-primary-container font-medium">About</Link>
-            <Link href="/#blog" className="text-label-md text-slate-700 hover:text-primary-container font-medium">News</Link>
-            <Link href="/#portal" className="inline-flex items-center justify-center px-4 py-2 rounded-lg text-label-md text-slate-700 border border-slate-300 hover:border-primary-container hover:text-primary-container transition-all duration-200 bg-white">Client Portal</Link>
-            <Link href="/#kickoff" className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-lg bg-primary-container text-white text-label-md font-bold hover:brightness-110 hover:scale-[1.02] active:scale-95 transition-all duration-200 shadow-md shadow-blue-500/20">Get Started <ArrowRight className="w-4 h-4" /></Link>
-          </nav>
-          <Link href="/" className="md:hidden inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-container text-white text-sm font-bold">Home</Link>
-        </div>
-      </header>
-
-      {/* HERO WITH FEATURED IMAGE & ICON */}
+    <>
       <section className="pt-32 pb-16 px-6 md:px-12 max-w-7xl mx-auto">
         <div className="relative rounded-3xl overflow-hidden bg-surface-container border border-outline-variant/20 mb-12">
           <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent z-10" />
@@ -97,7 +36,6 @@ async function SolutionServerPage({ params }: { params: Promise<{ slug: string }
           </div>
         </div>
 
-        {/* CONTENT */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           <div className="lg:col-span-2 space-y-8">
             <div className="bg-surface-container/40 border border-outline-variant/20 rounded-3xl p-8 md:p-10">
@@ -128,7 +66,6 @@ async function SolutionServerPage({ params }: { params: Promise<{ slug: string }
             )}
           </div>
 
-          {/* SIDEBAR: EXPLORE OTHER SOLUTIONS */}
           <div className="lg:col-span-1">
             <div className="sticky top-24 bg-surface-container/40 border border-outline-variant/20 rounded-3xl p-6">
               <h3 className="text-lg font-display font-bold text-on-surface mb-4">Explore Other Solutions</h3>
@@ -149,67 +86,6 @@ async function SolutionServerPage({ params }: { params: Promise<{ slug: string }
           </div>
         </div>
       </section>
-
-      {/* EXACT SAME FOOTER AS HOMEPAGE */}
-      <footer className="w-full bg-white border-t border-slate-200 text-slate-600 mt-24">
-        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 py-16">
-          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pb-12 border-b border-slate-200">
-            <div className="md:col-span-4 space-y-4">
-              <img src="/newlogo.png.jpg" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
-              <p className="text-body-sm max-w-sm leading-relaxed text-slate-600">Your partner in digital innovation. We design, develop, and deliver transformative media and web experiences for the modern African market.</p>
-              <p className="text-caption text-slate-500">RC-7434828</p>
-              <div className="space-y-2 text-sm text-slate-600">
-                <p>Ososami Rd, Ibadan 200273, Oyo State, Nigeria</p>
-                <p>+234 810 803 1437</p>
-                <p>hello@rushtechnomedia.com</p>
-              </div>
-              <div className="flex items-center gap-3 pt-2">
-                <a href="#" className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center hover:scale-110 transition-transform"><Facebook className="w-4 h-4" /></a>
-                <a href="#" className="w-9 h-9 rounded-full bg-sky-500 text-white flex items-center justify-center hover:scale-110 transition-transform"><Twitter className="w-4 h-4" /></a>
-                <a href="#" className="w-9 h-9 rounded-full bg-blue-700 text-white flex items-center justify-center hover:scale-110 transition-transform"><Linkedin className="w-4 h-4" /></a>
-                <a href="#" className="w-9 h-9 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 text-white flex items-center justify-center hover:scale-110 transition-transform"><Instagram className="w-4 h-4" /></a>
-              </div>
-            </div>
-            <div className="md:col-span-2 space-y-3">
-              <p className="text-label-md text-slate-900 font-bold">Solutions</p>
-              <ul className="space-y-2 text-body-sm">
-                <li><Link href="/solutions/website-and-app-development" className="text-slate-600 hover:text-primary-container transition-colors">Web & App Dev</Link></li>
-                <li><Link href="/solutions/ecommerce-solutions" className="text-slate-600 hover:text-primary-container transition-colors">E-Commerce</Link></li>
-                <li><Link href="/solutions/digital-marketing" className="text-slate-600 hover:text-primary-container transition-colors">Digital Marketing</Link></li>
-                <li><Link href="/solutions/ai-and-it-solutions" className="text-slate-600 hover:text-primary-container transition-colors">AI Solutions</Link></li>
-              </ul>
-            </div>
-            <div className="md:col-span-2 space-y-3">
-              <p className="text-label-md text-slate-900 font-bold">Company</p>
-              <ul className="space-y-2 text-body-sm">
-                <li><Link href="/#about" className="text-slate-600 hover:text-primary-container transition-colors">About Rush</Link></li>
-                <li><Link href="#" className="text-slate-600 hover:text-primary-container transition-colors">Careers</Link></li>
-                <li><Link href="/#portal" className="text-slate-600 hover:text-primary-container transition-colors">Client Portal</Link></li>
-                <li><Link href="/#kickoff" className="text-slate-600 hover:text-primary-container transition-colors">Contact Us</Link></li>
-              </ul>
-            </div>
-            <div className="md:col-span-4 space-y-3">
-              <p className="text-label-md text-slate-900 font-bold">Technomedia Dispatch</p>
-              <p className="text-body-sm text-slate-600">Bi-weekly engineering memos and generative media insights read by 24,000+ tech leaders.</p>
-              <form className="flex gap-2">
-                <input name="email" required type="email" placeholder="Enter work email" className="flex-1 bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-body-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-primary-container focus:bg-white transition-colors" />
-                <button type="submit" className="px-4 py-2 bg-primary-container text-white text-body-sm font-bold rounded-lg hover:brightness-110 active:scale-95 transition-all shadow-sm">Subscribe</button>
-              </form>
-            </div>
-          </div>
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-8 text-body-sm text-slate-500">
-            <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-center sm:text-left">
-              <p>© 2026 Rush Technomedia LTD</p>
-              <p className="hidden sm:inline">•</p>
-              <p>All rights reserved.</p>
-            </div>
-            <div className="flex items-center gap-6">
-              <Link href="/legal/privacy" className="text-slate-500 hover:text-primary-container transition-colors">Privacy Policy</Link>
-              <Link href="/legal/terms" className="text-slate-500 hover:text-primary-container transition-colors">Terms of Service</Link>
-            </div>
-          </div>
-        </div>
-      </footer>
-    </main>
+    </>
   );
 }
