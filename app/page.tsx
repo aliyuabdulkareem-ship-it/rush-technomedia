@@ -129,15 +129,31 @@ export default function Home() {
             ))}
           </div>
         </div>
-        <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory gap-4 px-6 pb-4 scrollbar-hide">
-          {["/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png", "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png"].map((src, i) => (
-            <div key={i} className="flex-shrink-0 w-[calc(50%-0.5rem)] snap-center flex items-center justify-center py-2">
-              <img src={src} alt="Tool Logo" className="h-8 w-auto object-contain grayscale opacity-60" />
-            </div>
+
+
+
+        {/* Mobile Auto-Scrolling Marquee */}
+        <div className="md:hidden relative overflow-hidden">
+          <div className="flex animate-[scroll_35s_linear_infinite]">
+            {["/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png", "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png", "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png"].map((src, i) => (
+              <div key={i} className="flex-shrink-0 mx-4 flex items-center justify-center">
+                <img src={src} alt="Tool Logo" className="h-8 w-auto object-contain grayscale opacity-60" />
+              </div>
+            ))}
+          </div>
+        </div>
+
+        
           ))}
         </div>
         <style>{`@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-33.333%); } } .scrollbar-hide::-webkit-scrollbar { display: none; } .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }`}</style>
       </section>
+
+
+
+
+
+      
 
       {/* BLOG SECTION */}
       <section id="blog" className="py-24 px-6 md:px-12 max-w-7xl mx-auto border-t border-outline-variant/20">
