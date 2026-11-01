@@ -132,12 +132,12 @@ export default function Home() {
 
 
 
-        {/* Mobile Auto-Scrolling Marquee */}
+              {/* Mobile Auto-Scrolling Marquee (Pauses on Touch/Hover) */}
         <div className="md:hidden relative overflow-hidden">
-          <div className="flex animate-[scroll_35s_linear_infinite]">
+          <div className="flex animate-[scroll_35s_linear_infinite] hover:[animation-play-state:paused]">
             {["/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png", "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png", "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png"].map((src, i) => (
               <div key={i} className="flex-shrink-0 mx-4 flex items-center justify-center">
-                <img src={src} alt="Tool Logo" className="h-8 w-auto object-contain grayscale opacity-60" />
+                <img src={src} alt="Tool Logo" className="h-8 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
               </div>
             ))}
           </div>
