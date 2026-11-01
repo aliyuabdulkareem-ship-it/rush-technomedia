@@ -216,7 +216,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* OUR SOLUTIONS SECTION */}
+           {/* OUR SOLUTIONS SECTION - With Custom Icons */}
       <section id="solutions" className="py-24 bg-surface-container-lowest border-y border-outline-variant/20 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 mb-12">
           <div className="text-center">
@@ -224,20 +224,21 @@ export default function Home() {
             <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface mt-2">Our Solutions</h2>
           </div>
         </div>
+        
         <div className="relative max-w-7xl mx-auto px-4">
           <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 pb-8 scrollbar-hide scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {[
-              { slug: "website-and-app-development", title: "Website & App Development", icon: Globe, color: "bg-blue-500" },
-              { slug: "ecommerce-solutions", title: "E-Commerce Solutions", icon: ShoppingBag, color: "bg-emerald-500" },
-              { slug: "digital-marketing", title: "Digital Marketing", icon: Megaphone, color: "bg-purple-500" },
-              { slug: "creative-design-and-branding", title: "Creative Design & Branding", icon: Palette, color: "bg-pink-500" },
-              { slug: "media-publications", title: "Media Publications", icon: Newspaper, color: "bg-orange-500" },
-              { slug: "ai-and-it-solutions", title: "AI & IT Solutions", icon: Bot, color: "bg-cyan-500" }
+              { slug: "website-and-app-development", title: "Website & App Development", icon: "/web.png", color: "bg-blue-500" },
+              { slug: "ecommerce-solutions", title: "E-Commerce Solutions", icon: "/e-commerce.png", color: "bg-emerald-500" },
+              { slug: "digital-marketing", title: "Digital Marketing", icon: "/digital.png", color: "bg-purple-500" },
+              { slug: "creative-design-and-branding", title: "Creative Design & Branding", icon: "/brand.png", color: "bg-pink-500" },
+              { slug: "media-publications", title: "Media Publications", icon: "/publication.png", color: "bg-orange-500" },
+              { slug: "ai-and-it-solutions", title: "AI & IT Solutions", icon: "/ai.png", color: "bg-cyan-500" }
             ].map((sol, i) => (
               <Link key={i} href={`/solutions/${sol.slug}`} className="flex-shrink-0 w-[45%] md:w-[280px] snap-center">
                 <div className="group flex flex-col items-center p-4 md:p-6 rounded-full bg-white border border-slate-200 hover:border-primary-container/50 hover:shadow-xl transition-all duration-300 cursor-pointer aspect-square justify-center">
-                  <div className={`w-16 h-16 md:w-24 md:h-24 rounded-full ${sol.color}/10 flex items-center justify-center mb-2 md:mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                    <sol.icon className={`w-8 h-8 md:w-12 md:h-12 ${sol.color.replace('bg-', 'text-')}`} />
+                  <div className={`w-16 h-16 md:w-24 md:h-24 rounded-full ${sol.color}/10 flex items-center justify-center mb-2 md:mb-4 p-3 md:p-4`}>
+                    <img src={sol.icon} alt={sol.title} className="w-full h-full object-contain" />
                   </div>
                   <h3 className="text-center text-slate-900 font-bold text-xs md:text-lg font-display group-hover:text-primary-container transition-colors leading-tight">{sol.title}</h3>
                 </div>
