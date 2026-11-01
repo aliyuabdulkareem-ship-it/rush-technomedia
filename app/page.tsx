@@ -24,7 +24,11 @@ const testimonials = [
 export default function Home() {
   const [contactStatus, setContactStatus] = useState<"idle" | "loading" | "success">("idle");
 
-  const handleContact = (e: React.FormEvent) => { e.preventDefault(); setContactStatus("loading"); setTimeout(() => setContactStatus("success"), 1500); };
+  const handleContact = (e: React.FormEvent) => { 
+    e.preventDefault(); 
+    setContactStatus("loading"); 
+    setTimeout(() => setContactStatus("success"), 1500); 
+  };
 
   return (
     <>
@@ -47,7 +51,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* OUR SOLUTIONS SECTION - Custom Icons & Hover Scale */}
+      {/* OUR SOLUTIONS SECTION */}
       <section id="solutions" className="py-24 bg-surface-container-lowest border-y border-outline-variant/20 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 mb-12">
           <div className="text-center">
@@ -55,7 +59,6 @@ export default function Home() {
             <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface mt-2">Our Solutions</h2>
           </div>
         </div>
-        
         <div className="relative max-w-7xl mx-auto px-4">
           <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 pb-8 scrollbar-hide scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {[
@@ -129,10 +132,7 @@ export default function Home() {
             ))}
           </div>
         </div>
-
-
-
-              {/* Mobile Auto-Scrolling Marquee (Pauses on Touch/Hover) */}
+        {/* Mobile Auto-Scrolling Marquee (Pauses on Touch/Hover) */}
         <div className="md:hidden relative overflow-hidden">
           <div className="flex animate-[scroll_35s_linear_infinite] hover:[animation-play-state:paused]">
             {["/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png", "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png", "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png"].map((src, i) => (
@@ -142,18 +142,8 @@ export default function Home() {
             ))}
           </div>
         </div>
-
-        
-          ))}
-        </div>
         <style>{`@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-33.333%); } } .scrollbar-hide::-webkit-scrollbar { display: none; } .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }`}</style>
       </section>
-
-
-
-
-
-      
 
       {/* BLOG SECTION */}
       <section id="blog" className="py-24 px-6 md:px-12 max-w-7xl mx-auto border-t border-outline-variant/20">
