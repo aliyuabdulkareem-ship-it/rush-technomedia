@@ -147,7 +147,7 @@ export default function Home() {
       <header className={`fixed top-0 left-0 right-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-sm transition-transform duration-300 ${headerVisible ? "translate-y-0" : "-translate-y-full"}`}>
         <div className="flex justify-between items-center w-full px-6 md:px-12 max-w-7xl mx-auto h-20">
           <Link href="/" className="flex items-center gap-3 transition-transform active:scale-95">
-            <img src="/logo.png.jpg" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
+            <img src="/newlogo.png.jpg" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
           </Link>
 
           {/* Desktop Navigation */}
@@ -455,7 +455,7 @@ export default function Home() {
         <div className="w-full max-w-7xl mx-auto px-6 md:px-12 py-16">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pb-12 border-b border-slate-200">
             <div className="md:col-span-4 space-y-4">
-              <img src="/logo.png.jpg" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
+              <img src="/newlogo.png.jpg" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
               <p className="text-body-sm max-w-sm leading-relaxed text-slate-600">Your partner in digital innovation. We design, develop, and deliver transformative media and web experiences for the modern African market.</p>
               <p className="text-caption text-slate-500">RC-7434828</p>
               <div className="flex items-center gap-3 text-xs font-medium text-slate-500">
