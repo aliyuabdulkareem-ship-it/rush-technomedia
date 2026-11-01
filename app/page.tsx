@@ -63,7 +63,7 @@ export default function Home() {
               { slug: "ecommerce-solutions", title: "E-Commerce Solutions", icon: "/e-commerce.png", color: "bg-emerald-500" },
               { slug: "digital-marketing", title: "Digital Marketing", icon: "/digital.png", color: "bg-purple-500" },
               { slug: "creative-design-and-branding", title: "Creative Design & Branding", icon: "/brand.png", color: "bg-pink-500" },
-              { slug: "media-publications", title: "Media Publications", icon: "/publication.png", color: "bg-orange-500" },
+              { slug: "media-publications", title: "Media Publications", icon: "/Publication.png", color: "bg-orange-500" },
               { slug: "ai-and-it-solutions", title: "AI & IT Solutions", icon: "/ai.png", color: "bg-cyan-500" }
             ].map((sol, i) => (
               <Link key={i} href={`/solutions/${sol.slug}`} className="flex-shrink-0 w-[45%] md:w-[280px] snap-center">
