@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, Bolt, PlayCircle, TrendingUp, Star, Terminal, MonitorPlay, Brain, Globe, ShieldCheck, Clock, Handshake, ExternalLink, Menu, X, Search, Facebook, Twitter, Linkedin, Instagram, Plus, Minus, Quote, ChevronDown, ShoppingBag, Megaphone, Palette, Newspaper, Bot } from "lucide-react";
+import { ArrowRight, Bolt, PlayCircle, TrendingUp, Star, Globe, ShieldCheck, Clock, Handshake, ExternalLink, Menu, X, Search, Facebook, Twitter, Linkedin, Instagram, Plus, Minus, Quote, ChevronDown, ShoppingBag, Megaphone, Palette, Newspaper, Bot } from "lucide-react";
 import Link from "next/link";
 
 const fadeInUp = {
@@ -56,6 +56,11 @@ export default function Home() {
 
   return (
     <main className="relative min-h-screen bg-background overflow-x-hidden">
+      {/* GIANT TEST BANNER - DELETE THIS DIV ONCE YOU SEE IT */}
+      <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] bg-yellow-400 text-black px-6 py-3 rounded-full font-bold shadow-2xl border-2 border-black animate-bounce">
+        ✅ CODE UPDATED SUCCESSFULLY! ✅
+      </div>
+
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-primary-container/10 rounded-full blur-[120px]" />
         <div className="absolute top-1/3 right-0 w-[600px] h-[600px] bg-tertiary/5 rounded-full blur-[100px]" />
@@ -172,7 +177,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* OUR SOLUTIONS SECTION - Horizontal Scrollable */}
+      {/* OUR SOLUTIONS SECTION - NEW HORIZONTAL SCROLLABLE */}
       <section id="solutions" className="py-24 bg-surface-container-lowest border-y border-outline-variant/20 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 mb-12">
           <div className="text-center">
