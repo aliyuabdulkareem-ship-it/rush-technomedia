@@ -32,7 +32,7 @@ export default function Home() {
   const [headerVisible, setHeaderVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [activeDropdown, setActiveDropdown] = useState<string | null>(null);
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -54,19 +54,18 @@ export default function Home() {
     } catch { setSubStatus("error"); }
   };
 
+  const toggleDropdown = (name: string) => {
+    setOpenDropdown(openDropdown === name ? null : name);
+  };
+
   return (
     <main className="relative min-h-screen bg-background overflow-x-hidden">
-      {/* GIANT TEST BANNER - DELETE THIS DIV ONCE YOU SEE IT */}
-      <div className="fixed top-24 left-1/2 -translate-x-1/2 z-[100] bg-yellow-400 text-black px-6 py-3 rounded-full font-bold shadow-2xl border-2 border-black animate-bounce">
-        ✅ CODE UPDATED SUCCESSFULLY! ✅
-      </div>
-
       <div className="fixed inset-0 pointer-events-none z-0">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[800px] bg-primary-container/10 rounded-full blur-[120px]" />
         <div className="absolute top-1/3 right-0 w-[600px] h-[600px] bg-tertiary/5 rounded-full blur-[100px]" />
       </div>
 
-      {/* SMART HEADER WITH DROPDOWNS */}
+      {/* SMART HEADER WITH CLICK DROPDOWNS */}
       <header className={`fixed top-0 left-0 right-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-sm transition-transform duration-300 ${headerVisible ? "translate-y-0" : "-translate-y-full"}`}>
         <div className="flex justify-between items-center w-full px-6 md:px-12 max-w-7xl mx-auto h-20">
           <Link href="/" className="flex items-center gap-3 transition-transform active:scale-95">
@@ -75,31 +74,35 @@ export default function Home() {
 
           {/* Desktop Nav */}
           <nav className="hidden md:flex items-center gap-6">
-            <div className="relative group" onMouseEnter={() => setActiveDropdown('services')} onMouseLeave={() => setActiveDropdown(null)}>
-              <button className="flex items-center gap-1 text-label-md text-slate-700 hover:text-primary-container font-medium py-2">
-                Services <ChevronDown className={`w-4 h-4 transition-transform ${activeDropdown === 'services' ? 'rotate-180' : ''}`} />
+            <div className="relative">
+              <button onClick={() => toggleDropdown('services')} className="flex items-center gap-1 text-label-md text-slate-700 hover:text-primary-container font-medium py-2">
+                Services <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'services' ? 'rotate-180' : ''}`} />
               </button>
-              <div className={`absolute top-full left-0 w-64 bg-white border border-slate-200 rounded-xl shadow-xl py-2 transition-all duration-200 ${activeDropdown === 'services' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}`}>
-                <Link href="/solutions/website-and-app-development" className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">Website & App Development</Link>
-                <Link href="/solutions/ecommerce-solutions" className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">E-Commerce Solutions</Link>
-                <Link href="/solutions/digital-marketing" className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">Digital Marketing</Link>
-                <Link href="/solutions/creative-design-and-branding" className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">Creative Design & Branding</Link>
-                <Link href="/solutions/media-publications" className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">Media Publications</Link>
-                <Link href="/solutions/ai-and-it-solutions" className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">AI & IT Solutions</Link>
-              </div>
+              {openDropdown === 'services' && (
+                <div className="absolute top-full left-0 w-64 bg-white border border-slate-200 rounded-xl shadow-xl py-2 z-50">
+                  <Link href="/solutions/website-and-app-development" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">Website & App Development</Link>
+                  <Link href="/solutions/ecommerce-solutions" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">E-Commerce Solutions</Link>
+                  <Link href="/solutions/digital-marketing" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">Digital Marketing</Link>
+                  <Link href="/solutions/creative-design-and-branding" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">Creative Design & Branding</Link>
+                  <Link href="/solutions/media-publications" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">Media Publications</Link>
+                  <Link href="/solutions/ai-and-it-solutions" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">AI & IT Solutions</Link>
+                </div>
+              )}
             </div>
 
             <Link href="#about" className="text-label-md text-slate-700 hover:text-primary-container font-medium">About</Link>
 
-            <div className="relative group" onMouseEnter={() => setActiveDropdown('news')} onMouseLeave={() => setActiveDropdown(null)}>
-              <button className="flex items-center gap-1 text-label-md text-slate-700 hover:text-primary-container font-medium py-2">
-                News <ChevronDown className={`w-4 h-4 transition-transform ${activeDropdown === 'news' ? 'rotate-180' : ''}`} />
+            <div className="relative">
+              <button onClick={() => toggleDropdown('news')} className="flex items-center gap-1 text-label-md text-slate-700 hover:text-primary-container font-medium py-2">
+                News <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'news' ? 'rotate-180' : ''}`} />
               </button>
-              <div className={`absolute top-full left-0 w-48 bg-white border border-slate-200 rounded-xl shadow-xl py-2 transition-all duration-200 ${activeDropdown === 'news' ? 'opacity-100 visible translate-y-0' : 'opacity-0 invisible -translate-y-2'}`}>
-                <Link href="/news" className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">Our News</Link>
-                <Link href="/mentions" className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">Our Mentions</Link>
-                <Link href="/videos" className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">Our Videos</Link>
-              </div>
+              {openDropdown === 'news' && (
+                <div className="absolute top-full left-0 w-48 bg-white border border-slate-200 rounded-xl shadow-xl py-2 z-50">
+                  <Link href="/news" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">Our News</Link>
+                  <Link href="/mentions" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">Our Mentions</Link>
+                  <Link href="/videos" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">Our Videos</Link>
+                </div>
+              )}
             </div>
 
             <button onClick={() => setSearchOpen(!searchOpen)} className="p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors">
@@ -134,20 +137,32 @@ export default function Home() {
           <div className="md:hidden absolute top-20 left-0 right-0 bg-white border-b border-slate-200 shadow-lg max-h-[80vh] overflow-y-auto">
             <nav className="flex flex-col px-6 py-6 space-y-4">
               <div className="space-y-2">
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">Services</p>
-                <Link href="/solutions/website-and-app-development" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">Website & App Development</Link>
-                <Link href="/solutions/ecommerce-solutions" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">E-Commerce Solutions</Link>
-                <Link href="/solutions/digital-marketing" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">Digital Marketing</Link>
-                <Link href="/solutions/creative-design-and-branding" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">Creative Design & Branding</Link>
-                <Link href="/solutions/media-publications" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">Media Publications</Link>
-                <Link href="/solutions/ai-and-it-solutions" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">AI & IT Solutions</Link>
+                <button onClick={() => toggleDropdown('mobile-services')} className="flex items-center justify-between w-full text-xs font-bold text-slate-400 uppercase tracking-wider py-2">
+                  Services <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'mobile-services' ? 'rotate-180' : ''}`} />
+                </button>
+                {openDropdown === 'mobile-services' && (
+                  <div className="space-y-1 pl-2">
+                    <Link href="/solutions/website-and-app-development" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">Website & App Development</Link>
+                    <Link href="/solutions/ecommerce-solutions" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">E-Commerce Solutions</Link>
+                    <Link href="/solutions/digital-marketing" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">Digital Marketing</Link>
+                    <Link href="/solutions/creative-design-and-branding" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">Creative Design & Branding</Link>
+                    <Link href="/solutions/media-publications" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">Media Publications</Link>
+                    <Link href="/solutions/ai-and-it-solutions" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">AI & IT Solutions</Link>
+                  </div>
+                )}
               </div>
               <Link href="#about" onClick={() => setMobileMenuOpen(false)} className="text-slate-700 py-2 border-b border-slate-100 font-medium">About</Link>
               <div className="space-y-2">
-                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">News</p>
-                <Link href="/news" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">Our News</Link>
-                <Link href="/mentions" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">Our Mentions</Link>
-                <Link href="/videos" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">Our Videos</Link>
+                <button onClick={() => toggleDropdown('mobile-news')} className="flex items-center justify-between w-full text-xs font-bold text-slate-400 uppercase tracking-wider py-2">
+                  News <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'mobile-news' ? 'rotate-180' : ''}`} />
+                </button>
+                {openDropdown === 'mobile-news' && (
+                  <div className="space-y-1 pl-2">
+                    <Link href="/news" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">Our News</Link>
+                    <Link href="/mentions" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">Our Mentions</Link>
+                    <Link href="/videos" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">Our Videos</Link>
+                  </div>
+                )}
               </div>
               <div className="pt-4 space-y-3">
                 <Link href="#portal" onClick={() => setMobileMenuOpen(false)} className="block w-full text-center py-3 rounded-lg border border-slate-300 text-slate-700 font-semibold">Client Portal</Link>
@@ -177,7 +192,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* OUR SOLUTIONS SECTION - NEW HORIZONTAL SCROLLABLE */}
+      {/* OUR SOLUTIONS SECTION - CIRCULAR CARDS, 2 PER ROW ON MOBILE */}
       <section id="solutions" className="py-24 bg-surface-container-lowest border-y border-outline-variant/20 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 mb-12">
           <div className="text-center">
@@ -186,15 +201,8 @@ export default function Home() {
           </div>
         </div>
         
-        <div className="relative max-w-7xl mx-auto">
-          <button onClick={() => document.getElementById('solutions-scroll')?.scrollBy({ left: -320, behavior: 'smooth' })} className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary-container text-white shadow-lg hover:brightness-110 transition-all flex items-center justify-center">
-            <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" /></svg>
-          </button>
-          <button onClick={() => document.getElementById('solutions-scroll')?.scrollBy({ left: 320, behavior: 'smooth' })} className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 md:w-12 md:h-12 rounded-full bg-primary-container text-white shadow-lg hover:brightness-110 transition-all flex items-center justify-center">
-            <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" /></svg>
-          </button>
-          
-          <div id="solutions-scroll" className="flex gap-6 overflow-x-auto snap-x snap-mandatory px-4 md:px-16 pb-8 scrollbar-hide scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+        <div className="relative max-w-7xl mx-auto px-4">
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 pb-8 scrollbar-hide scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {[
               { slug: "website-and-app-development", title: "Website & App Development", icon: Globe, color: "bg-blue-500" },
               { slug: "ecommerce-solutions", title: "E-Commerce Solutions", icon: ShoppingBag, color: "bg-emerald-500" },
@@ -203,21 +211,18 @@ export default function Home() {
               { slug: "media-publications", title: "Media Publications", icon: Newspaper, color: "bg-orange-500" },
               { slug: "ai-and-it-solutions", title: "AI & IT Solutions", icon: Bot, color: "bg-cyan-500" }
             ].map((sol, i) => (
-              <Link key={i} href={`/solutions/${sol.slug}`} className="flex-shrink-0 w-[260px] md:w-[300px] snap-center">
-                <div className="group flex flex-col items-center p-6 rounded-2xl bg-white border border-slate-200 hover:border-primary-container/50 hover:shadow-xl transition-all duration-300 cursor-pointer h-full justify-center">
-                  <div className={`w-24 h-24 md:w-28 md:h-28 rounded-full ${sol.color}/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
-                    <sol.icon className={`w-12 h-12 md:w-14 md:h-14 ${sol.color.replace('bg-', 'text-')}`} />
+              <Link key={i} href={`/solutions/${sol.slug}`} className="flex-shrink-0 w-[45%] md:w-[280px] snap-center">
+                <div className="group flex flex-col items-center p-4 md:p-6 rounded-full bg-white border border-slate-200 hover:border-primary-container/50 hover:shadow-xl transition-all duration-300 cursor-pointer aspect-square justify-center">
+                  <div className={`w-16 h-16 md:w-24 md:h-24 rounded-full ${sol.color}/10 flex items-center justify-center mb-2 md:mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                    <sol.icon className={`w-8 h-8 md:w-12 md:h-12 ${sol.color.replace('bg-', 'text-')}`} />
                   </div>
-                  <h3 className="text-center text-slate-900 font-bold text-lg md:text-xl font-display group-hover:text-primary-container transition-colors">{sol.title}</h3>
-                  <div className="mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <ArrowRight className="w-5 h-5 text-primary-container" />
-                  </div>
+                  <h3 className="text-center text-slate-900 font-bold text-xs md:text-lg font-display group-hover:text-primary-container transition-colors leading-tight">{sol.title}</h3>
                 </div>
               </Link>
             ))}
           </div>
         </div>
-        <div className="md:hidden text-center mt-4"><p className="text-caption text-outline">Swipe or use arrows to explore</p></div>
+        <div className="md:hidden text-center mt-4"><p className="text-caption text-outline">Swipe to explore more solutions</p></div>
       </section>
 
       {/* PORTFOLIO SECTION */}
