@@ -1,66 +1,213 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowRight, ArrowLeft, CheckCircle2, Globe, Smartphone, ShoppingBag, Megaphone, Palette, Newspaper, ShieldCheck, Bot } from "lucide-react";
+import { ArrowRight, ArrowLeft, CheckCircle2, Globe, ShoppingBag, Megaphone, Palette, Newspaper, Bot, MapPin, Phone, Mail, Facebook, Twitter, Linkedin, Instagram } from "lucide-react";
 
 const solutionsData: Record<string, any> = {
-  "website-and-app-development": { title: "Website & Application Development", icon: Globe, tagline: "High-velocity digital experiences engineered for scale.", description: "We don't just build websites; we engineer digital assets. From lightning-fast corporate sites to complex, data-heavy web applications and native mobile apps, our development stack is optimized for sub-second latency, SEO dominance, and bulletproof security.", features: ["Custom Website Design & Development", "Progressive Web Applications (PWA)", "Native iOS & Android Mobile Apps", "Enterprise-grade Web Portals", "API Integration & Microservices"], mediaPartners: [] },
-  "ecommerce-solutions": { title: "E-Commerce Solutions", icon: ShoppingBag, tagline: "Turn browsers into buyers with frictionless storefronts.", description: "Whether you need a custom Shopify build or a fully bespoke headless commerce architecture, we build online stores that convert. We integrate seamless payment gateways (Paystack, Flutterwave, Stripe), inventory management, and automated email flows to maximize your average order value.", features: ["Shopify & WooCommerce Development", "Custom Headless Commerce", "Payment Gateway Integration", "Inventory & CRM Automation", "Conversion Rate Optimization (CRO)"], mediaPartners: [] },
-  "digital-marketing": { title: "Digital Marketing", icon: Megaphone, tagline: "Data-driven campaigns that dominate your market.", description: "Visibility is currency. Our digital marketing frameworks combine technical SEO, high-ROAS paid advertising, and strategic email marketing to put your brand in front of the right audience at the exact moment they are ready to buy.", features: ["Search Engine Optimization (SEO)", "Social Media Marketing & Ads", "Email Marketing Automation", "Pay-Per-Click (PPC) Management", "Content Marketing Strategy"], mediaPartners: [] },
-  "creative-design-and-branding": { title: "Creative Design & Branding", icon: Palette, tagline: "Identities that command authority and trust.", description: "Your brand is more than a logo; it's the psychological footprint you leave on your audience. We craft comprehensive brand identity systems—from logo design and typography to full brand guidelines—that ensure you look like the market leader you are.", features: ["Logo & Visual Identity Design", "Complete Brand Guidelines", "UI/UX Design Systems", "Marketing Collateral & Print", "Motion Graphics & 3D Assets"], mediaPartners: [] },
-  "media-publications": { title: "Media Publications & Reputation", icon: Newspaper, tagline: "Strategic visibility in Africa's top news outlets.", description: "We secure high-authority press coverage for your brand. Through our deep relationships with Nigeria's leading news platforms, we publish strategic interviews, press releases, and thought-leadership articles that build instant credibility and manage your online reputation.", features: ["Press Release Distribution", "Executive Interview Placements", "Online Reputation Management (ORM)", "Strategic News Coverage", "Crisis Communication Support"], mediaPartners: ["Punch", "Tribune", "Guardian", "The Nation", "BusinessDay", "Vanguard", "Daily Independent", "New Telegraph", "PMNews", "Sun News NG"] },
-  "ai-and-it-solutions": { title: "AI & IT Solutions", icon: Bot, tagline: "Automate the mundane. Scale the exceptional.", description: "We integrate cutting-edge Artificial Intelligence into your business workflows. From custom AI chatbots and automated customer service agents to IT infrastructure consulting, we help you work smarter, faster, and with fewer overhead costs.", features: ["AI Automation Systems", "Custom AI Chatbots & Agents", "IT Infrastructure Consulting", "Cloud Architecture & Security", "Workflow Automation (Zapier/Make)"], mediaPartners: [] }
+  "website-and-app-development": { 
+    title: "Website & Application Development", 
+    icon: Globe, 
+    color: "bg-blue-500",
+    featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuAGXyBSWAAlSJOTBZU_STe60Uiq924sbsXXOjuYD2Al1GIo_tJ1j8eA66ClO1KTF7vdEo840XuXhTI0VFzQ4fVMj9sKpCrO2qsg-uaXRpy6lmejCvy9QrNalY8nfMbmnaBLyj4zbxk-NnrgLd9eO9fXTDOF-pqpE-6s3iU-E3wB7Jt1lEPBGukIFYaO4uzjbnmNvvf0MlNwkPbvl1-PlHNyvAYuf8mk2lARXQCczvQy",
+    tagline: "High-velocity digital experiences engineered for scale.", 
+    description: "We don't just build websites; we engineer digital assets. From lightning-fast corporate sites to complex, data-heavy web applications and native mobile apps, our development stack is optimized for sub-second latency, SEO dominance, and bulletproof security.", 
+    features: ["Custom Website Design & Development", "Progressive Web Applications (PWA)", "Native iOS & Android Mobile Apps", "Enterprise-grade Web Portals", "API Integration & Microservices"], 
+    mediaPartners: [] 
+  },
+  "ecommerce-solutions": { 
+    title: "E-Commerce Solutions", 
+    icon: ShoppingBag, 
+    color: "bg-emerald-500",
+    featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuC35pYO9-YsLqstNwOSo1jCqS90DbXJsJr6bTSa5rEwvlYTqoGsrvVC-WA-irMqs0BZC3OVy5BtBmc1xX4nd-orqmKO_oZ2s5BIYU2-ghdLW4-jzmkQMNXhqhb4hAcrzeVfecKHGVzMFSDoJpkSbfJwvTqhOykKtyUPJnbjevA-IeoG2cT6XgVhgmI545NX7h0bNW2eQgPvT0M-e6ripxxosippnDQERrD4M6ncszC-",
+    tagline: "Turn browsers into buyers with frictionless storefronts.", 
+    description: "Whether you need a custom Shopify build or a fully bespoke headless commerce architecture, we build online stores that convert. We integrate seamless payment gateways (Paystack, Flutterwave, Stripe), inventory management, and automated email flows to maximize your average order value.", 
+    features: ["Shopify & WooCommerce Development", "Custom Headless Commerce", "Payment Gateway Integration", "Inventory & CRM Automation", "Conversion Rate Optimization (CRO)"], 
+    mediaPartners: [] 
+  },
+  "digital-marketing": { 
+    title: "Digital Marketing", 
+    icon: Megaphone, 
+    color: "bg-purple-500",
+    featuredImage: "https://lh3.googleusercontent.com/aida/AEtjO1VUxqxWTheCKdKtDDAOBI_Ku18CcQMrVxuurCE72VDI1SFpHd5PvELQ_bdkCVLWwDeFIOvrX9bJJBQCn5RaXsqEesfO2zpHL_MvQGosY2cTXQeEccNQPalFBvVJV15D98aKwoviHRdFK4B_vB-3SNzxtgPdEJuy98AuMBKBlGJix1BMnwrBlNEZ0Txn13QQCrmndNL3djTKTRD9uaBPkg3nvT8G-sy0zdBbD6uMi3ip",
+    tagline: "Data-driven campaigns that dominate your market.", 
+    description: "Visibility is currency. Our digital marketing frameworks combine technical SEO, high-ROAS paid advertising, and strategic email marketing to put your brand in front of the right audience at the exact moment they are ready to buy.", 
+    features: ["Search Engine Optimization (SEO)", "Social Media Marketing & Ads", "Email Marketing Automation", "Pay-Per-Click (PPC) Management", "Content Marketing Strategy"], 
+    mediaPartners: [] 
+  },
+  "creative-design-and-branding": { 
+    title: "Creative Design & Branding", 
+    icon: Palette, 
+    color: "bg-pink-500",
+    featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuDHKuoa8TSKUZaD7__ApNBsYQ-mqptRELM3QbkfZogQsI10fTrjZNrb3K3CoDmwQZbbxC7-y6iuzYsW23ZLyLiNI_dzjD8etpz9UNOLUx1eKBT6G24iaY1SEVLZGnTowCoCu2mnrcY653Zy7fujYa3JkO2NRrUBbe1yy-mQMCeNwAChp9THYm8-TLIqU5GirXmlLbKarVuD06cedOx2MmZkEvG1apa6V5VoS4QWBBDbqIJBlkO2IKE_iUSMmg3un-ay0fSaYwpvC_S2NQA",
+    tagline: "Identities that command authority and trust.", 
+    description: "Your brand is more than a logo; it's the psychological footprint you leave on your audience. We craft comprehensive brand identity systems—from logo design and typography to full brand guidelines—that ensure you look like the market leader you are.", 
+    features: ["Logo & Visual Identity Design", "Complete Brand Guidelines", "UI/UX Design Systems", "Marketing Collateral & Print", "Motion Graphics & 3D Assets"], 
+    mediaPartners: [] 
+  },
+  "media-publications": { 
+    title: "Media Publications & Reputation", 
+    icon: Newspaper, 
+    color: "bg-orange-500",
+    featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuAGXyBSWAAlSJOTBZU_STe60Uiq924sbsXXOjuYD2Al1GIo_tJ1j8eA66ClO1KTF7vdEo840XuXhTI0VFzQ4fVMj9sKpCrO2qsg-uaXRpy6lmejCvy9QrNalY8nfMbmnaBLyj4zbxk-NnrgLd9eO9fXTDOF-pqpE-6s3iU-E3wB7Jt1lEPBGukIFYaO4uzjbnmNvvf0MlNwkPbvl1-PlHNyvAYuf8mk2lARXQCczvQy",
+    tagline: "Strategic visibility in Africa's top news outlets.", 
+    description: "We secure high-authority press coverage for your brand. Through our deep relationships with Nigeria's leading news platforms, we publish strategic interviews, press releases, and thought-leadership articles that build instant credibility and manage your online reputation.", 
+    features: ["Press Release Distribution", "Executive Interview Placements", "Online Reputation Management (ORM)", "Strategic News Coverage", "Crisis Communication Support"], 
+    mediaPartners: ["Punch", "Tribune", "Guardian", "The Nation", "BusinessDay", "Vanguard", "Daily Independent", "New Telegraph", "PMNews", "Sun News NG"] 
+  },
+  "ai-and-it-solutions": { 
+    title: "AI & IT Solutions", 
+    icon: Bot, 
+    color: "bg-cyan-500",
+    featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuC35pYO9-YsLqstNwOSo1jCqS90DbXJsJr6bTSa5rEwvlYTqoGsrvVC-WA-irMqs0BZC3OVy5BtBmc1xX4nd-orqmKO_oZ2s5BIYU2-ghdLW4-jzmkQMNXhqhb4hAcrzeVfecKHGVzMFSDoJpkSbfJwvTqhOykKtyUPJnbjevA-IeoG2cT6XgVhgmI545NX7h0bNW2eQgPvT0M-e6ripxxosippnDQERrD4M6ncszC-",
+    tagline: "Automate the mundane. Scale the exceptional.", 
+    description: "We integrate cutting-edge Artificial Intelligence into your business workflows. From custom AI chatbots and automated customer service agents to IT infrastructure consulting, we help you work smarter, faster, and with fewer overhead costs.", 
+    features: ["AI Automation Systems", "Custom AI Chatbots & Agents", "IT Infrastructure Consulting", "Cloud Architecture & Security", "Workflow Automation (Zapier/Make)"], 
+    mediaPartners: [] 
+  }
 };
 
 export default async function SolutionPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const solution = solutionsData[slug];
   if (!solution) notFound();
+  
   const allSlugs = Object.keys(solutionsData);
-  const currentIndex = allSlugs.indexOf(slug);
-  const nextSolution = solutionsData[allSlugs[(currentIndex + 1) % allSlugs.length]];
+  const otherSolutions = allSlugs.filter(s => s !== slug).map(s => solutionsData[s]);
 
   return (
     <main className="min-h-screen bg-background text-on-surface font-sans">
+      {/* HEADER */}
       <header className="fixed top-0 left-0 right-0 z-50 w-full border-b border-slate-200 bg-white/95 backdrop-blur-md shadow-sm">
         <div className="flex justify-between items-center w-full px-6 md:px-12 max-w-7xl mx-auto h-20">
           <Link href="/" className="flex items-center gap-3">
-            <img src="/newlogo.png.jpeg" alt="Rush Technomedia" className="h-8 w-auto object-contain" />
+            <img src="/newlogo.png.jpg" alt="Rush Technomedia" className="h-8 w-auto object-contain" />
           </Link>
           <Link href="/" className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary-container text-white text-sm font-bold hover:brightness-110 transition-all">
             <ArrowLeft className="w-4 h-4" /> Back to Home
           </Link>
         </div>
       </header>
-      <section className="pt-32 pb-16 px-6 md:px-12 max-w-7xl mx-auto text-center">
-        <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-primary-container/20 text-primary mb-6"><solution.icon className="w-8 h-8" /></div>
-        <h1 className="font-display text-4xl md:text-6xl font-bold text-on-surface mb-4 tracking-tight">{solution.title}</h1>
-        <p className="text-xl text-tertiary font-medium">{solution.tagline}</p>
-      </section>
-      <section className="px-6 md:px-12 max-w-4xl mx-auto pb-24">
-        <div className="bg-surface-container/40 border border-outline-variant/20 rounded-3xl p-8 md:p-12 mb-12">
-          <h2 className="text-2xl font-display font-bold text-on-surface mb-4">Overview</h2>
-          <p className="text-lg text-on-surface-variant leading-relaxed mb-8">{solution.description}</p>
-          <h3 className="text-xl font-display font-bold text-on-surface mb-4">What We Deliver</h3>
-          <ul className="space-y-3">{solution.features.map((feature: string, i: number) => (<li key={i} className="flex items-center gap-3 text-on-surface-variant"><CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />{feature}</li>))}</ul>
-        </div>
-        {solution.mediaPartners.length > 0 && (
-          <div className="mb-12">
-            <h3 className="text-xl font-display font-bold text-on-surface mb-6 text-center">Featured In & Media Partners</h3>
-            <div className="grid grid-cols-2 md:grid-cols-5 gap-4">{solution.mediaPartners.map((partner: string, i: number) => (<div key={i} className="flex items-center justify-center p-4 bg-white rounded-xl border border-slate-200 shadow-sm"><span className="text-slate-600 font-bold text-sm md:text-base text-center">{partner}</span></div>))}</div>
+
+      {/* HERO WITH FEATURED IMAGE & ICON */}
+      <section className="pt-32 pb-16 px-6 md:px-12 max-w-7xl mx-auto">
+        <div className="relative rounded-3xl overflow-hidden bg-surface-container border border-outline-variant/20 mb-12">
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent z-10" />
+          <img src={solution.featuredImage} alt={solution.title} className="w-full h-[300px] md:h-[400px] object-cover" />
+          <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 z-20 flex flex-col md:flex-row items-start md:items-end gap-6">
+            <div className={`w-16 h-16 md:w-20 md:h-20 rounded-2xl ${solution.color} flex items-center justify-center shadow-lg`}>
+              <solution.icon className="w-8 h-8 md:w-10 md:h-10 text-white" />
+            </div>
+            <div>
+              <h1 className="font-display text-3xl md:text-5xl font-bold text-white mb-2 tracking-tight">{solution.title}</h1>
+              <p className="text-lg md:text-xl text-tertiary font-medium">{solution.tagline}</p>
+            </div>
           </div>
-        )}
-        <div className="border-t border-outline-variant/20 pt-12 text-center">
-          <p className="text-caption text-outline uppercase tracking-wider mb-4">Explore Another Solution</p>
-          <Link href={`/solutions/${allSlugs[(currentIndex + 1) % allSlugs.length]}`} className="inline-flex items-center gap-3 group">
-            <div className="text-left"><p className="text-xs text-outline uppercase">Next Up</p><p className="text-lg font-display font-bold text-primary group-hover:underline">{nextSolution.title}</p></div>
-            <ArrowRight className="w-5 h-5 text-primary group-hover:translate-x-1 transition-transform" />
-          </Link>
+        </div>
+
+        {/* CONTENT */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+          <div className="lg:col-span-2 space-y-8">
+            <div className="bg-surface-container/40 border border-outline-variant/20 rounded-3xl p-8 md:p-10">
+              <h2 className="text-2xl font-display font-bold text-on-surface mb-4">Overview</h2>
+              <p className="text-lg text-on-surface-variant leading-relaxed mb-8">{solution.description}</p>
+              <h3 className="text-xl font-display font-bold text-on-surface mb-4">What We Deliver</h3>
+              <ul className="space-y-3">
+                {solution.features.map((feature: string, i: number) => (
+                  <li key={i} className="flex items-start gap-3 text-on-surface-variant">
+                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                    {feature}
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {solution.mediaPartners.length > 0 && (
+              <div className="bg-surface-container/40 border border-outline-variant/20 rounded-3xl p-8 md:p-10">
+                <h3 className="text-xl font-display font-bold text-on-surface mb-6 text-center">Featured In & Media Partners</h3>
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                  {solution.mediaPartners.map((partner: string, i: number) => (
+                    <div key={i} className="flex items-center justify-center p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+                      <span className="text-slate-600 font-bold text-sm md:text-base text-center">{partner}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* SIDEBAR: EXPLORE OTHER SOLUTIONS */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-24 bg-surface-container/40 border border-outline-variant/20 rounded-3xl p-6">
+              <h3 className="text-lg font-display font-bold text-on-surface mb-4">Explore Other Solutions</h3>
+              <div className="space-y-3">
+                {otherSolutions.map((other: any, i: number) => (
+                  <Link key={i} href={`/solutions/${Object.keys(solutionsData).find(key => solutionsData[key].title === other.title)}`} className="flex items-center gap-3 p-3 rounded-xl bg-white border border-slate-200 hover:border-primary-container/50 hover:shadow-md transition-all group">
+                    <div className={`w-10 h-10 rounded-full ${other.color}/10 flex items-center justify-center flex-shrink-0`}>
+                      <other.icon className={`w-5 h-5 ${other.color.replace('bg-', 'text-')}`} />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-slate-800 group-hover:text-primary-container truncate">{other.title}</p>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-primary-container group-hover:translate-x-1 transition-all" />
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </section>
-      <footer className="w-full bg-white border-t border-slate-200 text-slate-600">
-        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 py-12 text-center">
-          <img src="/newlogo.png.jpeg" alt="Rush Technomedia" className="h-8 w-auto object-contain mx-auto mb-4" />
-          <p className="text-sm">© 2026 Rush Technomedia LTD. All rights reserved.</p>
+
+      {/* FOOTER */}
+      <footer className="w-full bg-white border-t border-slate-200 text-slate-600 mt-24">
+        <div className="w-full max-w-7xl mx-auto px-6 md:px-12 py-16">
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pb-12 border-b border-slate-200">
+            <div className="md:col-span-4 space-y-4">
+              <img src="/newlogo.png.jpg" alt="Rush Technomedia" className="h-8 w-auto object-contain" />
+              <p className="text-body-sm max-w-sm leading-relaxed text-slate-600">Your partner in digital innovation. We design, develop, and deliver transformative media and web experiences for the modern African market.</p>
+              <p className="text-caption text-slate-500">RC-7434828</p>
+              <div className="space-y-2 text-xs font-medium text-slate-500">
+                <div className="flex items-center gap-2"><MapPin className="w-4 h-4 text-primary-container" /> Ososami Rd, Ibadan 200273, Oyo State, Nigeria</div>
+                <div className="flex items-center gap-2"><Phone className="w-4 h-4 text-primary-container" /> +234 810 803 1437</div>
+                <div className="flex items-center gap-2"><Mail className="w-4 h-4 text-primary-container" /> hello@rushtechnomedia.com</div>
+              </div>
+              <div className="flex items-center gap-3 pt-2">
+                <a href="#" className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center hover:scale-110 transition-transform"><Facebook className="w-4 h-4" /></a>
+                <a href="#" className="w-9 h-9 rounded-full bg-sky-500 text-white flex items-center justify-center hover:scale-110 transition-transform"><Twitter className="w-4 h-4" /></a>
+                <a href="#" className="w-9 h-9 rounded-full bg-blue-700 text-white flex items-center justify-center hover:scale-110 transition-transform"><Linkedin className="w-4 h-4" /></a>
+                <a href="#" className="w-9 h-9 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 text-white flex items-center justify-center hover:scale-110 transition-transform"><Instagram className="w-4 h-4" /></a>
+              </div>
+            </div>
+            <div className="md:col-span-2 space-y-3">
+              <p className="text-label-md text-slate-900 font-bold">Solutions</p>
+              <ul className="space-y-2 text-body-sm">
+                <li><Link href="/solutions/website-and-app-development" className="text-slate-600 hover:text-primary-container transition-colors">Web & App Dev</Link></li>
+                <li><Link href="/solutions/ecommerce-solutions" className="text-slate-600 hover:text-primary-container transition-colors">E-Commerce</Link></li>
+                <li><Link href="/solutions/digital-marketing" className="text-slate-600 hover:text-primary-container transition-colors">Digital Marketing</Link></li>
+                <li><Link href="/solutions/ai-and-it-solutions" className="text-slate-600 hover:text-primary-container transition-colors">AI Solutions</Link></li>
+              </ul>
+            </div>
+            <div className="md:col-span-2 space-y-3">
+              <p className="text-label-md text-slate-900 font-bold">Company</p>
+              <ul className="space-y-2 text-body-sm">
+                <li><Link href="/#about" className="text-slate-600 hover:text-primary-container transition-colors">About Rush</Link></li>
+                <li><Link href="#" className="text-slate-600 hover:text-primary-container transition-colors">Careers</Link></li>
+                <li><Link href="/#portal" className="text-slate-600 hover:text-primary-container transition-colors">Client Portal</Link></li>
+                <li><Link href="/#kickoff" className="text-slate-600 hover:text-primary-container transition-colors">Contact Us</Link></li>
+              </ul>
+            </div>
+            <div className="md:col-span-4 space-y-3">
+              <p className="text-label-md text-slate-900 font-bold">Technomedia Dispatch</p>
+              <p className="text-body-sm text-slate-600">Bi-weekly engineering memos and generative media insights read by 24,000+ tech leaders.</p>
+              <form className="flex gap-2">
+                <input name="email" required type="email" placeholder="Enter work email" className="flex-1 bg-slate-50 border border-slate-300 rounded-lg px-3 py-2 text-body-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:border-primary-container focus:bg-white transition-colors" />
+                <button type="submit" className="px-4 py-2 bg-primary-container text-white text-body-sm font-bold rounded-lg hover:brightness-110 active:scale-95 transition-all shadow-sm">Subscribe</button>
+              </form>
+            </div>
+          </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-1 sm:gap-6 pt-8 text-body-sm text-slate-500 text-center bg-white">
+            <p>© 2026 Rush Technomedia LTD</p>
+            <p className="hidden sm:inline">•</p>
+            <p>All rights reserved.</p>
+          </div>
         </div>
       </footer>
     </main>
