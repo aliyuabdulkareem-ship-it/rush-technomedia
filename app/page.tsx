@@ -277,36 +277,80 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Tools Marquee Section */}
+
+
+      
+      
+      {/* Our Arsenal - Tools Marquee Section */}
       <section className="py-20 bg-white border-y border-slate-200 overflow-hidden">
         <div className="text-center mb-12 px-6">
           <span className="text-slate-500 text-label-sm font-bold uppercase tracking-wider">Our Arsenal</span>
-          <h2 className="font-display text-headline-md md:text-headline-lg text-slate-900 mt-2">Some Cutting-Edge Toolkit for Digital Success</h2>
+          <h2 className="font-display text-headline-md md:text-headline-lg text-slate-900 mt-2">
+            Some Cutting-Edge Toolkit for Digital Success
+          </h2>
         </div>
-        <div className="relative">
-          <div className="absolute left-0 top-0 bottom-0 w-24 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-24 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
-          <div className="flex animate-[scroll_40s_linear_infinite]">
-            {[...tools, ...tools, ...tools].map((tool, i) => (
-              <div key={i} className="flex-shrink-0 mx-4 px-8 py-4 bg-slate-50 border border-slate-200 rounded-xl">
-                <span className="text-slate-500 font-semibold text-sm whitespace-nowrap">{tool}</span>
+        
+        {/* Desktop: Auto-scrolling Marquee (Pauses on Hover) */}
+        <div className="hidden md:block relative">
+          <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+          <div className="flex animate-[scroll_35s_linear_infinite] hover:[animation-play-state:paused]">
+            {[
+              "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png",
+              "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png",
+              "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png",
+              "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png",
+              "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png",
+              "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png"
+            ].map((src, i) => (
+              <div key={i} className="flex-shrink-0 mx-8 flex items-center justify-center">
+                <img 
+                  src={src} 
+                  alt="Tool Logo" 
+                  className="h-10 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300" 
+                />
               </div>
             ))}
           </div>
         </div>
+
+        {/* Mobile: Swipeable Horizontal Scroll (Shows 2 logos at a time) */}
+        <div className="md:hidden flex overflow-x-auto snap-x snap-mandatory gap-4 px-6 pb-4 scrollbar-hide">
+          {[
+            "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png",
+            "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png",
+            "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png",
+            "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png"
+          ].map((src, i) => (
+            <div key={i} className="flex-shrink-0 w-[calc(50%-0.5rem)] snap-center flex items-center justify-center py-2">
+              <img 
+                src={src} 
+                alt="Tool Logo" 
+                className="h-8 w-auto object-contain grayscale opacity-60" 
+              />
+            </div>
+          ))}
+        </div>
+
         <style>{`
           @keyframes scroll {
             0% { transform: translateX(0); }
             100% { transform: translateX(-33.333%); }
           }
-          @media (max-width: 768px) {
-            .animate-\\[scroll_40s_linear_infinite\\] > div {
-              margin-left: 0.5rem;
-              margin-right: 0.5rem;
-            }
+          .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+          }
+          .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
           }
         `}</style>
       </section>
+
+
+
+
+      
 
       {/* Blog Section */}
       <section id="blog" className="py-24 px-6 md:px-12 max-w-7xl mx-auto border-t border-outline-variant/20">
