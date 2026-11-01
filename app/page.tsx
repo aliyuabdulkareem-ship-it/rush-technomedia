@@ -9,16 +9,16 @@ const fadeInUp = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, t
 
 const blogPosts = [
   { title: "Why 90% of Nigerian Businesses Fail at SEO", excerpt: "Most businesses build beautiful websites that nobody can find. Here's the data-driven framework we use to fix that.", category: "SEO Strategy", readTime: "5 min read", date: "Oct 28, 2026" },
-  { title: "The Visibility Economy: How Being Found Online Became Your Biggest Asset", excerpt: "In 2026, digital visibility isn't marketing—it's survival. Learn why 'if you can't be found, you don't exist' is the new business law.", category: "Digital Strategy", readTime: "7 min read", date: "Oct 22, 2026" },
-  { title: "From 0 to 10,000 Monthly Visitors: A Lagos Startup's SEO Journey", excerpt: "How a small fintech in Yaba tripled their organic traffic in 6 months using technical SEO and content clusters.", category: "Case Study", readTime: "6 min read", date: "Oct 15, 2026" },
-  { title: "AI-Powered Content: How to Scale Your Brand Without Losing Your Voice", excerpt: "Generative AI can 10x your content output—but only if you know how to guide it. Our framework for authentic AI-assisted publishing.", category: "AI & Media", readTime: "8 min read", date: "Oct 10, 2026" }
+  { title: "The Visibility Economy: How Being Found Online Became Your Biggest Asset", excerpt: "In 2026, digital visibility isn't marketing—it's survival.", category: "Digital Strategy", readTime: "7 min read", date: "Oct 22, 2026" },
+  { title: "From 0 to 10,000 Monthly Visitors: A Lagos Startup's SEO Journey", excerpt: "How a small fintech in Yaba tripled their organic traffic in 6 months.", category: "Case Study", readTime: "6 min read", date: "Oct 15, 2026" },
+  { title: "AI-Powered Content: How to Scale Your Brand Without Losing Your Voice", excerpt: "Generative AI can 10x your content output.", category: "AI & Media", readTime: "8 min read", date: "Oct 10, 2026" }
 ];
 
 const testimonials = [
-  { name: "David Kim", role: "CTO @ HyperFlow Systems", initials: "DK", color: "bg-blue-500", quote: "Rush Technomedia operates like an elite special forces team for software. Their execution speed on our platform rebuild was unmatched.", rating: 5 },
-  { name: "Elena Rostova", role: "VP Marketing @ OmniCloud", initials: "ER", color: "bg-purple-500", quote: "The design aesthetics and technical robustness they delivered transformed our conversion rates overnight. +140% growth within 90 days.", rating: 5 },
-  { name: "Marcus Sterling", role: "Managing Director @ Apex Partners", initials: "MS", color: "bg-emerald-500", quote: "Their AI workflow automation cut our manual research overhead down from 18 hours per account to under 8 minutes.", rating: 5 },
-  { name: "Adaeze Okafor", role: "Founder @ Rush Online", initials: "AO", color: "bg-rose-500", quote: "Aliyu and his team understand the African digital ecosystem like no one else. They delivered a platform that truly represents our brand.", rating: 5 }
+  { name: "David Kim", role: "CTO @ HyperFlow Systems", initials: "DK", color: "bg-blue-500", quote: "Rush Technomedia operates like an elite special forces team for software.", rating: 5 },
+  { name: "Elena Rostova", role: "VP Marketing @ OmniCloud", initials: "ER", color: "bg-purple-500", quote: "The design aesthetics and technical robustness they delivered transformed our conversion rates overnight.", rating: 5 },
+  { name: "Marcus Sterling", role: "MD @ Apex Partners", initials: "MS", color: "bg-emerald-500", quote: "Their AI workflow automation cut our manual research overhead down from 18 hours to under 8 minutes.", rating: 5 },
+  { name: "Adaeze Okafor", role: "Founder @ Rush Online", initials: "AO", color: "bg-rose-500", quote: "Aliyu and his team understand the African digital ecosystem like no one else.", rating: 5 }
 ];
 
 export default function Home() {
@@ -31,7 +31,7 @@ export default function Home() {
   };
 
   return (
-    <>
+    <div className="relative min-h-screen bg-background overflow-x-hidden">
       {/* HERO SECTION */}
       <section className="relative pt-32 pb-24 md:pt-40 md:pb-32 px-6 md:px-12 max-w-7xl mx-auto z-10">
         <motion.div initial="hidden" animate="visible" variants={fadeInUp} className="flex flex-col items-center text-center max-w-4xl mx-auto mb-16">
@@ -132,7 +132,6 @@ export default function Home() {
             ))}
           </div>
         </div>
-        {/* Mobile Auto-Scrolling Marquee (Pauses on Touch/Hover) */}
         <div className="md:hidden relative overflow-hidden">
           <div className="flex animate-[scroll_35s_linear_infinite] hover:[animation-play-state:paused]">
             {["/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png", "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png", "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png"].map((src, i) => (
@@ -243,6 +242,6 @@ export default function Home() {
           </div>
         </motion.div>
       </section>
-    </>
+    </div>
   );
 }
