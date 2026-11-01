@@ -115,33 +115,39 @@ export default function Home() {
         </div>
       </section>
 
-      {/* OUR ARSENAL - TOOLS MARQUEE */}
+      {/* OUR ARSENAL - SEAMLESS INFINITE MARQUEE (Works on Mobile & Desktop) */}
       <section className="py-20 bg-white border-y border-slate-200 overflow-hidden">
         <div className="text-center mb-12 px-6">
           <span className="text-slate-500 text-label-sm font-bold uppercase tracking-wider">Our Arsenal</span>
           <h2 className="font-display text-headline-md md:text-headline-lg text-slate-900 mt-2">Some Cutting-Edge Toolkit for Digital Success</h2>
         </div>
-        <div className="hidden md:block relative">
-          <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
-          <div className="flex animate-[scroll_35s_linear_infinite] hover:[animation-play-state:paused]">
-            {["/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png", "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png", "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png"].map((src, i) => (
-              <div key={i} className="flex-shrink-0 mx-8 flex items-center justify-center">
-                <img src={src} alt="Tool Logo" className="h-10 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
+        
+        <div className="relative w-full overflow-hidden">
+          {/* Fade edges for smooth look */}
+          <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+          
+          {/* The moving track: 9 logos repeated exactly twice = 18 total. Animates exactly -50% for a seamless, invisible loop. */}
+          <div className="flex animate-[scroll_40s_linear_infinite] hover:[animation-play-state:paused]">
+            {[
+              "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png",
+              "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png"
+            ].map((src, i) => (
+              <div key={i} className="flex-shrink-0 mx-4 md:mx-8 flex items-center justify-center">
+                <img src={src} alt="Tool Logo" className="h-8 md:h-10 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
               </div>
             ))}
           </div>
         </div>
-        <div className="md:hidden relative overflow-hidden">
-          <div className="flex animate-[scroll_35s_linear_infinite] hover:[animation-play-state:paused]">
-            {["/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png", "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png", "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png"].map((src, i) => (
-              <div key={i} className="flex-shrink-0 mx-4 flex items-center justify-center">
-                <img src={src} alt="Tool Logo" className="h-8 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
-              </div>
-            ))}
-          </div>
-        </div>
-        <style>{`@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-33.333%); } } .scrollbar-hide::-webkit-scrollbar { display: none; } .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }`}</style>
+
+        <style>{`
+          @keyframes scroll { 
+            0% { transform: translateX(0); } 
+            100% { transform: translateX(-50%); } 
+          }
+          .scrollbar-hide::-webkit-scrollbar { display: none; } 
+          .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        `}</style>
       </section>
 
       {/* BLOG SECTION */}
