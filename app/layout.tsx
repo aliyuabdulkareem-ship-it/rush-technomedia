@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import CookieConsent from "@/components/CookieConsent";
+import SiteWrapper from "@/components/SiteWrapper";
 
 const jakarta = Plus_Jakarta_Sans({ subsets: ["latin"], variable: "--font-jakarta" });
 const space = Space_Grotesk({ subsets: ["latin"], variable: "--font-space" });
@@ -17,7 +18,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className="dark scroll-smooth">
       <body className={`${jakarta.variable} ${space.variable} bg-background text-on-surface antialiased font-sans selection:bg-primary-container selection:text-white`}>
-        {children}
+        <SiteWrapper>
+          {children}
+        </SiteWrapper>
         <CookieConsent />
       </body>
     </html>
