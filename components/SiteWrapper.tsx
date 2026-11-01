@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowRight, Search, Facebook, Twitter, Linkedin, Instagram, Menu, X, ChevronDown } from "lucide-react";
+import { ArrowRight, Search, Facebook, Twitter, Linkedin, Instagram, Menu, X, ChevronDown, MapPin, Phone, Mail } from "lucide-react";
 import Link from "next/link";
 
 export default function SiteWrapper({ children }: { children: React.ReactNode }) {
@@ -78,9 +78,10 @@ export default function SiteWrapper({ children }: { children: React.ReactNode })
               </button>
               {openDropdown === 'news' && (
                 <div className="absolute top-full left-0 w-48 bg-white border border-slate-200 rounded-xl shadow-xl py-2 z-50">
-                  {["Our News", "Our Mentions", "Our Videos"].map((item) => (
-                    <Link key={item} href="#" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">{item}</Link>
-                  ))}
+                  {/* LINKED TO BLOG SECTION */}
+                  <Link href="/#blog" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">Our News (Blog)</Link>
+                  <Link href="#" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">Our Mentions</Link>
+                  <Link href="#" onClick={() => setOpenDropdown(null)} className="block px-4 py-2.5 text-sm text-slate-700 hover:bg-slate-50 hover:text-primary-container">Our Videos</Link>
                 </div>
               )}
             </div>
@@ -112,14 +113,18 @@ export default function SiteWrapper({ children }: { children: React.ReactNode })
               </div>
               <Link href="/#about" onClick={() => setMobileMenuOpen(false)} className="text-slate-700 py-2 border-b border-slate-100 font-medium">About</Link>
               
-              {/* NEWS MENU FOR MOBILE */}
               <div className="space-y-2">
                 <button onClick={() => toggleDropdown('mobile-news')} className="flex items-center justify-between w-full text-xs font-bold text-slate-400 uppercase tracking-wider py-2">
                   News <ChevronDown className={`w-4 h-4 transition-transform ${openDropdown === 'mobile-news' ? 'rotate-180' : ''}`} />
                 </button>
-                {openDropdown === 'mobile-news' && ["Our News", "Our Mentions", "Our Videos"].map((item) => (
-                  <Link key={item} href="#" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">{item}</Link>
-                ))}
+                {openDropdown === 'mobile-news' && (
+                  <>
+                    {/* LINKED TO BLOG SECTION */}
+                    <Link href="/#blog" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">Our News (Blog)</Link>
+                    <Link href="#" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">Our Mentions</Link>
+                    <Link href="#" onClick={() => setMobileMenuOpen(false)} className="block text-slate-700 py-2 border-b border-slate-100">Our Videos</Link>
+                  </>
+                )}
               </div>
 
               <div className="pt-4 space-y-3">
@@ -186,12 +191,20 @@ export default function SiteWrapper({ children }: { children: React.ReactNode })
               <img src="/newlogo.png.jpg" alt="Rush Technomedia Logo" className="h-8 w-auto object-contain" />
               <p className="text-body-sm max-w-sm leading-relaxed text-slate-600">Your partner in digital innovation. We design, develop, and deliver transformative media and web experiences for the modern African market.</p>
               <p className="text-caption text-slate-500">RC-7434828</p>
-              {/* Address section with no icons, matching font */}
+              
+              {/* CLICKABLE CONTACT INFO */}
               <div className="space-y-2 text-sm text-slate-600">
-                <p>Ososami Rd, Ibadan 200273, Oyo State, Nigeria</p>
-                <p>+234 810 803 1437</p>
-                <p>hello@rushtechnomedia.com</p>
+                <a href="https://maps.google.com/?q=Ososami+Rd,+Ibadan+200273,+Oyo+State,+Nigeria" target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 hover:text-primary-container transition-colors w-fit">
+                  <MapPin className="w-4 h-4 flex-shrink-0" /> Ososami Rd, Ibadan 200273, Oyo State, Nigeria
+                </a>
+                <a href="tel:+2348108031437" className="flex items-center gap-2 hover:text-primary-container transition-colors w-fit">
+                  <Phone className="w-4 h-4 flex-shrink-0" /> +234 810 803 1437
+                </a>
+                <a href="mailto:hello@rushtechnomedia.com" className="flex items-center gap-2 hover:text-primary-container transition-colors w-fit">
+                  <Mail className="w-4 h-4 flex-shrink-0" /> hello@rushtechnomedia.com
+                </a>
               </div>
+
               <div className="flex items-center gap-3 pt-2">
                 <a href="#" className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center hover:scale-110 transition-transform"><Facebook className="w-4 h-4" /></a>
                 <a href="#" className="w-9 h-9 rounded-full bg-sky-500 text-white flex items-center justify-center hover:scale-110 transition-transform"><Twitter className="w-4 h-4" /></a>
@@ -232,7 +245,6 @@ export default function SiteWrapper({ children }: { children: React.ReactNode })
               <p className="hidden sm:inline">•</p>
               <p>All rights reserved.</p>
             </div>
-            {/* Privacy and Terms on the right */}
             <div className="flex items-center gap-6">
               <Link href="/legal/privacy" className="text-slate-500 hover:text-primary-container transition-colors">Privacy Policy</Link>
               <Link href="/legal/terms" className="text-slate-500 hover:text-primary-container transition-colors">Terms of Service</Link>
