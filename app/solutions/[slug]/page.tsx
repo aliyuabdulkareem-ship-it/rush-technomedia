@@ -20,72 +20,70 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
   const otherSolutions = allSlugs.filter(s => s !== slug).map(s => solutionsData[s]);
 
   return (
-    <>
-      <section className="pt-32 pb-16 px-6 md:px-12 max-w-7xl mx-auto">
-        <div className="relative rounded-3xl overflow-hidden bg-surface-container border border-outline-variant/20 mb-12">
-          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent z-10" />
-          <img src={solution.featuredImage} alt={solution.title} className="w-full h-[300px] md:h-[400px] object-cover" />
-          <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 z-20 flex flex-col md:flex-row items-start md:items-end gap-6">
-            <div className={`w-16 h-16 md:w-20 md:h-20 rounded-2xl ${solution.color} flex items-center justify-center shadow-lg`}>
-              <solution.icon className="w-8 h-8 md:w-10 md:h-10 text-white" />
-            </div>
-            <div>
-              <h1 className="font-display text-3xl md:text-5xl font-bold text-white mb-2 tracking-tight">{solution.title}</h1>
-              <p className="text-lg md:text-xl text-tertiary font-medium">{solution.tagline}</p>
-            </div>
+    <section className="pt-32 pb-16 px-6 md:px-12 max-w-7xl mx-auto">
+      <div className="relative rounded-3xl overflow-hidden bg-surface-container border border-outline-variant/20 mb-12">
+        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-transparent z-10" />
+        <img src={solution.featuredImage} alt={solution.title} className="w-full h-[300px] md:h-[400px] object-cover" />
+        <div className="absolute bottom-0 left-0 right-0 p-8 md:p-12 z-20 flex flex-col md:flex-row items-start md:items-end gap-6">
+          <div className={`w-16 h-16 md:w-20 md:h-20 rounded-2xl ${solution.color} flex items-center justify-center shadow-lg`}>
+            <solution.icon className="w-8 h-8 md:w-10 md:h-10 text-white" />
+          </div>
+          <div>
+            <h1 className="font-display text-3xl md:text-5xl font-bold text-white mb-2 tracking-tight">{solution.title}</h1>
+            <p className="text-lg md:text-xl text-tertiary font-medium">{solution.tagline}</p>
           </div>
         </div>
+      </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
-          <div className="lg:col-span-2 space-y-8">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+        <div className="lg:col-span-2 space-y-8">
+          <div className="bg-surface-container/40 border border-outline-variant/20 rounded-3xl p-8 md:p-10">
+            <h2 className="text-2xl font-display font-bold text-on-surface mb-4">Overview</h2>
+            <p className="text-lg text-on-surface-variant leading-relaxed mb-8">{solution.description}</p>
+            <h3 className="text-xl font-display font-bold text-on-surface mb-4">What We Deliver</h3>
+            <ul className="space-y-3">
+              {solution.features.map((feature: string, i: number) => (
+                <li key={i} className="flex items-start gap-3 text-on-surface-variant">
+                  <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  {feature}
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {solution.mediaPartners.length > 0 && (
             <div className="bg-surface-container/40 border border-outline-variant/20 rounded-3xl p-8 md:p-10">
-              <h2 className="text-2xl font-display font-bold text-on-surface mb-4">Overview</h2>
-              <p className="text-lg text-on-surface-variant leading-relaxed mb-8">{solution.description}</p>
-              <h3 className="text-xl font-display font-bold text-on-surface mb-4">What We Deliver</h3>
-              <ul className="space-y-3">
-                {solution.features.map((feature: string, i: number) => (
-                  <li key={i} className="flex items-start gap-3 text-on-surface-variant">
-                    <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
-                    {feature}
-                  </li>
+              <h3 className="text-xl font-display font-bold text-on-surface mb-6 text-center">Featured In & Media Partners</h3>
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+                {solution.mediaPartners.map((partner: string, i: number) => (
+                  <div key={i} className="flex items-center justify-center p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
+                    <span className="text-slate-600 font-bold text-sm md:text-base text-center">{partner}</span>
+                  </div>
                 ))}
-              </ul>
+              </div>
             </div>
+          )}
+        </div>
 
-            {solution.mediaPartners.length > 0 && (
-              <div className="bg-surface-container/40 border border-outline-variant/20 rounded-3xl p-8 md:p-10">
-                <h3 className="text-xl font-display font-bold text-on-surface mb-6 text-center">Featured In & Media Partners</h3>
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                  {solution.mediaPartners.map((partner: string, i: number) => (
-                    <div key={i} className="flex items-center justify-center p-4 bg-white rounded-xl border border-slate-200 shadow-sm">
-                      <span className="text-slate-600 font-bold text-sm md:text-base text-center">{partner}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="lg:col-span-1">
-            <div className="sticky top-24 bg-surface-container/40 border border-outline-variant/20 rounded-3xl p-6">
-              <h3 className="text-lg font-display font-bold text-on-surface mb-4">Explore Other Solutions</h3>
-              <div className="space-y-3">
-                {otherSolutions.map((other: any, i: number) => (
-                  <Link key={i} href={`/solutions/${Object.keys(solutionsData).find(key => solutionsData[key].title === other.title)}`} className="flex items-center gap-3 p-3 rounded-xl bg-white border border-slate-200 hover:border-primary-container/50 hover:shadow-md transition-all group">
-                    <div className={`w-10 h-10 rounded-full ${other.color}/10 flex items-center justify-center flex-shrink-0`}>
-                      <other.icon className={`w-5 h-5 ${other.color.replace('bg-', 'text-')}`} />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-slate-800 group-hover:text-primary-container truncate">{other.title}</p>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-primary-container group-hover:translate-x-1 transition-all" />
-                  </Link>
-                ))}
-              </div>
+        <div className="lg:col-span-1">
+          <div className="sticky top-24 bg-surface-container/40 border border-outline-variant/20 rounded-3xl p-6">
+            <h3 className="text-lg font-display font-bold text-on-surface mb-4">Explore Other Solutions</h3>
+            <div className="space-y-3">
+              {otherSolutions.map((other: any, i: number) => (
+                <Link key={i} href={`/solutions/${Object.keys(solutionsData).find(key => solutionsData[key].title === other.title)}`} className="flex items-center gap-3 p-3 rounded-xl bg-white border border-slate-200 hover:border-primary-container/50 hover:shadow-md transition-all group">
+                  <div className={`w-10 h-10 rounded-full ${other.color}/10 flex items-center justify-center flex-shrink-0`}>
+                    <other.icon className={`w-5 h-5 ${other.color.replace('bg-', 'text-')}`} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-slate-800 group-hover:text-primary-container truncate">{other.title}</p>
+                  </div>
+                  <ArrowRight className="w-4 h-4 text-slate-400 group-hover:text-primary-container group-hover:translate-x-1 transition-all" />
+                </Link>
+              ))}
             </div>
           </div>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 }
