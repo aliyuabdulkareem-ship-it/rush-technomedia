@@ -23,11 +23,31 @@ const testimonials = [
 
 export default function Home() {
   const [contactStatus, setContactStatus] = useState<"idle" | "loading" | "success">("idle");
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [selectedScope, setSelectedScope] = useState("Web & Mobile Apps");
 
-  const handleContact = (e: React.FormEvent) => { 
-    e.preventDefault(); 
-    setContactStatus("loading"); 
-    setTimeout(() => setContactStatus("success"), 1500); 
+  const handleContact = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setContactStatus("loading");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name: contactName, email: contactEmail, scope: selectedScope })
+      });
+      if (res.ok) {
+        setContactStatus("success");
+        setContactName("");
+        setContactEmail("");
+      } else {
+        setContactStatus("idle"); // Reset on error so they can try again
+        alert("Something went wrong. Please try again.");
+      }
+    } catch {
+      setContactStatus("idle");
+      alert("Network error. Please check your connection.");
+    }
   };
 
   return (
@@ -115,39 +135,24 @@ export default function Home() {
         </div>
       </section>
 
-      {/* OUR ARSENAL - SEAMLESS INFINITE MARQUEE (Works on Mobile & Desktop) */}
+      {/* OUR ARSENAL - SEAMLESS INFINITE MARQUEE */}
       <section className="py-20 bg-white border-y border-slate-200 overflow-hidden">
         <div className="text-center mb-12 px-6">
           <span className="text-slate-500 text-label-sm font-bold uppercase tracking-wider">Our Arsenal</span>
           <h2 className="font-display text-headline-md md:text-headline-lg text-slate-900 mt-2">Some Cutting-Edge Toolkit for Digital Success</h2>
         </div>
-        
         <div className="relative w-full overflow-hidden">
-          {/* Fade edges for smooth look */}
           <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
-          
-          {/* The moving track: 9 logos repeated exactly twice = 18 total. Animates exactly -50% for a seamless, invisible loop. */}
           <div className="flex animate-[scroll_40s_linear_infinite] hover:[animation-play-state:paused]">
-            {[
-              "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png",
-              "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png"
-            ].map((src, i) => (
+            {["/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png", "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png"].map((src, i) => (
               <div key={i} className="flex-shrink-0 mx-4 md:mx-8 flex items-center justify-center">
                 <img src={src} alt="Tool Logo" className="h-8 md:h-10 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
               </div>
             ))}
           </div>
         </div>
-
-        <style>{`
-          @keyframes scroll { 
-            0% { transform: translateX(0); } 
-            100% { transform: translateX(-50%); } 
-          }
-          .scrollbar-hide::-webkit-scrollbar { display: none; } 
-          .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
-        `}</style>
+        <style>{`@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } } .scrollbar-hide::-webkit-scrollbar { display: none; } .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }`}</style>
       </section>
 
       {/* BLOG SECTION */}
@@ -222,7 +227,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* LEAD CAPTURE */}
+      {/* LEAD CAPTURE FORM (NOW CONNECTED TO BACKEND) */}
       <section id="kickoff" className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
         <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="relative rounded-3xl bg-surface-container/60 backdrop-blur-xl border border-outline-variant/30 p-8 md:p-14 overflow-hidden">
           <div className="absolute -top-32 -left-32 w-80 h-80 bg-primary-container/10 rounded-full blur-3xl pointer-events-none" />
@@ -239,10 +244,26 @@ export default function Home() {
             <div className="lg:col-span-6 bg-surface-container-lowest/80 rounded-2xl p-6 md:p-8 border border-outline-variant/30 shadow-2xl">
               <h3 className="font-display text-headline-sm text-on-surface mb-2">Claim Your Strategy Session</h3>
               <form onSubmit={handleContact} className="space-y-5">
-                <div className="grid grid-cols-2 gap-2">{["Web & Mobile Apps", "SEO & Visibility", "Media & Content", "Full Product Pod"].map((scope) => (<label key={scope} className="flex items-center justify-center p-3 rounded-lg border border-outline-variant/40 bg-surface-container-high/40 cursor-pointer text-xs font-semibold text-on-surface hover:border-primary/60 hover:bg-surface-container-high transition-all"><input type="radio" name="scope" className="hidden" defaultChecked={scope === "Web & Mobile Apps"} /> {scope}</label>))}</div>
-                <div className="space-y-1.5"><label className="text-caption text-outline uppercase tracking-wider">Your Name</label><input required type="text" placeholder="Alex Morgan" className="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-4 py-3 text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" /></div>
-                <div className="space-y-1.5"><label className="text-caption text-outline uppercase tracking-wider">Work Email</label><input required type="email" placeholder="alex@company.com" className="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-4 py-3 text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" /></div>
-                <button type="submit" disabled={contactStatus !== "idle"} className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-lg bg-primary-container text-white font-label-md font-bold shadow-[0_8px_30px_-4px_rgba(20,71,230,0.5)] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed">{contactStatus === "loading" ? "Processing..." : contactStatus === "success" ? "Session Claimed!" : "Claim Free Strategy Session"}<ArrowRight className="w-4 h-4" /></button>
+                <div className="grid grid-cols-2 gap-2">
+                  {["Web & Mobile Apps", "SEO & Visibility", "Media & Content", "Full Product Pod"].map((scope) => (
+                    <label key={scope} className={`flex items-center justify-center p-3 rounded-lg border cursor-pointer text-xs font-semibold transition-all ${selectedScope === scope ? 'border-primary bg-primary/10 text-primary' : 'border-outline-variant/40 bg-surface-container-high/40 text-on-surface hover:border-primary/60'}`}>
+                      <input type="radio" name="scope" className="hidden" value={scope} checked={selectedScope === scope} onChange={() => setSelectedScope(scope)} /> 
+                      {scope}
+                    </label>
+                  ))}
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-caption text-outline uppercase tracking-wider">Your Name</label>
+                  <input required type="text" value={contactName} onChange={(e) => setContactName(e.target.value)} placeholder="Alex Morgan" className="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-4 py-3 text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-caption text-outline uppercase tracking-wider">Work Email</label>
+                  <input required type="email" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} placeholder="alex@company.com" className="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-4 py-3 text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
+                </div>
+                <button type="submit" disabled={contactStatus !== "idle"} className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-lg bg-primary-container text-white font-label-md font-bold shadow-[0_8px_30px_-4px_rgba(20,71,230,0.5)] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed">
+                  {contactStatus === "loading" ? "Processing..." : contactStatus === "success" ? "Session Claimed!" : "Claim Free Strategy Session"}
+                  <ArrowRight className="w-4 h-4" />
+                </button>
               </form>
             </div>
           </div>
