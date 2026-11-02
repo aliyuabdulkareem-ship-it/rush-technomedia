@@ -106,82 +106,70 @@ export default function Home() {
 
 
 
-            {/* PORTFOLIO SECTION - Horizontal Scroll with Mixed Background */}
-      <section id="work" className="py-24 overflow-hidden">
-        {/* Top Half - Dark Blue Background */}
-        <div className="bg-surface-container-lowest pb-12 pt-16">
-          <div className="text-center max-w-3xl mx-auto px-6">
-            <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Featured Production</span>
-            <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface mt-2 mb-4">Engineered Case Studies</h2>
-            <p className="text-on-surface-variant text-body-md">Measurable, high-velocity outcomes delivered for media enterprises, civic organizations, and global brands.</p>
-          </div>
+       {/* PORTFOLIO SECTION - Smart Auto-Scrolling Carousel */}
+      <section id="work" className="overflow-hidden bg-white">
+        {/* Top Half - Dark Blue Background for Header */}
+        <div className="bg-surface-container-lowest py-20 px-6 text-center">
+          <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Featured Production</span>
+          <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface mt-2 mb-4">Engineered Case Studies</h2>
+          <p className="text-on-surface-variant text-body-md max-w-2xl mx-auto">Measurable, high-velocity outcomes delivered for media enterprises, civic organizations, and global brands.</p>
         </div>
         
-        {/* Bottom Half - White Background with Scrollable Cards */}
-        <div className="bg-white pt-12 pb-24 relative">
-          <div className="max-w-7xl mx-auto px-6">
-            {/* Navigation Arrows */}
-            <button 
-              id="portfolio-prev"
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-primary-container text-white shadow-lg hover:brightness-110 transition-all flex items-center justify-center opacity-0 pointer-events-none"
-            >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-            </button>
-            <button 
-              id="portfolio-next"
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-primary-container text-white shadow-lg hover:brightness-110 transition-all flex items-center justify-center"
-            >
-              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-              </svg>
-            </button>
-
-            {/* Scrollable Container */}
-            <div 
-              id="portfolio-scroll"
-              className="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-8 scrollbar-hide scroll-smooth"
-              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
-            >
-              {[
-                { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
-                { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
-                { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
-                { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
-                { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" }
-              ].map((site, i) => (
-                <a 
-                  key={i} 
-                  href={site.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="flex-shrink-0 w-[85vw] md:w-[600px] snap-center group relative"
-                >
-                  {/* Image Container */}
-                  <div className="relative h-[400px] md:h-[500px] overflow-hidden rounded-t-2xl">
-                    <img 
-                      src="/18mk.png" 
-                      alt={site.name} 
-                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                    />
-                  </div>
-                  
-                  {/* White Card Overlay */}
-                  <div className="bg-white rounded-b-2xl p-6 md:p-8 shadow-lg relative -mt-4">
-                    <h3 className="font-display text-2xl md:text-3xl font-bold text-slate-900 mb-2">{site.name}</h3>
-                    <p className="text-slate-500 text-sm mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 h-0 group-hover:h-auto overflow-hidden">Website Development</p>
-                    <p className={`text-slate-600 text-base leading-relaxed transition-all duration-300 ${'opacity-0 group-hover:opacity-100 max-h-0 group-hover:max-h-24'}`}>{site.desc}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
+        {/* Bottom Half - White Background with Auto-Scrolling Cards */}
+        <div className="relative py-24">
+          {/* Fade Edges for smooth entry/exit */}
+          <div className="absolute left-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+          
+          {/* The Moving Track */}
+          <div className="flex animate-[scroll_40s_linear_infinite] hover:[animation-play-state:paused] gap-8 px-4">
+            {[
+              { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
+              { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
+              { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
+              { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
+              { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" },
+              // Duplicate for seamless infinite loop
+              { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
+              { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
+              { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
+              { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
+              { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" }
+            ].map((site, i) => (
+              <a 
+                key={i} 
+                href={site.url} 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="flex-shrink-0 w-[280px] md:w-[360px] group relative"
+              >
+                {/* Image Box */}
+                <div className="h-[220px] md:h-[260px] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm">
+                  <img 
+                    src="/18mk.png" 
+                    alt={site.name} 
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+                
+                {/* Overlapping Label Box */}
+                <div className="absolute -bottom-8 left-4 right-4 bg-white rounded-xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.15)] border border-slate-100 p-5 transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl">
+                  <h3 className="font-display font-bold text-slate-900 text-lg leading-tight">{site.name}</h3>
+                  <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mt-1 mb-2">Website Development</p>
+                  <p className="text-sm text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 h-0 group-hover:h-auto overflow-hidden">
+                    {site.desc}
+                  </p>
+                </div>
+              </a>
+            ))}
           </div>
         </div>
 
         <style>{`
-          .scrollbar-hide::-webkit-scrollbar { display: none; } 
-          .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+          @keyframes scroll { 
+            0% { transform: translateX(0); } 
+            100% { transform: translateX(-50%); } 
+          }
         `}</style>
       </section>
 
