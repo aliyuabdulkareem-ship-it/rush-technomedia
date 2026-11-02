@@ -103,6 +103,7 @@ export default function Home() {
         <div className="md:hidden text-center mt-4"><p className="text-caption text-outline">Swipe to explore more solutions</p></div>
       </section>
 
+
       {/* PORTFOLIO SECTION */}
       <section id="work" className="py-24 px-6 md:px-12 max-w-7xl mx-auto border-t border-outline-variant/20">
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -118,22 +119,34 @@ export default function Home() {
             { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
             { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" }
           ].map((site, i) => (
-            <a key={i} href={site.url} target="_blank" rel="noopener noreferrer" className="group relative rounded-2xl bg-surface-container/40 border border-outline-variant/20 overflow-hidden hover:border-primary/50 hover:bg-surface-container/80 transition-all duration-300 hover:-translate-y-1">
-              <div className="flex items-center gap-2 px-4 py-3 bg-surface-container-lowest border-b border-outline-variant/20">
-                <div className="flex gap-1.5"><div className="w-2.5 h-2.5 rounded-full bg-error/50"></div><div className="w-2.5 h-2.5 rounded-full bg-secondary/50"></div><div className="w-2.5 h-2.5 rounded-full bg-primary/30"></div></div>
-                <div className="flex-1 bg-surface-container-high rounded-md px-3 py-1 text-[10px] text-outline font-mono truncate text-center">{site.url}</div>
-              </div>
-              <div className="p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <h3 className="font-display text-headline-sm text-on-surface group-hover:text-primary transition-colors">{site.name}</h3>
-                  <ExternalLink className="w-4 h-4 text-outline group-hover:text-primary transition-colors" />
+            <a key={i} href={site.url} target="_blank" rel="noopener noreferrer" className="group relative rounded-2xl bg-white border border-slate-200 overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
+              {/* Image Container with Zoom Effect */}
+              <div className="relative h-64 overflow-hidden">
+                <img 
+                  src="/18mk.png" 
+                  alt={site.name} 
+                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
+                />
+                {/* Overlay on hover */}
+                <div className="absolute inset-0 bg-primary-container/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                  <span className="text-white font-bold text-lg flex items-center gap-2">
+                    View Project <ExternalLink className="w-5 h-5" />
+                  </span>
                 </div>
-                <p className="text-body-sm text-on-surface-variant">{site.desc}</p>
+              </div>
+              {/* Content */}
+              <div className="p-6">
+                <h3 className="font-display text-headline-sm text-on-surface mb-2 group-hover:text-primary transition-colors">{site.name}</h3>
+                <p className="text-body-sm text-slate-600">{site.desc}</p>
               </div>
             </a>
           ))}
         </div>
       </section>
+
+
+
+      
 
       {/* OUR ARSENAL - SEAMLESS INFINITE MARQUEE */}
       <section className="py-20 bg-white border-y border-slate-200 overflow-hidden">
