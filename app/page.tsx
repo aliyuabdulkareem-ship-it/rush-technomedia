@@ -104,46 +104,86 @@ export default function Home() {
       </section>
 
 
-      {/* PORTFOLIO SECTION */}
-      <section id="work" className="py-24 px-6 md:px-12 max-w-7xl mx-auto border-t border-outline-variant/20">
-        <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Featured Production</span>
-          <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface mt-2 mb-4">Engineered Case Studies</h2>
-          <p className="text-on-surface-variant text-body-md">Measurable, high-velocity outcomes delivered for media enterprises, civic organizations, and global brands.</p>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {[
-            { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
-            { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
-            { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
-            { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
-            { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" }
-          ].map((site, i) => (
-            <a key={i} href={site.url} target="_blank" rel="noopener noreferrer" className="group relative rounded-2xl bg-white border border-slate-200 overflow-hidden hover:shadow-2xl transition-all duration-500 hover:-translate-y-2">
-              {/* Image Container with Zoom Effect */}
-              <div className="relative h-64 overflow-hidden">
-                <img 
-                  src="/18mk.png" 
-                  alt={site.name} 
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110 group-hover:rotate-1"
-                />
-                {/* Overlay on hover */}
-                <div className="absolute inset-0 bg-primary-container/80 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
-                  <span className="text-white font-bold text-lg flex items-center gap-2">
-                    View Project <ExternalLink className="w-5 h-5" />
-                  </span>
-                </div>
-              </div>
-              {/* Content */}
-              <div className="p-6">
-                <h3 className="font-display text-headline-sm text-on-surface mb-2 group-hover:text-primary transition-colors">{site.name}</h3>
-                <p className="text-body-sm text-slate-600">{site.desc}</p>
-              </div>
-            </a>
-          ))}
-        </div>
-      </section>
 
+
+            {/* PORTFOLIO SECTION - Horizontal Scroll with Mixed Background */}
+      <section id="work" className="py-24 overflow-hidden">
+        {/* Top Half - Dark Blue Background */}
+        <div className="bg-surface-container-lowest pb-12 pt-16">
+          <div className="text-center max-w-3xl mx-auto px-6">
+            <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Featured Production</span>
+            <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface mt-2 mb-4">Engineered Case Studies</h2>
+            <p className="text-on-surface-variant text-body-md">Measurable, high-velocity outcomes delivered for media enterprises, civic organizations, and global brands.</p>
+          </div>
+        </div>
+        
+        {/* Bottom Half - White Background with Scrollable Cards */}
+        <div className="bg-white pt-12 pb-24 relative">
+          <div className="max-w-7xl mx-auto px-6">
+            {/* Navigation Arrows */}
+            <button 
+              id="portfolio-prev"
+              className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-primary-container text-white shadow-lg hover:brightness-110 transition-all flex items-center justify-center opacity-0 pointer-events-none"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+              </svg>
+            </button>
+            <button 
+              id="portfolio-next"
+              className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-primary-container text-white shadow-lg hover:brightness-110 transition-all flex items-center justify-center"
+            >
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+
+            {/* Scrollable Container */}
+            <div 
+              id="portfolio-scroll"
+              className="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-8 scrollbar-hide scroll-smooth"
+              style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+            >
+              {[
+                { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
+                { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
+                { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
+                { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
+                { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" }
+              ].map((site, i) => (
+                <a 
+                  key={i} 
+                  href={site.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex-shrink-0 w-[85vw] md:w-[600px] snap-center group relative"
+                >
+                  {/* Image Container */}
+                  <div className="relative h-[400px] md:h-[500px] overflow-hidden rounded-t-2xl">
+                    <img 
+                      src="/18mk.png" 
+                      alt={site.name} 
+                      className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                    />
+                  </div>
+                  
+                  {/* White Card Overlay */}
+                  <div className="bg-white rounded-b-2xl p-6 md:p-8 shadow-lg relative -mt-4">
+                    <h3 className="font-display text-2xl md:text-3xl font-bold text-slate-900 mb-2">{site.name}</h3>
+                    <p className="text-slate-500 text-sm mb-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300 h-0 group-hover:h-auto overflow-hidden">Website Development</p>
+                    <p className={`text-slate-600 text-base leading-relaxed transition-all duration-300 ${'opacity-0 group-hover:opacity-100 max-h-0 group-hover:max-h-24'}`}>{site.desc}</p>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        <style>{`
+          .scrollbar-hide::-webkit-scrollbar { display: none; } 
+          .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
+        `}</style>
+      </section>
 
 
       
