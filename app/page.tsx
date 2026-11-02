@@ -106,78 +106,89 @@ export default function Home() {
 
 
 
-      {/* PORTFOLIO SECTION - Smart Step-Scrolling Carousel */}
+           {/* PORTFOLIO SECTION - Smart Step-Scrolling Carousel */}
       <section id="work" className="overflow-hidden bg-white">
         {/* Top Half - Dark Blue Background for Header */}
-        <div className="bg-surface-container-lowest pt-20 pb-32 px-6 text-center relative">
+        <div className="bg-surface-container-lowest pt-20 pb-48 px-6 text-center relative">
           <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Featured Production</span>
           <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface mt-2 mb-4">Engineered Case Studies</h2>
           <p className="text-on-surface-variant text-body-md max-w-2xl mx-auto">Measurable, high-velocity outcomes delivered for media enterprises, civic organizations, and global brands.</p>
         </div>
         
         {/* Bottom Half - White Background, Pulled Up to Overlap */}
-        <div className="relative -mt-24 z-10">
+        <div className="relative -mt-32 z-10">
           {/* Fade Edges for smooth entry/exit */}
-          <div className="absolute left-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-12 md:w-24 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-12 md:w-24 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
           
-          {/* The Moving Track */}
-          <div className="flex animate-[stepScroll_25s_ease-in-out_infinite] hover:[animation-play-state:paused] gap-8 px-4">
-            {[
-              { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
-              { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
-              { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
-              { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
-              { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" },
-              // Duplicate for seamless infinite loop
-              { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
-              { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
-              { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
-              { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
-              { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" }
-            ].map((site, i) => (
-              <a 
-                key={i} 
-                href={site.url} 
-                target="_blank" 
-                rel="noopener noreferrer" 
-                className="flex-shrink-0 w-[280px] md:w-[360px] group relative"
-              >
-                {/* Image Box */}
-                <div className="h-[220px] md:h-[260px] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm">
-                  <img 
-                    src="/18mk.png" 
-                    alt={site.name} 
-                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-                
-                {/* Overlapping Label Box (Centered & Pushed Up) */}
-                <div className="absolute -bottom-8 left-4 right-4 bg-white rounded-xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.15)] border border-slate-100 p-5 transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl">
-                  <h3 className="font-display font-bold text-slate-900 text-lg leading-tight text-center">{site.name}</h3>
-                  <p className="text-sm text-slate-600 opacity-0 group-hover:opacity-100 transition-all duration-300 mt-2 text-center max-h-0 group-hover:max-h-24 overflow-hidden">
-                    {site.desc}
-                  </p>
-                </div>
-              </a>
-            ))}
+          {/* Viewport: Constrained to show exactly ONE card at a time */}
+          <div className="w-[300px] md:w-[400px] mx-auto overflow-hidden">
+            {/* The Moving Track */}
+            <div className="portfolio-track flex animate-[slideStep_20s_ease-in-out_infinite] hover:[animation-play-state:paused] gap-8">
+              {[
+                { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
+                { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
+                { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
+                { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
+                { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" },
+                // Duplicates for seamless infinite loop
+                { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
+                { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
+                { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
+                { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
+                { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" }
+              ].map((site, i) => (
+                <a 
+                  key={i} 
+                  href={site.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="flex-shrink-0 w-[300px] md:w-[400px] group relative"
+                >
+                  {/* Image Box */}
+                  <div className="h-[220px] md:h-[260px] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm">
+                    <img 
+                      src="/18mk.png" 
+                      alt={site.name} 
+                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    />
+                  </div>
+                  
+                  {/* Overlapping Label Box (Centered & Pulled Up) */}
+                  <div className="absolute -bottom-10 left-4 right-4 bg-white rounded-xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.15)] border border-slate-100 p-5 transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl">
+                    <h3 className="font-display font-bold text-slate-900 text-lg leading-tight text-center">{site.name}</h3>
+                    <p className="text-sm text-slate-600 opacity-0 group-hover:opacity-100 transition-all duration-300 mt-2 text-center max-h-0 group-hover:max-h-24 overflow-hidden">
+                      {site.desc}
+                    </p>
+                  </div>
+                </a>
+              ))}
+            </div>
           </div>
         </div>
 
         <style>{`
-          /* Custom Keyframes for Wait -> Snap -> Wait effect */
-          @keyframes stepScroll {
-            0%, 15% { transform: translateX(0); }
-            20%, 35% { transform: translateX(-10%); }
-            40%, 55% { transform: translateX(-20%); }
-            60%, 75% { transform: translateX(-30%); }
-            80%, 95% { transform: translateX(-40%); }
-            100% { transform: translateX(-50%); }
+          .portfolio-track {
+            --card-width: 300px;
+            --gap: 32px;
+            --step: calc(var(--card-width) + var(--gap));
+          }
+          @media (min-width: 768px) {
+            .portfolio-track {
+              --card-width: 400px;
+            }
+          }
+          /* Wait -> Smooth Slide -> Wait -> Loop */
+          @keyframes slideStep {
+            0%, 16% { transform: translateX(0); }
+            20%, 36% { transform: translateX(calc(-1 * var(--step))); }
+            40%, 56% { transform: translateX(calc(-2 * var(--step))); }
+            60%, 76% { transform: translateX(calc(-3 * var(--step))); }
+            80%, 96% { transform: translateX(calc(-4 * var(--step))); }
+            100% { transform: translateX(calc(-5 * var(--step))); }
           }
         `}</style>
       </section>
-
-
 
 
       
