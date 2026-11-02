@@ -185,7 +185,7 @@ export default function SiteWrapper({ children }: { children: React.ReactNode })
         <motion.button initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 20 }} onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })} className="fixed bottom-6 left-6 z-50 w-12 h-12 rounded-full bg-primary-container text-white shadow-lg hover:brightness-110 hover:scale-105 transition-all duration-300 flex items-center justify-center" aria-label="Scroll to top"><ArrowUp className="w-5 h-5" /></motion.button>
       )}
 
-      {/* GLOBAL FOOTER */}
+      {/* WHITE FOOTER (Main Content) */}
       <footer className="w-full bg-white border-t border-slate-200 text-slate-600 relative z-10">
         <div className="w-full max-w-7xl mx-auto px-6 md:px-12 py-16">
           <div className="grid grid-cols-1 md:grid-cols-12 gap-12 pb-12 border-b border-slate-200">
@@ -229,32 +229,25 @@ export default function SiteWrapper({ children }: { children: React.ReactNode })
               </form>
             </div>
           </div>
+        </div>
+      </footer>
 
-
-          
-                  </div>
-        
-        {/* Extreme Footer: Dark Blue Background - Full Width */}
-        <div className="w-full bg-surface-container border-t border-outline-variant/20 mt-12">
-          <div className="max-w-7xl mx-auto px-6 md:px-12 py-6">
-            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-body-sm text-on-surface-variant">
-              <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-center sm:text-left">
-                <p>© 2026 Rush Technomedia LTD</p>
-                <p className="hidden sm:inline">•</p>
-                <p>All rights reserved.</p>
-              </div>
-              <div className="flex items-center gap-6">
-                <Link href="/legal/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
-                <Link href="/legal/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
-              </div>
+      {/* DARK BLUE BOTTOM BAR - FULL WIDTH, EDGE TO EDGE */}
+      <div className="w-full bg-surface-container text-on-surface-variant">
+        <div className="max-w-7xl mx-auto px-6 md:px-12 py-6">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-body-sm">
+            <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-center sm:text-left">
+              <p>© 2026 Rush Technomedia LTD</p>
+              <p className="hidden sm:inline">•</p>
+              <p>All rights reserved.</p>
+            </div>
+            <div className="flex items-center gap-6">
+              <Link href="/legal/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+              <Link href="/legal/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
             </div>
           </div>
         </div>
-        
-      </footer>
-
-
-      
+      </div>
       
       {/* WHATSAPP BUTTON */}
       <a href="https://wa.me/2348108031437" target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-[#25D366] text-white pl-3 pr-4 py-3 rounded-full shadow-[0_8px_30px_-4px_rgba(37,211,102,0.6)] hover:scale-105 hover:shadow-[0_12px_40px_-4px_rgba(37,211,102,0.8)] transition-all duration-300 group">
