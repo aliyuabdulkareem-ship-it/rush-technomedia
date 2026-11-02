@@ -1,4 +1,14 @@
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
+import { Resend } from "resend";
+
+// Initialize Supabase
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
+
+// Initialize Resend (for sending the actual email)
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function POST(req: NextRequest) {
   try {
@@ -7,26 +17,23 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
     }
 
-    const apiKey = process.env.RESEND_API_KEY;
+    // 1. Save to Supabase Database
+    const { data, error: dbError } = await supabase
+      .from('newsletter_subscribers')
+      .insert([{ email }]);
 
-    // If no API key is set yet, simulate success so the site can deploy without crashing
-    if (!apiKey) {
-      console.log("Simulated email sent to:", email);
-      return NextResponse.json({ 
-        success: true, 
-        message: "Simulated success. Add RESEND_API_KEY in Vercel settings to send real emails." 
-      });
+    if (dbError) {
+      // If email already exists, that's fine, just log it
+      if (dbError.code !== '23505') { 
+        console.error("Database error:", dbError);
+      }
     }
 
-    // Only load Resend if the key actually exists
-    const { Resend } = await import("resend");
-    const resend = new Resend(apiKey);
-
+    // 2. Send Welcome Email via Resend
     const unsubscribeToken = Buffer.from(email).toString("base64");
-    const appUrl = process.env.NEXT_PUBLIC_APP_URL || "https://rushtechnomedia.com";
-    const unsubscribeUrl = `${appUrl}/api/unsubscribe?token=${unsubscribeToken}`;
+    const unsubscribeUrl = `${process.env.NEXT_PUBLIC_APP_URL || "https://rushtechnomedia.com"}/api/unsubscribe?token=${unsubscribeToken}`;
 
-    const { data, error } = await resend.emails.send({
+    const { error: emailError } = await resend.emails.send({
       from: "Rush Technomedia <newsletter@rushtechnomedia.com>",
       to: [email],
       subject: "Welcome to the Technomedia Dispatch 🚀",
@@ -47,8 +54,9 @@ export async function POST(req: NextRequest) {
       },
     });
 
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-    return NextResponse.json({ success: true });
+    if (emailError) return NextResponse.json({ error: emailError.message }, { status: 500 });
+
+    return NextResponse.json({ success: true, message: "Subscribed and email sent!" });
   } catch (error) {
     return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
