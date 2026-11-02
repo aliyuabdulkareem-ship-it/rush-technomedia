@@ -42,7 +42,7 @@ export async function POST(req: NextRequest) {
         const unsubscribeUrl = `${appUrl}/api/unsubscribe?token=${unsubscribeToken}`;
 
         const { error: emailError } = await resend.emails.send({
-          from: "Rush Technomedia <newsletter@rushtechnomedia.com>",
+      from: "Rush Technomedia <onboarding@resend.dev>",
           to: [email],
           subject: "Welcome to the Technomedia Dispatch 🚀",
           html: `
