@@ -229,14 +229,32 @@ export default function SiteWrapper({ children }: { children: React.ReactNode })
               </form>
             </div>
           </div>
-          <div className="w-full bg-surface-container border-t border-outline-variant/20 mt-12 -mx-6 -mb-16 px-6 md:px-12 py-6">
-            <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-body-sm text-on-surface-variant">
-              <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-center sm:text-left"><p>© 2026 Rush Technomedia LTD</p><p className="hidden sm:inline">•</p><p>All rights reserved.</p></div>
-              <div className="flex items-center gap-6"><Link href="/legal/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link><Link href="/legal/terms" className="hover:text-primary transition-colors">Terms of Service</Link></div>
+
+
+          
+                  </div>
+        
+        {/* Extreme Footer: Dark Blue Background - Full Width */}
+        <div className="w-full bg-surface-container border-t border-outline-variant/20 mt-12">
+          <div className="max-w-7xl mx-auto px-6 md:px-12 py-6">
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-body-sm text-on-surface-variant">
+              <div className="flex flex-col sm:flex-row items-center gap-1 sm:gap-2 text-center sm:text-left">
+                <p>© 2026 Rush Technomedia LTD</p>
+                <p className="hidden sm:inline">•</p>
+                <p>All rights reserved.</p>
+              </div>
+              <div className="flex items-center gap-6">
+                <Link href="/legal/privacy" className="hover:text-primary transition-colors">Privacy Policy</Link>
+                <Link href="/legal/terms" className="hover:text-primary transition-colors">Terms of Service</Link>
+              </div>
             </div>
           </div>
         </div>
+        
       </footer>
+
+
+      
       
       {/* WHATSAPP BUTTON */}
       <a href="https://wa.me/2348108031437" target="_blank" rel="noopener noreferrer" className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-[#25D366] text-white pl-3 pr-4 py-3 rounded-full shadow-[0_8px_30px_-4px_rgba(37,211,102,0.6)] hover:scale-105 hover:shadow-[0_12px_40px_-4px_rgba(37,211,102,0.8)] transition-all duration-300 group">
