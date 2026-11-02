@@ -106,7 +106,7 @@ export default function Home() {
 
 
 
-       {/* PORTFOLIO SECTION - Smart Auto-Scrolling Carousel */}
+             {/* PORTFOLIO SECTION - Smart Step-Scrolling Carousel */}
       <section id="work" className="overflow-hidden bg-white">
         {/* Top Half - Dark Blue Background for Header */}
         <div className="bg-surface-container-lowest py-20 px-6 text-center">
@@ -115,14 +115,14 @@ export default function Home() {
           <p className="text-on-surface-variant text-body-md max-w-2xl mx-auto">Measurable, high-velocity outcomes delivered for media enterprises, civic organizations, and global brands.</p>
         </div>
         
-        {/* Bottom Half - White Background with Auto-Scrolling Cards */}
+        {/* Bottom Half - White Background with Step-Scrolling Cards */}
         <div className="relative py-24">
           {/* Fade Edges for smooth entry/exit */}
           <div className="absolute left-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
           
           {/* The Moving Track */}
-          <div className="flex animate-[scroll_40s_linear_infinite] hover:[animation-play-state:paused] gap-8 px-4">
+          <div className="flex animate-[stepScroll_25s_ease-in-out_infinite] hover:[animation-play-state:paused] gap-8 px-4">
             {[
               { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
               { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
@@ -154,9 +154,8 @@ export default function Home() {
                 
                 {/* Overlapping Label Box */}
                 <div className="absolute -bottom-8 left-4 right-4 bg-white rounded-xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.15)] border border-slate-100 p-5 transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl">
-                  <h3 className="font-display font-bold text-slate-900 text-lg leading-tight">{site.name}</h3>
-                  <p className="text-xs text-slate-500 font-semibold uppercase tracking-wide mt-1 mb-2">Website Development</p>
-                  <p className="text-sm text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 h-0 group-hover:h-auto overflow-hidden">
+                  <h3 className="font-display font-bold text-slate-900 text-lg leading-tight text-center">{site.name}</h3>
+                  <p className="text-sm text-slate-600 opacity-0 group-hover:opacity-100 transition-all duration-300 mt-2 text-center max-h-0 group-hover:max-h-24 overflow-hidden">
                     {site.desc}
                   </p>
                 </div>
@@ -166,13 +165,17 @@ export default function Home() {
         </div>
 
         <style>{`
-          @keyframes scroll { 
-            0% { transform: translateX(0); } 
-            100% { transform: translateX(-50%); } 
+          /* Custom Keyframes for Wait -> Move -> Wait effect */
+          @keyframes stepScroll {
+            0%, 16% { transform: translateX(0); }
+            20%, 36% { transform: translateX(-10%); }
+            40%, 56% { transform: translateX(-20%); }
+            60%, 76% { transform: translateX(-30%); }
+            80%, 96% { transform: translateX(-40%); }
+            100% { transform: translateX(-50%); }
           }
         `}</style>
       </section>
-
 
       
 
