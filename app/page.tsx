@@ -106,23 +106,23 @@ export default function Home() {
 
 
 
-           {/* PORTFOLIO SECTION - Smart Step-Scrolling Carousel */}
-      <section id="work" className="overflow-hidden bg-white">
+                 {/* PORTFOLIO SECTION - Smart Step-Scrolling Carousel */}
+      <section id="work" className="overflow-hidden bg-surface-container-lowest">
         {/* Top Half - Dark Blue Background for Header */}
         <div className="bg-surface-container-lowest pt-20 pb-48 px-6 text-center relative">
           <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Featured Production</span>
-          <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface mt-2 mb-4">Engineered Case Studies</h2>
-          <p className="text-on-surface-variant text-body-md max-w-2xl mx-auto">Measurable, high-velocity outcomes delivered for media enterprises, civic organizations, and global brands.</p>
+          <h2 className="font-display text-headline-md md:text-headline-lg text-white mt-2 mb-4">Engineered Case Studies</h2>
+          <p className="text-slate-300 text-body-md max-w-2xl mx-auto">Measurable, high-velocity outcomes delivered for media enterprises, civic organizations, and global brands.</p>
         </div>
         
-        {/* Bottom Half - White Background, Pulled Up to Overlap */}
+        {/* Bottom Half - Dark Blue Background, Pulled Up to Overlap */}
         <div className="relative -mt-32 z-10">
-          {/* Fade Edges for smooth entry/exit */}
-          <div className="absolute left-0 top-0 bottom-0 w-12 md:w-24 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-12 md:w-24 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+          {/* Fade Edges: Dark Blue Gradients matching the background */}
+          <div className="absolute left-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-r from-surface-container-lowest to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-surface-container-lowest to-transparent z-10 pointer-events-none" />
           
-          {/* Viewport: Constrained to show exactly ONE card at a time */}
-          <div className="w-[300px] md:w-[400px] mx-auto overflow-hidden">
+          {/* Viewport: 1 card on mobile, 2 cards on desktop */}
+          <div className="w-[300px] md:w-[752px] mx-auto overflow-hidden">
             {/* The Moving Track */}
             <div className="portfolio-track flex animate-[slideStep_20s_ease-in-out_infinite] hover:[animation-play-state:paused] gap-8">
               {[
@@ -143,7 +143,7 @@ export default function Home() {
                   href={site.url} 
                   target="_blank" 
                   rel="noopener noreferrer" 
-                  className="flex-shrink-0 w-[300px] md:w-[400px] group relative"
+                  className="flex-shrink-0 w-[300px] md:w-[360px] group relative"
                 >
                   {/* Image Box */}
                   <div className="h-[220px] md:h-[260px] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm">
@@ -175,7 +175,7 @@ export default function Home() {
           }
           @media (min-width: 768px) {
             .portfolio-track {
-              --card-width: 400px;
+              --card-width: 360px;
             }
           }
           /* Wait -> Smooth Slide -> Wait -> Loop */
@@ -189,8 +189,6 @@ export default function Home() {
           }
         `}</style>
       </section>
-
-
       
       
 
