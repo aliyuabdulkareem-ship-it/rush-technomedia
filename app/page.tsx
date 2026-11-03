@@ -107,7 +107,7 @@ export default function Home() {
 
 
 
-      {/* PORTFOLIO SECTION - Smart Step-Scrolling Carousel */}
+            {/* PORTFOLIO SECTION - Smart Step-Scrolling Carousel */}
       <section id="work" className="bg-surface-container-lowest pb-32">
         {/* Top Half - Dark Blue Background for Header */}
         <div className="bg-surface-container-lowest pt-20 pb-48 px-6 text-center relative">
@@ -123,53 +123,56 @@ export default function Home() {
           <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-surface-container-lowest to-transparent z-10 pointer-events-none" />
           
           {/* Viewport: 1 card on mobile, 2 cards on desktop */}
-          <div className="w-[300px] md:w-[752px] mx-auto overflow-hidden">
-            {/* The Moving Track */}
-            <div className="portfolio-track flex animate-[slideStep_20s_ease-in-out_infinite] hover:[animation-play-state:paused] gap-8">
-              {[
-                { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
-                { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
-                { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
-                { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
-                { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" },
-                // Duplicates for seamless infinite loop
-                { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
-                { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
-                { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
-                { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
-                { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" }
-              ].map((site, i) => (
-                <a 
-                  key={i} 
-                  href={site.url} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="flex-shrink-0 w-[300px] md:w-[360px] group relative"
-                >
-                  {/* Image Box */}
-                  <div className="h-[220px] md:h-[260px] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm">
-                    <img 
-                      src="/18mk.png" 
-                      alt={site.name} 
-                      className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                    />
-                  </div>
-                  
-                  {/* Overlapping Label Box */}
-                  <div className="absolute -bottom-10 left-4 right-4 bg-white rounded-xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.15)] border border-slate-100 p-5 transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl">
-                    <h3 className="font-display font-bold text-slate-900 text-lg leading-tight text-center">{site.name}</h3>
-                    {/* Description: Increased max-h to prevent cutoff */}
-                    <p className="text-sm text-slate-600 opacity-0 group-hover:opacity-100 transition-all duration-300 mt-2 text-center max-h-0 group-hover:max-h-40 overflow-hidden">
-                      {site.desc}
-                    </p>
-                  </div>
-                </a>
-              ))}
+          <div className="w-[300px] md:w-[752px] mx-auto">
+            {/* Overflow wrapper with bottom padding (pb-16) so the label box doesn't get clipped */}
+            <div className="overflow-hidden pb-16">
+              {/* The Moving Track */}
+              <div className="portfolio-track flex animate-[slideStep_20s_ease-in-out_infinite] hover:[animation-play-state:paused] gap-8">
+                {[
+                  { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
+                  { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
+                  { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
+                  { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
+                  { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" },
+                  // Duplicates for seamless infinite loop
+                  { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
+                  { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
+                  { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
+                  { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
+                  { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" }
+                ].map((site, i) => (
+                  <a 
+                    key={i} 
+                    href={site.url} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="flex-shrink-0 w-[300px] md:w-[360px] group relative"
+                  >
+                    {/* Image Box */}
+                    <div className="h-[220px] md:h-[260px] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm">
+                      <img 
+                        src="/18mk.png" 
+                        alt={site.name} 
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
+                    
+                    {/* Overlapping Label Box */}
+                    <div className="absolute -bottom-10 left-4 right-4 bg-white rounded-xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.15)] border border-slate-100 p-5 transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl">
+                      <h3 className="font-display font-bold text-slate-900 text-lg leading-tight text-center">{site.name}</h3>
+                      {/* Description: Clean opacity fade-in, no height clipping */}
+                      <p className="text-sm text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-2 text-center">
+                        {site.desc}
+                      </p>
+                    </div>
+                  </a>
+                ))}
+              </div>
             </div>
           </div>
 
           {/* Pagination Dots (Synced with Carousel) */}
-          <div className="flex justify-center gap-2 mt-16">
+          <div className="flex justify-center gap-2 mt-8">
             <div className="dot dot-1"></div>
             <div className="dot dot-2"></div>
             <div className="dot dot-3"></div>
@@ -195,11 +198,11 @@ export default function Home() {
             width: 24px;
             height: 6px;
             border-radius: 9999px;
-            background-color: rgba(255, 255, 255, 0.3); /* Dim white for inactive */
+            background-color: rgba(255, 255, 255, 0.3);
             transition: all 0.3s ease;
           }
           
-          /* Dot Animations (Synced perfectly with slideStep) */
+          /* Dot Animations */
           .dot-1 { animation: dot1 20s infinite ease-in-out; }
           .dot-2 { animation: dot2 20s infinite ease-in-out; }
           .dot-3 { animation: dot3 20s infinite ease-in-out; }
@@ -207,7 +210,7 @@ export default function Home() {
           .dot-5 { animation: dot5 20s infinite ease-in-out; }
 
           @keyframes dot1 {
-            0%, 16% { background-color: #ffffff; transform: scale(1.2); } /* Bright white active */
+            0%, 16% { background-color: #ffffff; transform: scale(1.2); }
             20%, 100% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
           }
           @keyframes dot2 {
@@ -242,7 +245,6 @@ export default function Home() {
           }
         `}</style>
       </section>
-      
       
 
 
