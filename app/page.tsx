@@ -190,6 +190,54 @@ export default function Home() {
         `}</style>
       </section>
       
+
+
+
+{/* LEAD CAPTURE FORM (NOW CONNECTED TO BACKEND) */}
+      <section id="kickoff" className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="relative rounded-3xl bg-surface-container/60 backdrop-blur-xl border border-outline-variant/30 p-8 md:p-14 overflow-hidden">
+          <div className="absolute -top-32 -left-32 w-80 h-80 bg-primary-container/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+            <div className="lg:col-span-6 space-y-6">
+              <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface">Ready to Accelerate Your Digital Velocity?</h2>
+              <p className="text-on-surface-variant text-body-lg leading-relaxed">Book a 30-minute discovery workshop directly with our engineering and creative partners.</p>
+              <div className="space-y-3 pt-4 border-t border-outline-variant/20">
+                {[{ icon: ShieldCheck, text: "Strict Mutual NDA Protected Before Any File Exchange" }, { icon: Clock, text: "Guaranteed Initial Technical Proposal within 24 Hours" }, { icon: Handshake, text: "Zero Obligations • Full Architecture Ownership" }].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3 text-body-sm text-secondary"><item.icon className="w-5 h-5 text-primary" /> {item.text}</div>
+                ))}
+              </div>
+            </div>
+            <div className="lg:col-span-6 bg-surface-container-lowest/80 rounded-2xl p-6 md:p-8 border border-outline-variant/30 shadow-2xl">
+              <h3 className="font-display text-headline-sm text-on-surface mb-2">Claim Your Strategy Session</h3>
+              <form onSubmit={handleContact} className="space-y-5">
+                <div className="grid grid-cols-2 gap-2">
+                  {["Web & Mobile Apps", "SEO & Visibility", "Media & Content", "Full Product Pod"].map((scope) => (
+                    <label key={scope} className={`flex items-center justify-center p-3 rounded-lg border cursor-pointer text-xs font-semibold transition-all ${selectedScope === scope ? 'border-primary bg-primary/10 text-primary' : 'border-outline-variant/40 bg-surface-container-high/40 text-on-surface hover:border-primary/60'}`}>
+                      <input type="radio" name="scope" className="hidden" value={scope} checked={selectedScope === scope} onChange={() => setSelectedScope(scope)} /> 
+                      {scope}
+                    </label>
+                  ))}
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-caption text-outline uppercase tracking-wider">Your Name</label>
+                  <input required type="text" value={contactName} onChange={(e) => setContactName(e.target.value)} placeholder="Alex Morgan" className="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-4 py-3 text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-caption text-outline uppercase tracking-wider">Work Email</label>
+                  <input required type="email" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} placeholder="alex@company.com" className="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-4 py-3 text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
+                </div>
+                <button type="submit" disabled={contactStatus !== "idle"} className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-lg bg-primary-container text-white font-label-md font-bold shadow-[0_8px_30px_-4px_rgba(20,71,230,0.5)] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed">
+                  {contactStatus === "loading" ? "Processing..." : contactStatus === "success" ? "Session Claimed!" : "Claim Free Strategy Session"}
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </form>
+            </div>
+          </div>
+        </motion.div>
+      </section>
+
+
+
       
 
       {/* OUR ARSENAL - SEAMLESS INFINITE MARQUEE */}
@@ -284,48 +332,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* LEAD CAPTURE FORM (NOW CONNECTED TO BACKEND) */}
-      <section id="kickoff" className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="relative rounded-3xl bg-surface-container/60 backdrop-blur-xl border border-outline-variant/30 p-8 md:p-14 overflow-hidden">
-          <div className="absolute -top-32 -left-32 w-80 h-80 bg-primary-container/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
-            <div className="lg:col-span-6 space-y-6">
-              <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface">Ready to Accelerate Your Digital Velocity?</h2>
-              <p className="text-on-surface-variant text-body-lg leading-relaxed">Book a 30-minute discovery workshop directly with our engineering and creative partners.</p>
-              <div className="space-y-3 pt-4 border-t border-outline-variant/20">
-                {[{ icon: ShieldCheck, text: "Strict Mutual NDA Protected Before Any File Exchange" }, { icon: Clock, text: "Guaranteed Initial Technical Proposal within 24 Hours" }, { icon: Handshake, text: "Zero Obligations • Full Architecture Ownership" }].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3 text-body-sm text-secondary"><item.icon className="w-5 h-5 text-primary" /> {item.text}</div>
-                ))}
-              </div>
-            </div>
-            <div className="lg:col-span-6 bg-surface-container-lowest/80 rounded-2xl p-6 md:p-8 border border-outline-variant/30 shadow-2xl">
-              <h3 className="font-display text-headline-sm text-on-surface mb-2">Claim Your Strategy Session</h3>
-              <form onSubmit={handleContact} className="space-y-5">
-                <div className="grid grid-cols-2 gap-2">
-                  {["Web & Mobile Apps", "SEO & Visibility", "Media & Content", "Full Product Pod"].map((scope) => (
-                    <label key={scope} className={`flex items-center justify-center p-3 rounded-lg border cursor-pointer text-xs font-semibold transition-all ${selectedScope === scope ? 'border-primary bg-primary/10 text-primary' : 'border-outline-variant/40 bg-surface-container-high/40 text-on-surface hover:border-primary/60'}`}>
-                      <input type="radio" name="scope" className="hidden" value={scope} checked={selectedScope === scope} onChange={() => setSelectedScope(scope)} /> 
-                      {scope}
-                    </label>
-                  ))}
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-caption text-outline uppercase tracking-wider">Your Name</label>
-                  <input required type="text" value={contactName} onChange={(e) => setContactName(e.target.value)} placeholder="Alex Morgan" className="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-4 py-3 text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-caption text-outline uppercase tracking-wider">Work Email</label>
-                  <input required type="email" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} placeholder="alex@company.com" className="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-4 py-3 text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
-                </div>
-                <button type="submit" disabled={contactStatus !== "idle"} className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-lg bg-primary-container text-white font-label-md font-bold shadow-[0_8px_30px_-4px_rgba(20,71,230,0.5)] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed">
-                  {contactStatus === "loading" ? "Processing..." : contactStatus === "success" ? "Session Claimed!" : "Claim Free Strategy Session"}
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </form>
-            </div>
-          </div>
-        </motion.div>
-      </section>
+      
     </div>
   );
 }
