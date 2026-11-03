@@ -107,9 +107,8 @@ export default function Home() {
 
 
 
-
       {/* PORTFOLIO SECTION - Smart Step-Scrolling Carousel */}
-      <section id="work" className="bg-surface-container-lowest pb-24">
+      <section id="work" className="bg-surface-container-lowest pb-32">
         {/* Top Half - Dark Blue Background for Header */}
         <div className="bg-surface-container-lowest pt-20 pb-48 px-6 text-center relative">
           <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Featured Production</span>
@@ -156,16 +155,26 @@ export default function Home() {
                     />
                   </div>
                   
-                  {/* Overlapping Label Box (Centered & Pulled Up) */}
+                  {/* Overlapping Label Box */}
                   <div className="absolute -bottom-10 left-4 right-4 bg-white rounded-xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.15)] border border-slate-100 p-5 transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl">
                     <h3 className="font-display font-bold text-slate-900 text-lg leading-tight text-center">{site.name}</h3>
-                    <p className="text-sm text-slate-600 opacity-0 group-hover:opacity-100 transition-all duration-300 mt-2 text-center max-h-0 group-hover:max-h-24 overflow-hidden">
+                    {/* Description: Increased max-h to prevent cutoff */}
+                    <p className="text-sm text-slate-600 opacity-0 group-hover:opacity-100 transition-all duration-300 mt-2 text-center max-h-0 group-hover:max-h-40 overflow-hidden">
                       {site.desc}
                     </p>
                   </div>
                 </a>
               ))}
             </div>
+          </div>
+
+          {/* Pagination Dots (Synced with Carousel) */}
+          <div className="flex justify-center gap-2 mt-16">
+            <div className="dot dot-1"></div>
+            <div className="dot dot-2"></div>
+            <div className="dot dot-3"></div>
+            <div className="dot dot-4"></div>
+            <div className="dot dot-5"></div>
           </div>
         </div>
 
@@ -180,6 +189,48 @@ export default function Home() {
               --card-width: 360px;
             }
           }
+          
+          /* Dot Styles */
+          .dot {
+            width: 24px;
+            height: 6px;
+            border-radius: 9999px;
+            background-color: rgba(255, 255, 255, 0.3); /* Dim white for inactive */
+            transition: all 0.3s ease;
+          }
+          
+          /* Dot Animations (Synced perfectly with slideStep) */
+          .dot-1 { animation: dot1 20s infinite ease-in-out; }
+          .dot-2 { animation: dot2 20s infinite ease-in-out; }
+          .dot-3 { animation: dot3 20s infinite ease-in-out; }
+          .dot-4 { animation: dot4 20s infinite ease-in-out; }
+          .dot-5 { animation: dot5 20s infinite ease-in-out; }
+
+          @keyframes dot1 {
+            0%, 16% { background-color: #ffffff; transform: scale(1.2); } /* Bright white active */
+            20%, 100% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
+          }
+          @keyframes dot2 {
+            0%, 16% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
+            20%, 36% { background-color: #ffffff; transform: scale(1.2); }
+            40%, 100% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
+          }
+          @keyframes dot3 {
+            0%, 36% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
+            40%, 56% { background-color: #ffffff; transform: scale(1.2); }
+            60%, 100% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
+          }
+          @keyframes dot4 {
+            0%, 56% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
+            60%, 76% { background-color: #ffffff; transform: scale(1.2); }
+            80%, 100% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
+          }
+          @keyframes dot5 {
+            0%, 76% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
+            80%, 96% { background-color: #ffffff; transform: scale(1.2); }
+            100% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
+          }
+
           /* Wait -> Smooth Slide -> Wait -> Loop */
           @keyframes slideStep {
             0%, 16% { transform: translateX(0); }
@@ -191,7 +242,7 @@ export default function Home() {
           }
         `}</style>
       </section>
-
+      
       
 
 
