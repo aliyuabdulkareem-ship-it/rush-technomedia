@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Bolt, PlayCircle, Star, ShieldCheck, Clock, Handshake, ExternalLink, Plus, Minus, Quote } from "lucide-react";
 import Link from "next/link";
@@ -27,6 +27,105 @@ export default function Home() {
   const [contactEmail, setContactEmail] = useState("");
   const [selectedScope, setSelectedScope] = useState("Web & Mobile Apps");
 
+  // Refs and State for Auto-Scrolling Carousels
+  const arsenalRef = useRef<HTMLDivElement>(null);
+  const portfolioRef = useRef<HTMLDivElement>(null);
+  const [arsenalActive, setArsenalActive] = useState(0);
+  const [portfolioActive, setPortfolioActive] = useState(0);
+
+  useEffect(() => {
+    // --- ARSENAL AUTO-SCROLL (Continuous) ---
+    const el = arsenalRef.current;
+    if (el) {
+      let animationFrame: number;
+      let isHovering = false;
+      const speed = 1; // Scroll speed
+
+      const scroll = () => {
+        if (!isHovering) {
+          el.scrollLeft += speed;
+          // Infinite loop reset
+          if (el.scrollLeft >= el.scrollWidth / 2) {
+            el.scrollLeft = 0;
+          }
+          // Update active dot (9 items)
+          const progress = el.scrollLeft / (el.scrollWidth / 2);
+          setArsenalActive(Math.floor(progress * 9) % 9);
+        }
+        animationFrame = requestAnimationFrame(scroll);
+      };
+      animationFrame = requestAnimationFrame(scroll);
+
+      const handleEnter = () => isHovering = true;
+      const handleLeave = () => isHovering = false;
+
+      el.addEventListener('mouseenter', handleEnter);
+      el.addEventListener('mouseleave', handleLeave);
+      el.addEventListener('touchstart', handleEnter);
+      el.addEventListener('touchend', handleLeave);
+      
+      // Allow manual scroll to update dots
+      const handleManualScroll = () => {
+         const progress = el.scrollLeft / (el.scrollWidth / 2);
+         setArsenalActive(Math.floor(progress * 9) % 9);
+      };
+      el.addEventListener('scroll', handleManualScroll);
+
+      return () => {
+        cancelAnimationFrame(animationFrame);
+        el.removeEventListener('mouseenter', handleEnter);
+        el.removeEventListener('mouseleave', handleLeave);
+        el.removeEventListener('touchstart', handleEnter);
+        el.removeEventListener('touchend', handleLeave);
+        el.removeEventListener('scroll', handleManualScroll);
+      };
+    }
+
+    // --- PORTFOLIO AUTO-SCROLL (Step/Snap) ---
+    const pel = portfolioRef.current;
+    if (pel) {
+      let interval: NodeJS.Timeout;
+      let isHovering = false;
+
+      const scrollStep = () => {
+        if (!isHovering) {
+          const isDesktop = window.innerWidth >= 768;
+          const step = isDesktop ? 392 : 332; // Card width + gap
+          pel.scrollBy({ left: step, behavior: 'smooth' });
+        }
+      };
+
+      interval = setInterval(scrollStep, 4000); // Wait 4 seconds between slides
+
+      const handleEnter = () => isHovering = true;
+      const handleLeave = () => isHovering = false;
+
+      pel.addEventListener('mouseenter', handleEnter);
+      pel.addEventListener('mouseleave', handleLeave);
+      pel.addEventListener('touchstart', handleEnter);
+      pel.addEventListener('touchend', handleLeave);
+
+      // Reset loop and update dots on manual scroll
+      const handleManualScroll = () => {
+        if (pel.scrollLeft >= pel.scrollWidth / 2) {
+          pel.scrollLeft = 0;
+        }
+        const progress = pel.scrollLeft / (pel.scrollWidth / 2);
+        setPortfolioActive(Math.floor(progress * 5) % 5);
+      };
+      pel.addEventListener('scroll', handleManualScroll);
+
+      return () => {
+        clearInterval(interval);
+        pel.removeEventListener('mouseenter', handleEnter);
+        pel.removeEventListener('mouseleave', handleLeave);
+        pel.removeEventListener('touchstart', handleEnter);
+        pel.removeEventListener('touchend', handleLeave);
+        pel.removeEventListener('scroll', handleManualScroll);
+      };
+    }
+  }, []);
+
   const handleContact = async (e: React.FormEvent) => {
     e.preventDefault();
     setContactStatus("loading");
@@ -41,7 +140,7 @@ export default function Home() {
         setContactName("");
         setContactEmail("");
       } else {
-        setContactStatus("idle"); // Reset on error so they can try again
+        setContactStatus("idle");
         alert("Something went wrong. Please try again.");
       }
     } catch {
@@ -103,64 +202,41 @@ export default function Home() {
         <div className="md:hidden text-center mt-4"><p className="text-caption text-outline">Swipe to explore more solutions</p></div>
       </section>
 
-
-
-
-
-            {/* PORTFOLIO SECTION - Smart Step-Scrolling Carousel */}
+      {/* PORTFOLIO SECTION - Interactive Auto-Scroll */}
       <section id="work" className="bg-surface-container-lowest pb-32">
-        {/* Top Half - Dark Blue Background for Header */}
         <div className="bg-surface-container-lowest pt-20 pb-48 px-6 text-center relative">
           <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Featured Production</span>
           <h2 className="font-display text-headline-md md:text-headline-lg text-white mt-2 mb-4">Engineered Case Studies</h2>
           <p className="text-slate-300 text-body-md max-w-2xl mx-auto">Measurable, high-velocity outcomes delivered for media enterprises, civic organizations, and global brands.</p>
         </div>
         
-        {/* Bottom Half - Dark Blue Background, Pulled Up to Overlap */}
         <div className="relative -mt-32 z-10">
-          {/* Fade Edges: Dark Blue Gradients matching the background */}
           <div className="absolute left-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-r from-surface-container-lowest to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-surface-container-lowest to-transparent z-10 pointer-events-none" />
           
-          {/* Viewport: 1 card on mobile, 2 cards on desktop */}
           <div className="w-[300px] md:w-[752px] mx-auto">
-            {/* Overflow wrapper with bottom padding (pb-16) so the label box doesn't get clipped */}
             <div className="overflow-hidden pb-16">
-              {/* The Moving Track */}
-              <div className="portfolio-track flex animate-[slideStep_20s_ease-in-out_infinite] hover:[animation-play-state:paused] gap-8">
+              {/* Native Scroll Container for Manual + Auto Scroll */}
+              <div ref={portfolioRef} className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-8 px-4 scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {[
                   { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
                   { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
                   { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
                   { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
                   { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" },
-                  // Duplicates for seamless infinite loop
+                  // Duplicates for loop
                   { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
                   { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
                   { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
                   { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
                   { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" }
                 ].map((site, i) => (
-                  <a 
-                    key={i} 
-                    href={site.url} 
-                    target="_blank" 
-                    rel="noopener noreferrer" 
-                    className="flex-shrink-0 w-[300px] md:w-[360px] group relative"
-                  >
-                    {/* Image Box */}
+                  <a key={i} href={site.url} target="_blank" rel="noopener noreferrer" className="flex-shrink-0 w-[300px] md:w-[360px] snap-center group relative">
                     <div className="h-[220px] md:h-[260px] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm">
-                      <img 
-                        src="/18mk.png" 
-                        alt={site.name} 
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                      />
+                      <img src="/18mk.png" alt={site.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                     </div>
-                    
-                    {/* Overlapping Label Box */}
                     <div className="absolute -bottom-10 left-4 right-4 bg-white rounded-xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.15)] border border-slate-100 p-5 transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl">
                       <h3 className="font-display font-bold text-slate-900 text-lg leading-tight text-center">{site.name}</h3>
-                      {/* Description: Clean opacity fade-in, no height clipping */}
                       <p className="text-sm text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-2 text-center">
                         {site.desc}
                       </p>
@@ -171,149 +247,46 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Pagination Dots (Synced with Carousel) */}
+          {/* Portfolio Pagination Dots */}
           <div className="flex justify-center gap-2 mt-8">
-            <div className="dot dot-1"></div>
-            <div className="dot dot-2"></div>
-            <div className="dot dot-3"></div>
-            <div className="dot dot-4"></div>
-            <div className="dot dot-5"></div>
+            {[...Array(5)].map((_, i) => (
+              <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${portfolioActive === i ? 'w-6 bg-white' : 'w-3 bg-white/30'}`}></div>
+            ))}
           </div>
         </div>
-
-        <style>{`
-          .portfolio-track {
-            --card-width: 300px;
-            --gap: 32px;
-            --step: calc(var(--card-width) + var(--gap));
-          }
-          @media (min-width: 768px) {
-            .portfolio-track {
-              --card-width: 360px;
-            }
-          }
-          
-          /* Dot Styles */
-          .dot {
-            width: 24px;
-            height: 6px;
-            border-radius: 9999px;
-            background-color: rgba(255, 255, 255, 0.3);
-            transition: all 0.3s ease;
-          }
-          
-          /* Dot Animations */
-          .dot-1 { animation: dot1 20s infinite ease-in-out; }
-          .dot-2 { animation: dot2 20s infinite ease-in-out; }
-          .dot-3 { animation: dot3 20s infinite ease-in-out; }
-          .dot-4 { animation: dot4 20s infinite ease-in-out; }
-          .dot-5 { animation: dot5 20s infinite ease-in-out; }
-
-          @keyframes dot1 {
-            0%, 16% { background-color: #ffffff; transform: scale(1.2); }
-            20%, 100% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
-          }
-          @keyframes dot2 {
-            0%, 16% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
-            20%, 36% { background-color: #ffffff; transform: scale(1.2); }
-            40%, 100% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
-          }
-          @keyframes dot3 {
-            0%, 36% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
-            40%, 56% { background-color: #ffffff; transform: scale(1.2); }
-            60%, 100% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
-          }
-          @keyframes dot4 {
-            0%, 56% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
-            60%, 76% { background-color: #ffffff; transform: scale(1.2); }
-            80%, 100% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
-          }
-          @keyframes dot5 {
-            0%, 76% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
-            80%, 96% { background-color: #ffffff; transform: scale(1.2); }
-            100% { background-color: rgba(255, 255, 255, 0.3); transform: scale(1); }
-          }
-
-          /* Wait -> Smooth Slide -> Wait -> Loop */
-          @keyframes slideStep {
-            0%, 16% { transform: translateX(0); }
-            20%, 36% { transform: translateX(calc(-1 * var(--step))); }
-            40%, 56% { transform: translateX(calc(-2 * var(--step))); }
-            60%, 76% { transform: translateX(calc(-3 * var(--step))); }
-            80%, 96% { transform: translateX(calc(-4 * var(--step))); }
-            100% { transform: translateX(calc(-5 * var(--step))); }
-          }
-        `}</style>
-      </section>
-      
-
-
-
-{/* LEAD CAPTURE FORM (NOW CONNECTED TO BACKEND) */}
-      <section id="kickoff" className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="relative rounded-3xl bg-surface-container/60 backdrop-blur-xl border border-outline-variant/30 p-8 md:p-14 overflow-hidden">
-          <div className="absolute -top-32 -left-32 w-80 h-80 bg-primary-container/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
-            <div className="lg:col-span-6 space-y-6">
-              <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface">Ready to Accelerate Your Digital Velocity?</h2>
-              <p className="text-on-surface-variant text-body-lg leading-relaxed">Book a 30-minute discovery workshop directly with our engineering and creative partners.</p>
-              <div className="space-y-3 pt-4 border-t border-outline-variant/20">
-                {[{ icon: ShieldCheck, text: "Strict Mutual NDA Protected Before Any File Exchange" }, { icon: Clock, text: "Guaranteed Initial Technical Proposal within 24 Hours" }, { icon: Handshake, text: "Zero Obligations • Full Architecture Ownership" }].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3 text-body-sm text-secondary"><item.icon className="w-5 h-5 text-primary" /> {item.text}</div>
-                ))}
-              </div>
-            </div>
-            <div className="lg:col-span-6 bg-surface-container-lowest/80 rounded-2xl p-6 md:p-8 border border-outline-variant/30 shadow-2xl">
-              <h3 className="font-display text-headline-sm text-on-surface mb-2">Claim Your Strategy Session</h3>
-              <form onSubmit={handleContact} className="space-y-5">
-                <div className="grid grid-cols-2 gap-2">
-                  {["Web & Mobile Apps", "SEO & Visibility", "Media & Content", "Full Product Pod"].map((scope) => (
-                    <label key={scope} className={`flex items-center justify-center p-3 rounded-lg border cursor-pointer text-xs font-semibold transition-all ${selectedScope === scope ? 'border-primary bg-primary/10 text-primary' : 'border-outline-variant/40 bg-surface-container-high/40 text-on-surface hover:border-primary/60'}`}>
-                      <input type="radio" name="scope" className="hidden" value={scope} checked={selectedScope === scope} onChange={() => setSelectedScope(scope)} /> 
-                      {scope}
-                    </label>
-                  ))}
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-caption text-outline uppercase tracking-wider">Your Name</label>
-                  <input required type="text" value={contactName} onChange={(e) => setContactName(e.target.value)} placeholder="Alex Morgan" className="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-4 py-3 text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
-                </div>
-                <div className="space-y-1.5">
-                  <label className="text-caption text-outline uppercase tracking-wider">Work Email</label>
-                  <input required type="email" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} placeholder="alex@company.com" className="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-4 py-3 text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
-                </div>
-                <button type="submit" disabled={contactStatus !== "idle"} className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-lg bg-primary-container text-white font-label-md font-bold shadow-[0_8px_30px_-4px_rgba(20,71,230,0.5)] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed">
-                  {contactStatus === "loading" ? "Processing..." : contactStatus === "success" ? "Session Claimed!" : "Claim Free Strategy Session"}
-                  <ArrowRight className="w-4 h-4" />
-                </button>
-              </form>
-            </div>
-          </div>
-        </motion.div>
       </section>
 
-
-
-      
-
-      {/* OUR ARSENAL - SEAMLESS INFINITE MARQUEE */}
+      {/* OUR ARSENAL - Interactive Auto-Scroll */}
       <section className="py-20 bg-white border-y border-slate-200 overflow-hidden">
         <div className="text-center mb-12 px-6">
           <span className="text-slate-500 text-label-sm font-bold uppercase tracking-wider">Our Arsenal</span>
           <h2 className="font-display text-headline-md md:text-headline-lg text-slate-900 mt-2">Some Cutting-Edge Toolkit for Digital Success</h2>
         </div>
-        <div className="relative w-full overflow-hidden">
+        
+        <div className="relative w-full">
           <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
-          <div className="flex animate-[scroll_40s_linear_infinite] hover:[animation-play-state:paused]">
-            {["/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png", "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png"].map((src, i) => (
+          
+          {/* Native Scroll Container for Manual + Auto Scroll */}
+          <div ref={arsenalRef} className="flex overflow-x-auto scrollbar-hide gap-8 px-4 scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {[
+              "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png",
+              // Duplicates for loop
+              "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png"
+            ].map((src, i) => (
               <div key={i} className="flex-shrink-0 mx-4 md:mx-8 flex items-center justify-center">
                 <img src={src} alt="Tool Logo" className="h-8 md:h-10 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300" />
               </div>
             ))}
           </div>
         </div>
-        <style>{`@keyframes scroll { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } } .scrollbar-hide::-webkit-scrollbar { display: none; } .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }`}</style>
+
+        {/* Arsenal Pagination Dashes */}
+        <div className="flex justify-center gap-2 mt-12">
+          {[...Array(9)].map((_, i) => (
+            <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${arsenalActive === i ? 'w-6 bg-slate-800' : 'w-3 bg-slate-300'}`}></div>
+          ))}
+        </div>
       </section>
 
       {/* BLOG SECTION */}
@@ -388,7 +361,48 @@ export default function Home() {
         </div>
       </section>
 
-      
+      {/* LEAD CAPTURE FORM */}
+      <section id="kickoff" className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="relative rounded-3xl bg-surface-container/60 backdrop-blur-xl border border-outline-variant/30 p-8 md:p-14 overflow-hidden">
+          <div className="absolute -top-32 -left-32 w-80 h-80 bg-primary-container/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+            <div className="lg:col-span-6 space-y-6">
+              <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface">Ready to Accelerate Your Digital Velocity?</h2>
+              <p className="text-on-surface-variant text-body-lg leading-relaxed">Book a 30-minute discovery workshop directly with our engineering and creative partners.</p>
+              <div className="space-y-3 pt-4 border-t border-outline-variant/20">
+                {[{ icon: ShieldCheck, text: "Strict Mutual NDA Protected Before Any File Exchange" }, { icon: Clock, text: "Guaranteed Initial Technical Proposal within 24 Hours" }, { icon: Handshake, text: "Zero Obligations • Full Architecture Ownership" }].map((item, i) => (
+                  <div key={i} className="flex items-center gap-3 text-body-sm text-secondary"><item.icon className="w-5 h-5 text-primary" /> {item.text}</div>
+                ))}
+              </div>
+            </div>
+            <div className="lg:col-span-6 bg-surface-container-lowest/80 rounded-2xl p-6 md:p-8 border border-outline-variant/30 shadow-2xl">
+              <h3 className="font-display text-headline-sm text-on-surface mb-2">Claim Your Strategy Session</h3>
+              <form onSubmit={handleContact} className="space-y-5">
+                <div className="grid grid-cols-2 gap-2">
+                  {["Web & Mobile Apps", "SEO & Visibility", "Media & Content", "Full Product Pod"].map((scope) => (
+                    <label key={scope} className={`flex items-center justify-center p-3 rounded-lg border cursor-pointer text-xs font-semibold transition-all ${selectedScope === scope ? 'border-primary bg-primary/10 text-primary' : 'border-outline-variant/40 bg-surface-container-high/40 text-on-surface hover:border-primary/60'}`}>
+                      <input type="radio" name="scope" className="hidden" value={scope} checked={selectedScope === scope} onChange={() => setSelectedScope(scope)} /> 
+                      {scope}
+                    </label>
+                  ))}
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-caption text-outline uppercase tracking-wider">Your Name</label>
+                  <input required type="text" value={contactName} onChange={(e) => setContactName(e.target.value)} placeholder="Alex Morgan" className="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-4 py-3 text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
+                </div>
+                <div className="space-y-1.5">
+                  <label className="text-caption text-outline uppercase tracking-wider">Work Email</label>
+                  <input required type="email" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} placeholder="alex@company.com" className="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-4 py-3 text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
+                </div>
+                <button type="submit" disabled={contactStatus !== "idle"} className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-lg bg-primary-container text-white font-label-md font-bold shadow-[0_8px_30px_-4px_rgba(20,71,230,0.5)] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed">
+                  {contactStatus === "loading" ? "Processing..." : contactStatus === "success" ? "Session Claimed!" : "Claim Free Strategy Session"}
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </form>
+            </div>
+          </div>
+        </motion.div>
+      </section>
     </div>
   );
 }
