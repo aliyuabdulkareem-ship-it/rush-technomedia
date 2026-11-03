@@ -106,8 +106,10 @@ export default function Home() {
 
 
 
-                 {/* PORTFOLIO SECTION - Smart Step-Scrolling Carousel */}
-      <section id="work" className="overflow-hidden bg-surface-container-lowest">
+
+
+      {/* PORTFOLIO SECTION - Smart Step-Scrolling Carousel */}
+      <section id="work" className="bg-surface-container-lowest pb-24">
         {/* Top Half - Dark Blue Background for Header */}
         <div className="bg-surface-container-lowest pt-20 pb-48 px-6 text-center relative">
           <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Featured Production</span>
@@ -189,6 +191,7 @@ export default function Home() {
           }
         `}</style>
       </section>
+
       
 
 
