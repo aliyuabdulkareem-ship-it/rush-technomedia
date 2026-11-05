@@ -178,12 +178,20 @@ export default function Home() {
               { slug: "ai-and-it-solutions", title: "AI & IT Solutions", icon: "/ai.png", color: "bg-cyan-500" }
             ].map((sol, i) => (
               <Link key={i} href={`/solutions/${sol.slug}`} className="flex-shrink-0 w-[45%] md:w-[280px] snap-center">
+
+
+
+
                 <div className="group flex flex-col items-center p-4 md:p-6 rounded-full bg-slate-50 border border-slate-200 hover:border-blue-500/50 hover:shadow-xl transition-all duration-300 cursor-pointer aspect-square justify-center">
-                  <div className={`w-16 h-16 md:w-24 md:h-24 rounded-full ${sol.color}/10 flex items-center justify-center mb-2 md:mb-4 p-3 md:p-4 group-hover:scale-110 transition-transform duration-300`}>
-                    <img src={sol.icon} alt={sol.title} className="w-full h-full object-contain" loading="lazy" />
+                  {/* Dark Blue Circle with White Icons */}
+                  <div className={`w-16 h-16 md:w-24 md:h-24 rounded-full bg-slate-900 flex items-center justify-center mb-2 md:mb-4 p-3 md:p-4 group-hover:scale-110 transition-transform duration-300 border border-slate-800 shadow-lg`}>
+                    <img src={sol.icon} alt={sol.title} className="w-full h-full object-contain invert brightness-0" loading="lazy" />
                   </div>
                   <h3 className="text-center text-slate-900 font-bold text-xs md:text-lg font-display group-hover:text-blue-600 transition-colors leading-tight">{sol.title}</h3>
                 </div>
+
+
+                
               </Link>
             ))}
           </div>
@@ -294,27 +302,44 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. BLOG SECTION (White) */}
-      <section id="blog" className="py-24 px-6 md:px-12 max-w-7xl mx-auto bg-white">
-        <div className="text-center max-w-3xl mx-auto mb-16">
+
+      {/* 6. BLOG SECTION (White Background, Dark Scrollable Cards) */}
+      <section id="blog" className="py-24 bg-white overflow-hidden">
+        <div className="text-center max-w-3xl mx-auto mb-12 px-6">
           <span className="text-blue-600 text-label-sm font-bold uppercase tracking-wider">Insights & Updates</span>
           <h2 className="font-display text-headline-md md:text-headline-lg text-slate-900 mt-2 mb-4">Read Latest Blog Posts</h2>
           <p className="text-slate-600 text-body-md">Stories on visibility, SEO, and how digital presence transforms businesses.</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+
+        {/* Horizontal Scroll Container */}
+        <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 px-6 md:px-12 pb-8 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {blogPosts.map((post, i) => (
-            <article key={i} className="group rounded-2xl bg-slate-50 border border-slate-200 overflow-hidden hover:border-blue-500/50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
-              <div className="h-32 bg-gradient-to-br from-blue-100 to-cyan-50 flex items-center justify-center"><span className="text-4xl font-display font-bold text-blue-600/30">0{i + 1}</span></div>
+            <article key={i} className="flex-shrink-0 w-[85vw] md:w-[calc(25%-1.125rem)] snap-center group rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden hover:border-blue-500/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+              {/* Dark Header for Post Number */}
+              <div className="h-32 bg-gradient-to-br from-blue-900 to-slate-900 flex items-center justify-center border-b border-slate-800">
+                <span className="text-4xl font-display font-bold text-white/20">0{i + 1}</span>
+              </div>
+              
+              {/* Dark Card Content */}
               <div className="p-6">
-                <div className="flex items-center gap-2 mb-3"><span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold uppercase">{post.category}</span><span className="text-[10px] text-slate-500">{post.readTime}</span></div>
-                <h3 className="font-display text-headline-sm text-slate-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">{post.title}</h3>
-                <p className="text-body-sm text-slate-600 line-clamp-3 mb-4">{post.excerpt}</p>
-                <div className="flex items-center justify-between pt-3 border-t border-slate-200"><span className="text-[10px] text-slate-500">{post.date}</span><span className="text-xs text-blue-600 font-semibold group-hover:translate-x-1 transition-transform">Read more →</span></div>
+                <div className="flex items-center gap-2 mb-3">
+                  <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 text-[10px] font-bold uppercase">{post.category}</span>
+                  <span className="text-[10px] text-slate-500">{post.readTime}</span>
+                </div>
+                <h3 className="font-display text-headline-sm text-white mb-2 group-hover:text-blue-400 transition-colors line-clamp-2">{post.title}</h3>
+                <p className="text-body-sm text-slate-400 line-clamp-3 mb-4">{post.excerpt}</p>
+                <div className="flex items-center justify-between pt-3 border-t border-slate-800">
+                  <span className="text-[10px] text-slate-500">{post.date}</span>
+                  <span className="text-xs text-blue-400 font-semibold group-hover:translate-x-1 transition-transform">Read more →</span>
+                </div>
               </div>
             </article>
           ))}
         </div>
       </section>
+
+
+      
 
       {/* 7. TESTIMONIALS SECTION (Dark Blue) */}
       <section className="py-24 bg-slate-900 text-white">
