@@ -159,7 +159,10 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* 2. SOLUTIONS SECTION (White) */}
+
+
+
+      {/* 2. SOLUTIONS SECTION (White Background, Dark Circular Cards) */}
       <section id="solutions" className="py-24 bg-white border-y border-slate-200 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 mb-12">
           <div className="text-center">
@@ -178,26 +181,27 @@ export default function Home() {
               { slug: "ai-and-it-solutions", title: "AI & IT Solutions", icon: "/ai.png", color: "bg-cyan-500" }
             ].map((sol, i) => (
               <Link key={i} href={`/solutions/${sol.slug}`} className="flex-shrink-0 w-[45%] md:w-[280px] snap-center">
-
-
-
-
-                <div className="group flex flex-col items-center p-4 md:p-6 rounded-full bg-slate-50 border border-slate-200 hover:border-blue-500/50 hover:shadow-xl transition-all duration-300 cursor-pointer aspect-square justify-center">
-                  {/* Dark Blue Circle with White Icons */}
-                  <div className={`w-16 h-16 md:w-24 md:h-24 rounded-full bg-slate-900 flex items-center justify-center mb-2 md:mb-4 p-3 md:p-4 group-hover:scale-110 transition-transform duration-300 border border-slate-800 shadow-lg`}>
-                    <img src={sol.icon} alt={sol.title} className="w-full h-full object-contain invert brightness-0" loading="lazy" />
+                {/* Entire Card is now Dark Blue/Black */}
+                <div className="group flex flex-col items-center p-4 md:p-6 rounded-full bg-slate-900 border border-slate-800 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-900/20 transition-all duration-300 cursor-pointer aspect-square justify-center">
+                  
+                  {/* Inner Circle is White so the black icons show perfectly */}
+                  <div className={`w-16 h-16 md:w-24 md:h-24 rounded-full bg-white flex items-center justify-center mb-2 md:mb-4 p-3 md:p-4 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
+                    <img src={sol.icon} alt={sol.title} className="w-full h-full object-contain" loading="lazy" />
                   </div>
-                  <h3 className="text-center text-slate-900 font-bold text-xs md:text-lg font-display group-hover:text-blue-600 transition-colors leading-tight">{sol.title}</h3>
+                  
+                  {/* Text is now White */}
+                  <h3 className="text-center text-white font-bold text-xs md:text-lg font-display group-hover:text-blue-400 transition-colors leading-tight">{sol.title}</h3>
                 </div>
-
-
-                
               </Link>
             ))}
           </div>
         </div>
         <div className="md:hidden text-center mt-4"><p className="text-slate-500 text-sm">Swipe to explore more solutions</p></div>
       </section>
+
+
+
+      
 
       {/* 3. PORTFOLIO SECTION (Dark Blue) */}
       <section id="work" className="bg-slate-900 pb-32 text-white">
