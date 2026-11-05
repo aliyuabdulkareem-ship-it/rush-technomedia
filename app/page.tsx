@@ -180,19 +180,28 @@ export default function Home() {
               { slug: "media-publications", title: "Media Publications", icon: "/Publication.png", color: "bg-orange-500" },
               { slug: "ai-and-it-solutions", title: "AI & IT Solutions", icon: "/ai.png", color: "bg-cyan-500" }
             ].map((sol, i) => (
+
+
+
+
+
+
               <Link key={i} href={`/solutions/${sol.slug}`} className="flex-shrink-0 w-[45%] md:w-[280px] snap-center">
-                {/* Entire Card is now Dark Blue/Black */}
-                <div className="group flex flex-col items-center p-4 md:p-6 rounded-full bg-slate-900 border border-slate-800 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-900/20 transition-all duration-300 cursor-pointer aspect-square justify-center">
+                {/* The Entire Card is the Dark Circle */}
+                <div className="group flex flex-col items-center justify-center p-6 md:p-8 rounded-full bg-slate-900 border border-slate-800 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-900/20 transition-all duration-300 cursor-pointer aspect-square">
                   
-                  {/* Inner Circle is White so the black icons show perfectly */}
-                  <div className={`w-16 h-16 md:w-24 md:h-24 rounded-full bg-white flex items-center justify-center mb-2 md:mb-4 p-3 md:p-4 group-hover:scale-110 transition-transform duration-300 shadow-lg`}>
-                    <img src={sol.icon} alt={sol.title} className="w-full h-full object-contain" loading="lazy" />
-                  </div>
+                  {/* Icon directly inside, turned white using CSS filters, NO inner circle */}
+                  <img src={sol.icon} alt={sol.title} className="w-16 h-16 md:w-24 md:h-24 object-contain mb-4 group-hover:scale-110 transition-transform duration-300 invert brightness-0" loading="lazy" />
                   
-                  {/* Text is now White */}
-                  <h3 className="text-center text-white font-bold text-xs md:text-lg font-display group-hover:text-blue-400 transition-colors leading-tight">{sol.title}</h3>
+                  {/* Text is White */}
+                  <h3 className="text-center text-white font-bold text-sm md:text-lg font-display group-hover:text-blue-400 transition-colors leading-tight px-2">{sol.title}</h3>
                 </div>
               </Link>
+
+
+
+
+              
             ))}
           </div>
         </div>
@@ -345,16 +354,20 @@ export default function Home() {
 
       
 
-      {/* 7. TESTIMONIALS SECTION (Dark Blue) */}
-      <section className="py-24 bg-slate-900 text-white">
+
+
+      {/* 7. TESTIMONIALS SECTION (Dark Blue, Scrollable) */}
+      <section className="py-24 bg-slate-900 text-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="text-center max-w-3xl mx-auto mb-16">
             <span className="text-blue-400 text-label-sm font-bold uppercase tracking-wider">Client Stories</span>
             <h2 className="font-display text-headline-md md:text-headline-lg text-white mt-2 mb-4">What Our Clients Say</h2>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          
+          {/* Horizontal Scroll Container */}
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {testimonials.map((t, i) => (
-              <div key={i} className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col text-slate-900">
+              <div key={i} className="flex-shrink-0 w-[85vw] md:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] snap-center bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col text-slate-900">
                 <div className="flex gap-1 mb-4">{[...Array(t.rating)].map((_, j) => (<Star key={j} className="w-4 h-4 fill-yellow-400 text-yellow-400" />))}</div>
                 <Quote className="w-6 h-6 text-blue-600/30 mb-3" />
                 <p className="text-slate-700 text-body-sm italic mb-6 leading-relaxed flex-1">"{t.quote}"</p>
@@ -367,6 +380,10 @@ export default function Home() {
           </div>
         </div>
       </section>
+
+
+
+      
 
       {/* 8. FAQ SECTION (White) */}
       <section id="faq" className="py-24 px-6 md:px-12 max-w-4xl mx-auto bg-white">
