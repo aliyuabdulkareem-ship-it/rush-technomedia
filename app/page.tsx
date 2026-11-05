@@ -28,6 +28,11 @@ const faqs = [
   { q: "Do you work with businesses outside of Nigeria?", a: "Yes. While we are proudly rooted in Nigeria (Lagos, Ibadan, Ilorin), we serve clients globally with remote-first workflows." }
 ];
 
+const mediaPartners = [
+  "Punch", "Tribune", "ThisDay", "Guardian", "Vanguard", 
+  "BusinessDay", "Daily Independent", "New Telegraph", "PMNews", "Sun News NG"
+];
+
 export default function Home() {
   const [contactStatus, setContactStatus] = useState<"idle" | "loading" | "success">("idle");
   const [contactName, setContactName] = useState("");
@@ -37,13 +42,11 @@ export default function Home() {
   const [selectedScope, setSelectedScope] = useState("Web & Mobile Apps");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  // Refs for high-performance auto-scrolling
   const arsenalRef = useRef<HTMLDivElement>(null);
   const portfolioRef = useRef<HTMLDivElement>(null);
+  const mediaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // --- HIGH-PERFORMANCE AUTO-SCROLL LOGIC ---
-    // This uses requestAnimationFrame and DOM mutation directly, avoiding React re-renders during scroll.
     const setupAutoScroll = (el: HTMLDivElement | null, speed: number, resetThreshold: number) => {
       if (!el) return;
       let animationId: number;
@@ -69,7 +72,7 @@ export default function Home() {
       el.addEventListener('touchend', resume);
       el.addEventListener('mousedown', pause);
       el.addEventListener('mouseup', resume);
-      el.addEventListener('scroll', pause); // Pause if user manually scrolls
+      el.addEventListener('scroll', pause);
 
       return () => {
         cancelAnimationFrame(animationId);
@@ -83,12 +86,9 @@ export default function Home() {
       };
     };
 
-    const cleanupArsenal = setupAutoScroll(arsenalRef.current, 0.5, 2); // Slow continuous scroll
-    const cleanupPortfolio = setupAutoScroll(portfolioRef.current, 0, 2); // Portfolio uses snap, so speed 0 (manual only) or we can add a slow nudge. Let's keep it manual snap for portfolio to avoid jank, or add a very slow nudge. Actually, let's just let the user scroll portfolio manually as it's snap-based, but Arsenal auto-scrolls. 
-    // If you want portfolio to auto-scroll too, change speed to 0.2, but snap and auto-scroll fight each other. 
-    // Let's make Arsenal auto-scroll, and Portfolio auto-scrolls via a simple interval that respects snap.
-    
-    // Portfolio Auto-Step
+    const cleanupArsenal = setupAutoScroll(arsenalRef.current, 0.5, 2);
+    const cleanupMedia = setupAutoScroll(mediaRef.current, 0.5, 2);
+
     let portfolioInterval: NodeJS.Timeout;
     const pel = portfolioRef.current;
     if (pel) {
@@ -110,7 +110,7 @@ export default function Home() {
 
     return () => {
       cleanupArsenal?.();
-      cleanupPortfolio?.();
+      cleanupMedia?.();
       clearInterval(portfolioInterval);
     };
   }, []);
@@ -138,32 +138,33 @@ export default function Home() {
   };
 
   return (
-    <div className="relative min-h-screen bg-background overflow-x-hidden">
-      {/* HERO SECTION */}
-      <section className="relative pt-32 pb-24 md:pt-40 md:pb-32 px-6 md:px-12 max-w-7xl mx-auto z-10">
+    <div className="relative min-h-screen overflow-x-hidden">
+      
+      {/* 1. HERO SECTION (Dark Blue) */}
+      <section className="relative pt-32 pb-24 md:pt-40 md:pb-32 px-6 md:px-12 max-w-7xl mx-auto z-10 bg-slate-900 text-white">
         <motion.div initial="hidden" animate="visible" variants={fadeInUp} className="flex flex-col items-center text-center max-w-4xl mx-auto mb-16">
-          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-surface-container/80 border border-outline-variant/30 text-tertiary text-caption font-bold tracking-wider uppercase mb-8 backdrop-blur-md">
-            <span className="w-2 h-2 rounded-full bg-tertiary animate-pulse" /> Next-Gen Tech & Media Powerhouse
+          <div className="inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full bg-white/10 border border-white/20 text-blue-300 text-caption font-bold tracking-wider uppercase mb-8 backdrop-blur-md">
+            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" /> Next-Gen Tech & Media Powerhouse
           </div>
-          <h1 className="font-display text-display-hero-mobile md:text-display-hero text-on-surface tracking-tight mb-6">
-            Engineering <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-tertiary to-white">High-Velocity</span> Digital Experiences.
+          <h1 className="font-display text-display-hero-mobile md:text-display-hero tracking-tight mb-6">
+            Engineering <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-300 to-white">High-Velocity</span> Digital Experiences.
           </h1>
-          <p className="text-on-surface-variant text-body-lg max-w-2xl leading-relaxed mb-10">
+          <p className="text-slate-300 text-body-lg max-w-2xl leading-relaxed mb-10">
             We combine cutting-edge software engineering, strategic SEO, and high-impact media production to build and scale category-defining modern market leaders across Africa and beyond.
           </p>
           <div className="flex flex-col sm:flex-row items-center gap-4 w-full sm:w-auto">
-            <Link href="/#kickoff" className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-lg bg-primary-container text-white text-label-md font-bold shadow-[0_8px_30px_-4px_rgba(20,71,230,0.5)] hover:brightness-110 hover:scale-[1.02] transition-all duration-200">Start Your Project <Bolt className="w-5 h-5" /></Link>
-            <Link href="/#work" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-lg bg-surface-container/50 border border-outline-variant/30 text-on-surface text-label-md hover:bg-surface-container hover:border-outline-variant/60 transition-all duration-200"><PlayCircle className="w-5 h-5 text-tertiary" /> Explore Reel & Work</Link>
+            <Link href="/#kickoff" className="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 rounded-lg bg-blue-600 text-white text-label-md font-bold shadow-lg hover:bg-blue-500 transition-all duration-200">Start Your Project <Bolt className="w-5 h-5" /></Link>
+            <Link href="/#work" className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 py-4 rounded-lg bg-white/10 border border-white/20 text-white text-label-md hover:bg-white/20 transition-all duration-200"><PlayCircle className="w-5 h-5" /> Explore Reel & Work</Link>
           </div>
         </motion.div>
       </section>
 
-      {/* OUR SOLUTIONS SECTION */}
-      <section id="solutions" className="py-24 bg-surface-container-lowest border-y border-outline-variant/20 overflow-hidden">
+      {/* 2. SOLUTIONS SECTION (White) */}
+      <section id="solutions" className="py-24 bg-white border-y border-slate-200 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 mb-12">
           <div className="text-center">
-            <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">What We Do</span>
-            <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface mt-2">Our Solutions</h2>
+            <span className="text-blue-600 text-label-sm font-bold uppercase tracking-wider">What We Do</span>
+            <h2 className="font-display text-headline-md md:text-headline-lg text-slate-900 mt-2">Our Solutions</h2>
           </div>
         </div>
         <div className="relative max-w-7xl mx-auto px-4">
@@ -177,30 +178,30 @@ export default function Home() {
               { slug: "ai-and-it-solutions", title: "AI & IT Solutions", icon: "/ai.png", color: "bg-cyan-500" }
             ].map((sol, i) => (
               <Link key={i} href={`/solutions/${sol.slug}`} className="flex-shrink-0 w-[45%] md:w-[280px] snap-center">
-                <div className="group flex flex-col items-center p-4 md:p-6 rounded-full bg-white border border-slate-200 hover:border-primary-container/50 hover:shadow-xl transition-all duration-300 cursor-pointer aspect-square justify-center">
+                <div className="group flex flex-col items-center p-4 md:p-6 rounded-full bg-slate-50 border border-slate-200 hover:border-blue-500/50 hover:shadow-xl transition-all duration-300 cursor-pointer aspect-square justify-center">
                   <div className={`w-16 h-16 md:w-24 md:h-24 rounded-full ${sol.color}/10 flex items-center justify-center mb-2 md:mb-4 p-3 md:p-4 group-hover:scale-110 transition-transform duration-300`}>
                     <img src={sol.icon} alt={sol.title} className="w-full h-full object-contain" loading="lazy" />
                   </div>
-                  <h3 className="text-center text-slate-900 font-bold text-xs md:text-lg font-display group-hover:text-primary-container transition-colors leading-tight">{sol.title}</h3>
+                  <h3 className="text-center text-slate-900 font-bold text-xs md:text-lg font-display group-hover:text-blue-600 transition-colors leading-tight">{sol.title}</h3>
                 </div>
               </Link>
             ))}
           </div>
         </div>
-        <div className="md:hidden text-center mt-4"><p className="text-caption text-outline">Swipe to explore more solutions</p></div>
+        <div className="md:hidden text-center mt-4"><p className="text-slate-500 text-sm">Swipe to explore more solutions</p></div>
       </section>
 
-      {/* PORTFOLIO SECTION */}
-      <section id="work" className="bg-surface-container-lowest pb-32">
-        <div className="bg-surface-container-lowest pt-20 pb-48 px-6 text-center relative">
-          <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Featured Production</span>
+      {/* 3. PORTFOLIO SECTION (Dark Blue) */}
+      <section id="work" className="bg-slate-900 pb-32 text-white">
+        <div className="pt-20 pb-48 px-6 text-center relative">
+          <span className="text-blue-400 text-label-sm font-bold uppercase tracking-wider">Featured Production</span>
           <h2 className="font-display text-headline-md md:text-headline-lg text-white mt-2 mb-4">Engineered Case Studies</h2>
           <p className="text-slate-300 text-body-md max-w-2xl mx-auto">Measurable, high-velocity outcomes delivered for media enterprises, civic organizations, and global brands.</p>
         </div>
         
         <div className="relative -mt-32 z-10">
-          <div className="absolute left-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-r from-surface-container-lowest to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-surface-container-lowest to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-r from-slate-900 to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-12 md:w-32 bg-gradient-to-l from-slate-900 to-transparent z-10 pointer-events-none" />
           
           <div className="w-[300px] md:w-[752px] mx-auto">
             <div className="overflow-hidden pb-16">
@@ -218,10 +219,10 @@ export default function Home() {
                   { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" }
                 ].map((site, i) => (
                   <a key={i} href={site.url} target="_blank" rel="noopener noreferrer" className="flex-shrink-0 w-[300px] md:w-[360px] snap-center group relative">
-                    <div className="h-[220px] md:h-[260px] rounded-xl overflow-hidden bg-slate-100 border border-slate-200 shadow-sm">
+                    <div className="h-[220px] md:h-[260px] rounded-xl overflow-hidden bg-slate-800 border border-slate-700 shadow-sm">
                       <img src="/18mk.png" alt={site.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
                     </div>
-                    <div className="absolute -bottom-10 left-4 right-4 bg-white rounded-xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.15)] border border-slate-100 p-5 transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl">
+                    <div className="absolute -bottom-10 left-4 right-4 bg-white rounded-xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)] p-5 transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl">
                       <h3 className="font-display font-bold text-slate-900 text-lg leading-tight text-center">{site.name}</h3>
                       <p className="text-sm text-slate-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300 mt-2 text-center">{site.desc}</p>
                     </div>
@@ -236,10 +237,10 @@ export default function Home() {
         </div>
       </section>
 
-      {/* OUR ARSENAL - Auto-Scrolling */}
+      {/* 4. ARSENAL SECTION (White) */}
       <section className="py-20 bg-white border-y border-slate-200 overflow-hidden">
         <div className="text-center mb-12 px-6">
-          <span className="text-slate-500 text-label-sm font-bold uppercase tracking-wider">Our Arsenal</span>
+          <span className="text-blue-600 text-label-sm font-bold uppercase tracking-wider">Our Arsenal</span>
           <h2 className="font-display text-headline-md md:text-headline-lg text-slate-900 mt-2">Some Cutting-Edge Toolkit for Digital Success</h2>
         </div>
         
@@ -264,40 +265,69 @@ export default function Home() {
         </div>
       </section>
 
-      {/* BLOG SECTION */}
-      <section id="blog" className="py-24 px-6 md:px-12 max-w-7xl mx-auto border-t border-outline-variant/20">
+      {/* 5. MEDIA PARTNERS SECTION (Dark Blue) - NEW */}
+      <section className="py-20 bg-slate-900 border-y border-slate-800 overflow-hidden text-white">
+        <div className="text-center mb-12 px-6">
+          <span className="text-blue-400 text-label-sm font-bold uppercase tracking-wider">Media Partners</span>
+          <h2 className="font-display text-headline-md md:text-headline-lg text-white mt-2">Featured In Nigeria's Top Outlets</h2>
+          <p className="text-slate-400 mt-4 max-w-2xl mx-auto">We secure high-authority press coverage for our clients across the most trusted news platforms in the country.</p>
+        </div>
+        
+        <div className="relative w-full">
+          <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-slate-900 to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-slate-900 to-transparent z-10 pointer-events-none" />
+          
+          <div ref={mediaRef} className="flex overflow-x-auto scrollbar-hide gap-6 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+            {[...mediaPartners, ...mediaPartners].map((partner, i) => (
+              <div key={i} className="flex-shrink-0 mx-2 md:mx-4 flex items-center justify-center">
+                {/* Placeholder Box - Replace inner content with <img> when logos are uploaded */}
+                <div className="h-16 md:h-20 w-32 md:w-40 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center hover:bg-white/20 hover:border-blue-400/50 transition-all duration-300 backdrop-blur-sm">
+                  <span className="text-white font-bold text-lg md:text-xl tracking-wide">{partner}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex justify-center gap-2 mt-12">
+          {[...Array(10)].map((_, i) => (<div key={i} className="h-1.5 w-3 bg-white/30 rounded-full"></div>))}
+        </div>
+      </section>
+
+      {/* 6. BLOG SECTION (White) */}
+      <section id="blog" className="py-24 px-6 md:px-12 max-w-7xl mx-auto bg-white">
         <div className="text-center max-w-3xl mx-auto mb-16">
-          <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Insights & Updates</span>
-          <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface mt-2 mb-4">Read Latest Blog Posts</h2>
-          <p className="text-on-surface-variant text-body-md">Stories on visibility, SEO, and how digital presence transforms businesses.</p>
+          <span className="text-blue-600 text-label-sm font-bold uppercase tracking-wider">Insights & Updates</span>
+          <h2 className="font-display text-headline-md md:text-headline-lg text-slate-900 mt-2 mb-4">Read Latest Blog Posts</h2>
+          <p className="text-slate-600 text-body-md">Stories on visibility, SEO, and how digital presence transforms businesses.</p>
         </div>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {blogPosts.map((post, i) => (
-            <article key={i} className="group rounded-2xl bg-surface-container/40 border border-outline-variant/20 overflow-hidden hover:border-primary/50 hover:bg-surface-container/80 transition-all duration-300 hover:-translate-y-1">
-              <div className="h-32 bg-gradient-to-br from-primary-container/20 to-tertiary/10 flex items-center justify-center"><span className="text-4xl font-display font-bold text-primary/30">0{i + 1}</span></div>
+            <article key={i} className="group rounded-2xl bg-slate-50 border border-slate-200 overflow-hidden hover:border-blue-500/50 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+              <div className="h-32 bg-gradient-to-br from-blue-100 to-cyan-50 flex items-center justify-center"><span className="text-4xl font-display font-bold text-blue-600/30">0{i + 1}</span></div>
               <div className="p-6">
-                <div className="flex items-center gap-2 mb-3"><span className="px-2 py-0.5 rounded-full bg-primary-container/20 text-primary text-[10px] font-bold uppercase">{post.category}</span><span className="text-[10px] text-outline">{post.readTime}</span></div>
-                <h3 className="font-display text-headline-sm text-on-surface mb-2 group-hover:text-primary transition-colors line-clamp-2">{post.title}</h3>
-                <p className="text-body-sm text-on-surface-variant line-clamp-3 mb-4">{post.excerpt}</p>
-                <div className="flex items-center justify-between pt-3 border-t border-outline-variant/20"><span className="text-[10px] text-outline">{post.date}</span><span className="text-xs text-primary font-semibold group-hover:translate-x-1 transition-transform">Read more →</span></div>
+                <div className="flex items-center gap-2 mb-3"><span className="px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-bold uppercase">{post.category}</span><span className="text-[10px] text-slate-500">{post.readTime}</span></div>
+                <h3 className="font-display text-headline-sm text-slate-900 mb-2 group-hover:text-blue-600 transition-colors line-clamp-2">{post.title}</h3>
+                <p className="text-body-sm text-slate-600 line-clamp-3 mb-4">{post.excerpt}</p>
+                <div className="flex items-center justify-between pt-3 border-t border-slate-200"><span className="text-[10px] text-slate-500">{post.date}</span><span className="text-xs text-blue-600 font-semibold group-hover:translate-x-1 transition-transform">Read more →</span></div>
               </div>
             </article>
           ))}
         </div>
       </section>
 
-      {/* TESTIMONIALS */}
-      <section className="py-24 bg-white border-y border-slate-200">
+      {/* 7. TESTIMONIALS SECTION (Dark Blue) */}
+      <section className="py-24 bg-slate-900 text-white">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
           <div className="text-center max-w-3xl mx-auto mb-16">
-            <span className="text-primary-container text-label-sm font-bold uppercase tracking-wider">Client Stories</span>
-            <h2 className="font-display text-headline-md md:text-headline-lg text-slate-900 mt-2 mb-4">What Our Clients Say</h2>
+            <span className="text-blue-400 text-label-sm font-bold uppercase tracking-wider">Client Stories</span>
+            <h2 className="font-display text-headline-md md:text-headline-lg text-white mt-2 mb-4">What Our Clients Say</h2>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {testimonials.map((t, i) => (
-              <div key={i} className="bg-white rounded-2xl p-6 border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col">
+              <div key={i} className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col text-slate-900">
                 <div className="flex gap-1 mb-4">{[...Array(t.rating)].map((_, j) => (<Star key={j} className="w-4 h-4 fill-yellow-400 text-yellow-400" />))}</div>
-                <Quote className="w-6 h-6 text-primary-container/30 mb-3" />
+                <Quote className="w-6 h-6 text-blue-600/30 mb-3" />
                 <p className="text-slate-700 text-body-sm italic mb-6 leading-relaxed flex-1">"{t.quote}"</p>
                 <div className="flex items-center gap-3 pt-4 border-t border-slate-100">
                   <div className={`w-10 h-10 rounded-full ${t.color} text-white flex items-center justify-center font-bold text-sm`}>{t.initials}</div>
@@ -309,26 +339,26 @@ export default function Home() {
         </div>
       </section>
 
-      {/* FAQ SECTION - Accordion Logic */}
-      <section id="faq" className="py-24 px-6 md:px-12 max-w-4xl mx-auto border-t border-outline-variant/20">
+      {/* 8. FAQ SECTION (White) */}
+      <section id="faq" className="py-24 px-6 md:px-12 max-w-4xl mx-auto bg-white">
         <div className="text-center mb-16">
-          <span className="text-tertiary text-label-sm font-bold uppercase tracking-wider">Common Questions</span>
-          <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface mt-2">Frequently Asked Questions</h2>
+          <span className="text-blue-600 text-label-sm font-bold uppercase tracking-wider">Common Questions</span>
+          <h2 className="font-display text-headline-md md:text-headline-lg text-slate-900 mt-2">Frequently Asked Questions</h2>
         </div>
         <div className="space-y-4">
           {faqs.map((faq, i) => (
-            <div key={i} className={`rounded-xl border transition-all duration-300 ${openFaq === i ? 'bg-surface-container/80 border-primary/30' : 'bg-surface-container/40 border-outline-variant/20'}`}>
+            <div key={i} className={`rounded-xl border transition-all duration-300 ${openFaq === i ? 'bg-blue-50 border-blue-200' : 'bg-slate-50 border-slate-200'}`}>
               <button 
                 onClick={() => setOpenFaq(openFaq === i ? null : i)} 
                 className="flex items-center justify-between w-full p-6 text-left cursor-pointer"
               >
-                <span className="font-display text-headline-sm text-on-surface pr-4">{faq.q}</span>
-                <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-primary-container/20 text-primary flex items-center justify-center font-bold text-lg">
+                <span className="font-display text-headline-sm text-slate-900 pr-4">{faq.q}</span>
+                <span className="flex-shrink-0 w-8 h-8 rounded-lg bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg">
                   {openFaq === i ? <Minus className="w-5 h-5" /> : <Plus className="w-5 h-5" />}
                 </span>
               </button>
               {openFaq === i && (
-                <div className="px-6 pb-6 text-body-md text-on-surface-variant leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="px-6 pb-6 text-body-md text-slate-600 leading-relaxed animate-in fade-in slide-in-from-top-2 duration-200">
                   {faq.a}
                 </div>
               )}
@@ -337,26 +367,26 @@ export default function Home() {
         </div>
       </section>
 
-      {/* LEAD CAPTURE FORM - Updated with Phone & Message */}
-      <section id="kickoff" className="py-24 px-6 md:px-12 max-w-7xl mx-auto">
-        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="relative rounded-3xl bg-surface-container/60 backdrop-blur-xl border border-outline-variant/30 p-8 md:p-14 overflow-hidden">
-          <div className="absolute -top-32 -left-32 w-80 h-80 bg-primary-container/10 rounded-full blur-3xl pointer-events-none" />
+      {/* 9. LEAD CAPTURE FORM (Dark Blue) */}
+      <section id="kickoff" className="py-24 px-6 md:px-12 max-w-7xl mx-auto bg-slate-900">
+        <motion.div initial="hidden" whileInView="visible" viewport={{ once: true }} variants={fadeInUp} className="relative rounded-3xl bg-slate-800/50 backdrop-blur-xl border border-slate-700 p-8 md:p-14 overflow-hidden">
+          <div className="absolute -top-32 -left-32 w-80 h-80 bg-blue-600/20 rounded-full blur-3xl pointer-events-none" />
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
-            <div className="lg:col-span-6 space-y-6">
-              <h2 className="font-display text-headline-md md:text-headline-lg text-on-surface">Ready to Accelerate Your Digital Velocity?</h2>
-              <p className="text-on-surface-variant text-body-lg leading-relaxed">Book a 30-minute discovery workshop directly with our engineering and creative partners.</p>
-              <div className="space-y-3 pt-4 border-t border-outline-variant/20">
+            <div className="lg:col-span-6 space-y-6 text-white">
+              <h2 className="font-display text-headline-md md:text-headline-lg">Ready to Accelerate Your Digital Velocity?</h2>
+              <p className="text-slate-300 text-body-lg leading-relaxed">Book a 30-minute discovery workshop directly with our engineering and creative partners.</p>
+              <div className="space-y-3 pt-4 border-t border-slate-700">
                 {[{ icon: ShieldCheck, text: "Strict Mutual NDA Protected Before Any File Exchange" }, { icon: Clock, text: "Guaranteed Initial Technical Proposal within 24 Hours" }, { icon: Handshake, text: "Zero Obligations • Full Architecture Ownership" }].map((item, i) => (
-                  <div key={i} className="flex items-center gap-3 text-body-sm text-secondary"><item.icon className="w-5 h-5 text-primary" /> {item.text}</div>
+                  <div key={i} className="flex items-center gap-3 text-body-sm text-slate-300"><item.icon className="w-5 h-5 text-blue-400" /> {item.text}</div>
                 ))}
               </div>
             </div>
-            <div className="lg:col-span-6 bg-surface-container-lowest/80 rounded-2xl p-6 md:p-8 border border-outline-variant/30 shadow-2xl">
-              <h3 className="font-display text-headline-sm text-on-surface mb-2">Claim Your Strategy Session</h3>
+            <div className="lg:col-span-6 bg-white rounded-2xl p-6 md:p-8 shadow-2xl">
+              <h3 className="font-display text-headline-sm text-slate-900 mb-2">Claim Your Strategy Session</h3>
               <form onSubmit={handleContact} className="space-y-4">
                 <div className="grid grid-cols-2 gap-2">
                   {["Web & Mobile Apps", "SEO & Visibility", "Media & Content", "Full Product Pod"].map((scope) => (
-                    <label key={scope} className={`flex items-center justify-center p-3 rounded-lg border cursor-pointer text-xs font-semibold transition-all ${selectedScope === scope ? 'border-primary bg-primary/10 text-primary' : 'border-outline-variant/40 bg-surface-container-high/40 text-on-surface hover:border-primary/60'}`}>
+                    <label key={scope} className={`flex items-center justify-center p-3 rounded-lg border cursor-pointer text-xs font-semibold transition-all ${selectedScope === scope ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-200 bg-slate-50 text-slate-700 hover:border-blue-300'}`}>
                       <input type="radio" name="scope" className="hidden" value={scope} checked={selectedScope === scope} onChange={() => setSelectedScope(scope)} /> 
                       {scope}
                     </label>
@@ -364,23 +394,23 @@ export default function Home() {
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-1.5">
-                    <label className="text-caption text-outline uppercase tracking-wider">Your Name</label>
-                    <input required type="text" value={contactName} onChange={(e) => setContactName(e.target.value)} placeholder="Alex Morgan" className="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-4 py-3 text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
+                    <label className="text-caption text-slate-500 uppercase tracking-wider">Your Name</label>
+                    <input required type="text" value={contactName} onChange={(e) => setContactName(e.target.value)} placeholder="Alex Morgan" className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-body-md text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all" />
                   </div>
                   <div className="space-y-1.5">
-                    <label className="text-caption text-outline uppercase tracking-wider">Phone Number</label>
-                    <input type="tel" value={contactPhone} onChange={(e) => setContactPhone(e.target.value)} placeholder="+234 800 000 0000" className="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-4 py-3 text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
+                    <label className="text-caption text-slate-500 uppercase tracking-wider">Phone Number</label>
+                    <input type="tel" value={contactPhone} onChange={(e) => setContactPhone(e.target.value)} placeholder="+234 800 000 0000" className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-body-md text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all" />
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-caption text-outline uppercase tracking-wider">Work Email</label>
-                  <input required type="email" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} placeholder="alex@company.com" className="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-4 py-3 text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" />
+                  <label className="text-caption text-slate-500 uppercase tracking-wider">Work Email</label>
+                  <input required type="email" value={contactEmail} onChange={(e) => setContactEmail(e.target.value)} placeholder="alex@company.com" className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-body-md text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-caption text-outline uppercase tracking-wider">How can we help? (Optional)</label>
-                  <textarea value={contactMessage} onChange={(e) => setContactMessage(e.target.value)} placeholder="Tell us about your project..." rows={3} className="w-full bg-surface-container border border-outline-variant/40 rounded-lg px-4 py-3 text-body-md text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none" />
+                  <label className="text-caption text-slate-500 uppercase tracking-wider">How can we help? (Optional)</label>
+                  <textarea value={contactMessage} onChange={(e) => setContactMessage(e.target.value)} placeholder="Tell us about your project..." rows={3} className="w-full bg-slate-50 border border-slate-200 rounded-lg px-4 py-3 text-body-md text-slate-900 placeholder:text-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition-all resize-none" />
                 </div>
-                <button type="submit" disabled={contactStatus !== "idle"} className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-lg bg-primary-container text-white font-label-md font-bold shadow-[0_8px_30px_-4px_rgba(20,71,230,0.5)] hover:brightness-110 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed">
+                <button type="submit" disabled={contactStatus !== "idle"} className="w-full inline-flex items-center justify-center gap-2 py-4 px-6 rounded-lg bg-blue-600 text-white font-label-md font-bold shadow-lg hover:bg-blue-500 active:scale-[0.98] transition-all disabled:opacity-70 disabled:cursor-not-allowed">
                   {contactStatus === "loading" ? "Processing..." : contactStatus === "success" ? "Session Claimed!" : "Claim Free Strategy Session"}
                   <ArrowRight className="w-4 h-4" />
                 </button>
