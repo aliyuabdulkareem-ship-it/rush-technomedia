@@ -28,11 +28,6 @@ const faqs = [
   { q: "Do you work with businesses outside of Nigeria?", a: "Yes. While we are proudly rooted in Nigeria (Lagos, Ibadan, Ilorin), we serve clients globally with remote-first workflows." }
 ];
 
-const mediaPartners = [
-  "Punch", "Tribune", "ThisDay", "Guardian", "Vanguard", 
-  "BusinessDay", "Daily Independent", "New Telegraph", "PMNews", "Sun News NG"
-];
-
 export default function Home() {
   const [contactStatus, setContactStatus] = useState<"idle" | "loading" | "success">("idle");
   const [contactName, setContactName] = useState("");
@@ -89,7 +84,7 @@ export default function Home() {
     const cleanupArsenal = setupAutoScroll(arsenalRef.current, 0.5, 2);
     const cleanupMedia = setupAutoScroll(mediaRef.current, 0.5, 2);
 
-    let portfolioInterval: NodeJS.Timeout;
+    let portfolioInterval: ReturnType<typeof setInterval>;
     const pel = portfolioRef.current;
     if (pel) {
        let isHovering = false;
@@ -100,8 +95,8 @@ export default function Home() {
              if (pel.scrollLeft >= pel.scrollWidth / 2) pel.scrollLeft = 0;
           }
        }, 4000);
-       const pPause = () => isHovering = true;
-       const pResume = () => isHovering = false;
+       const pPause = () => { isHovering = true; };
+       const pResume = () => { isHovering = false; };
        pel.addEventListener('mouseenter', pPause);
        pel.addEventListener('mouseleave', pResume);
        pel.addEventListener('touchstart', pPause);
@@ -159,9 +154,6 @@ export default function Home() {
         </motion.div>
       </section>
 
-
-
-
       {/* 2. SOLUTIONS SECTION (White Background, Dark Circular Cards) */}
       <section id="solutions" className="py-24 bg-white border-y border-slate-200 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 mb-12">
@@ -180,37 +172,17 @@ export default function Home() {
               { slug: "media-publications", title: "Media Publications", icon: "/Publication.png", color: "bg-orange-500" },
               { slug: "ai-and-it-solutions", title: "AI & IT Solutions", icon: "/ai.png", color: "bg-cyan-500" }
             ].map((sol, i) => (
-
-
-
-
-
-
               <Link key={i} href={`/solutions/${sol.slug}`} className="flex-shrink-0 w-[45%] md:w-[280px] snap-center">
-                {/* The Entire Card is the Dark Circle */}
                 <div className="group flex flex-col items-center justify-center p-6 md:p-8 rounded-full bg-slate-900 border border-slate-800 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-900/20 transition-all duration-300 cursor-pointer aspect-square">
-                  
-                  {/* Icon directly inside, turned white using CSS filters, NO inner circle */}
                   <img src={sol.icon} alt={sol.title} className="w-16 h-16 md:w-24 md:h-24 object-contain mb-4 group-hover:scale-110 transition-transform duration-300 invert brightness-0" loading="lazy" />
-                  
-                  {/* Text is White */}
                   <h3 className="text-center text-white font-bold text-sm md:text-lg font-display group-hover:text-blue-400 transition-colors leading-tight px-2">{sol.title}</h3>
                 </div>
               </Link>
-
-
-
-
-              
             ))}
           </div>
         </div>
         <div className="md:hidden text-center mt-4"><p className="text-slate-500 text-sm">Swipe to explore more solutions</p></div>
       </section>
-
-
-
-      
 
       {/* 3. PORTFOLIO SECTION (Dark Blue) */}
       <section id="work" className="bg-slate-900 pb-32 text-white">
@@ -226,9 +198,6 @@ export default function Home() {
           
           <div className="w-[300px] md:w-[752px] mx-auto">
             <div className="overflow-hidden pb-16">
-
-
-
               <div ref={portfolioRef} className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-8 px-4 scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {[
                   { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence", image: "/Rulers.png" },
@@ -236,7 +205,6 @@ export default function Home() {
                   { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture", image: "/DPSR.png" },
                   { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform", image: "/18mk.png" },
                   { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal", image: "/18mk.png" },
-                  // Duplicates for seamless infinite loop
                   { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence", image: "/Rulers.png" },
                   { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy", image: "/18mk.png" },
                   { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture", image: "/DPSR.png" },
@@ -245,7 +213,6 @@ export default function Home() {
                 ].map((site, i) => (
                   <a key={i} href={site.url} target="_blank" rel="noopener noreferrer" className="flex-shrink-0 w-[300px] md:w-[360px] snap-center group relative">
                     <div className="h-[220px] md:h-[260px] rounded-xl overflow-hidden bg-slate-800 border border-slate-700 shadow-sm">
-                      {/* Updated to use the specific image for each project */}
                       <img src={site.image} alt={site.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
                     </div>
                     <div className="absolute -bottom-10 left-4 right-4 bg-white rounded-xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)] p-5 transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl">
@@ -255,10 +222,8 @@ export default function Home() {
                   </a>
                 ))}
               </div>
-
-
-
-              
+            </div>
+          </div>
           <div className="flex justify-center gap-2 mt-8">
             {[...Array(5)].map((_, i) => (<div key={i} className="h-1.5 w-6 bg-white/30 rounded-full"></div>))}
           </div>
@@ -293,9 +258,7 @@ export default function Home() {
         </div>
       </section>
 
-
-
-      {/* 5. MEDIA PARTNERS SECTION (Dark Blue) - Auto-Scrolling Logos */}
+      {/* 5. MEDIA PARTNERS SECTION (Dark Blue) */}
       <section className="py-20 bg-slate-900 border-y border-slate-800 overflow-hidden text-white">
         <div className="text-center mb-12 px-6">
           <span className="text-blue-400 text-label-sm font-bold uppercase tracking-wider">Media Partners</span>
@@ -304,39 +267,27 @@ export default function Home() {
         </div>
         
         <div className="relative w-full">
-          {/* Fade Edges */}
           <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-slate-900 to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-slate-900 to-transparent z-10 pointer-events-none" />
           
-          {/* Moving Track */}
           <div ref={mediaRef} className="flex overflow-x-auto scrollbar-hide gap-6 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {[
-              // Original 10 Logos
               "/Punch.png", "/Tribune.png", "/Guardianng.png", "/nation.png", "/Vanguard.png", 
               "/BusinessDay.png", "/Independent.png", "/The_Sun.png", "/pmnews.png", "/Telegraph.png",
-              // Duplicated for seamless infinite loop
               "/Punch.png", "/Tribune.png", "/Guardianng.png", "/nation.png", "/Vanguard.png", 
               "/BusinessDay.png", "/Independent.png", "/The_Sun.png", "/pmnews.png", "/Telegraph.png"
             ].map((src, i) => (
               <div key={i} className="flex-shrink-0 mx-4 md:mx-8 flex items-center justify-center">
-                {/* Styled exactly like the Arsenal section */}
                 <img src={src} alt="Media Partner Logo" className="h-10 md:h-14 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300" loading="lazy" />
               </div>
             ))}
           </div>
         </div>
 
-        {/* Pagination Dashes */}
         <div className="flex justify-center gap-2 mt-12">
           {[...Array(10)].map((_, i) => (<div key={i} className="h-1.5 w-3 bg-white/30 rounded-full"></div>))}
         </div>
       </section>
-
-
-
-
-      
-
 
       {/* 6. BLOG SECTION (White Background, Dark Scrollable Cards) */}
       <section id="blog" className="py-24 bg-white overflow-hidden">
@@ -346,16 +297,12 @@ export default function Home() {
           <p className="text-slate-600 text-body-md">Stories on visibility, SEO, and how digital presence transforms businesses.</p>
         </div>
 
-        {/* Horizontal Scroll Container */}
         <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 px-6 md:px-12 pb-8 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {blogPosts.map((post, i) => (
             <article key={i} className="flex-shrink-0 w-[85vw] md:w-[calc(25%-1.125rem)] snap-center group rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden hover:border-blue-500/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              {/* Dark Header for Post Number */}
               <div className="h-32 bg-gradient-to-br from-blue-900 to-slate-900 flex items-center justify-center border-b border-slate-800">
                 <span className="text-4xl font-display font-bold text-white/20">0{i + 1}</span>
               </div>
-              
-              {/* Dark Card Content */}
               <div className="p-6">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 text-[10px] font-bold uppercase">{post.category}</span>
@@ -373,11 +320,6 @@ export default function Home() {
         </div>
       </section>
 
-
-      
-
-
-
       {/* 7. TESTIMONIALS SECTION (Dark Blue, Scrollable) */}
       <section className="py-24 bg-slate-900 text-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 md:px-12">
@@ -386,7 +328,6 @@ export default function Home() {
             <h2 className="font-display text-headline-md md:text-headline-lg text-white mt-2 mb-4">What Our Clients Say</h2>
           </div>
           
-          {/* Horizontal Scroll Container */}
           <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 pb-8 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {testimonials.map((t, i) => (
               <div key={i} className="flex-shrink-0 w-[85vw] md:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] snap-center bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 flex flex-col text-slate-900">
@@ -402,10 +343,6 @@ export default function Home() {
           </div>
         </div>
       </section>
-
-
-
-      
 
       {/* 8. FAQ SECTION (White) */}
       <section id="faq" className="py-24 px-6 md:px-12 max-w-4xl mx-auto bg-white">
