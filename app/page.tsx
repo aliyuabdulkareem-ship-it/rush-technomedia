@@ -286,7 +286,9 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. MEDIA PARTNERS SECTION (Dark Blue) - NEW */}
+
+
+      {/* 5. MEDIA PARTNERS SECTION (Dark Blue) - Auto-Scrolling Logos */}
       <section className="py-20 bg-slate-900 border-y border-slate-800 overflow-hidden text-white">
         <div className="text-center mb-12 px-6">
           <span className="text-blue-400 text-label-sm font-bold uppercase tracking-wider">Media Partners</span>
@@ -295,25 +297,38 @@ export default function Home() {
         </div>
         
         <div className="relative w-full">
+          {/* Fade Edges */}
           <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-slate-900 to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-slate-900 to-transparent z-10 pointer-events-none" />
           
+          {/* Moving Track */}
           <div ref={mediaRef} className="flex overflow-x-auto scrollbar-hide gap-6 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-            {[...mediaPartners, ...mediaPartners].map((partner, i) => (
-              <div key={i} className="flex-shrink-0 mx-2 md:mx-4 flex items-center justify-center">
-                {/* Placeholder Box - Replace inner content with <img> when logos are uploaded */}
-                <div className="h-16 md:h-20 w-32 md:w-40 bg-white/10 border border-white/20 rounded-xl flex items-center justify-center hover:bg-white/20 hover:border-blue-400/50 transition-all duration-300 backdrop-blur-sm">
-                  <span className="text-white font-bold text-lg md:text-xl tracking-wide">{partner}</span>
-                </div>
+            {[
+              // Original 10 Logos
+              "/Punch.png", "/Tribune.png", "/Guardianng.png", "/nation.png", "/Vanguard.png", 
+              "/BusinessDay.png", "/Independent.png", "/The_Sun.png", "/pmnews.png", "/Telegraph.png",
+              // Duplicated for seamless infinite loop
+              "/Punch.png", "/Tribune.png", "/Guardianng.png", "/nation.png", "/Vanguard.png", 
+              "/BusinessDay.png", "/Independent.png", "/The_Sun.png", "/pmnews.png", "/Telegraph.png"
+            ].map((src, i) => (
+              <div key={i} className="flex-shrink-0 mx-4 md:mx-8 flex items-center justify-center">
+                {/* Styled exactly like the Arsenal section */}
+                <img src={src} alt="Media Partner Logo" className="h-10 md:h-14 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300" loading="lazy" />
               </div>
             ))}
           </div>
         </div>
 
+        {/* Pagination Dashes */}
         <div className="flex justify-center gap-2 mt-12">
           {[...Array(10)].map((_, i) => (<div key={i} className="h-1.5 w-3 bg-white/30 rounded-full"></div>))}
         </div>
       </section>
+
+
+
+
+      
 
 
       {/* 6. BLOG SECTION (White Background, Dark Scrollable Cards) */}
