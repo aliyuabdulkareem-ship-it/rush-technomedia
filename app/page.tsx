@@ -226,22 +226,27 @@ export default function Home() {
           
           <div className="w-[300px] md:w-[752px] mx-auto">
             <div className="overflow-hidden pb-16">
+
+
+
               <div ref={portfolioRef} className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-8 px-4 scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {[
-                  { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
-                  { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
-                  { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
-                  { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
-                  { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" },
-                  { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence" },
-                  { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy" },
-                  { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture" },
-                  { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform" },
-                  { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal" }
+                  { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence", image: "/Rulers.png" },
+                  { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy", image: "/18mk.png" },
+                  { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture", image: "/DPSR.png" },
+                  { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform", image: "/18mk.png" },
+                  { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal", image: "/18mk.png" },
+                  // Duplicates for seamless infinite loop
+                  { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence", image: "/Rulers.png" },
+                  { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy", image: "/18mk.png" },
+                  { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture", image: "/DPSR.png" },
+                  { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform", image: "/18mk.png" },
+                  { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal", image: "/18mk.png" }
                 ].map((site, i) => (
                   <a key={i} href={site.url} target="_blank" rel="noopener noreferrer" className="flex-shrink-0 w-[300px] md:w-[360px] snap-center group relative">
                     <div className="h-[220px] md:h-[260px] rounded-xl overflow-hidden bg-slate-800 border border-slate-700 shadow-sm">
-                      <img src="/18mk.png" alt={site.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                      {/* Updated to use the specific image for each project */}
+                      <img src={site.image} alt={site.name} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
                     </div>
                     <div className="absolute -bottom-10 left-4 right-4 bg-white rounded-xl shadow-[0_8px_30px_-12px_rgba(0,0,0,0.5)] p-5 transition-all duration-300 group-hover:-translate-y-2 group-hover:shadow-xl">
                       <h3 className="font-display font-bold text-slate-900 text-lg leading-tight text-center">{site.name}</h3>
@@ -250,8 +255,10 @@ export default function Home() {
                   </a>
                 ))}
               </div>
-            </div>
-          </div>
+
+
+
+              
           <div className="flex justify-center gap-2 mt-8">
             {[...Array(5)].map((_, i) => (<div key={i} className="h-1.5 w-6 bg-white/30 rounded-full"></div>))}
           </div>
