@@ -36,11 +36,84 @@ export default function Home() {
   const [contactMessage, setContactMessage] = useState("");
   const [selectedScope, setSelectedScope] = useState("Web & Mobile Apps");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
+  
+  // State for live dot tracking
+  const [arsenalActive, setArsenalActive] = useState(0);
+  const [mediaActive, setMediaActive] = useState(0);
 
   const portfolioRef = useRef<HTMLDivElement>(null);
+  const arsenalRef = useRef<HTMLDivElement>(null);
+  const mediaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Portfolio Auto-Step Logic
+    // --- HYBRID AUTO/MANUAL SCROLL LOGIC ---
+    const setupMarquee = (ref: React.RefObject<HTMLDivElement>, uniqueCount: number, setActive: React.Dispatch<React.SetStateAction<number>>) => {
+      const el = ref.current;
+      if (!el) return;
+
+      let animationId: number;
+      let isInteracting = false;
+      let resumeTimeout: ReturnType<typeof setTimeout>;
+      const speed = 0.6; // Smooth auto-scroll speed
+
+      const scroll = () => {
+        if (!isInteracting) {
+          el.scrollLeft += speed;
+          // Seamless infinite loop reset
+          if (el.scrollLeft >= el.scrollWidth / 2) {
+            el.scrollLeft = 0;
+          }
+          // Update active dot based on scroll progress
+          const progress = el.scrollLeft / (el.scrollWidth / 2);
+          setActive(Math.floor(progress * uniqueCount) % uniqueCount);
+        }
+        animationId = requestAnimationFrame(scroll);
+      };
+
+      animationId = requestAnimationFrame(scroll);
+
+      const pause = () => { 
+        isInteracting = true; 
+        clearTimeout(resumeTimeout);
+      };
+      const resume = () => { 
+        // Resume auto-scroll 1 second after user stops interacting
+        resumeTimeout = setTimeout(() => { isInteracting = false; }, 1000); 
+      };
+
+      el.addEventListener('mouseenter', pause);
+      el.addEventListener('mouseleave', resume);
+      el.addEventListener('touchstart', pause, { passive: true });
+      el.addEventListener('touchend', resume);
+      el.addEventListener('mousedown', pause);
+      el.addEventListener('mouseup', resume);
+      
+      // Sync dots during manual drag
+      const handleManualScroll = () => {
+        pause();
+        const progress = el.scrollLeft / (el.scrollWidth / 2);
+        setActive(Math.floor(progress * uniqueCount) % uniqueCount);
+        resume();
+      };
+      el.addEventListener('scroll', handleManualScroll, { passive: true });
+
+      return () => {
+        cancelAnimationFrame(animationId);
+        clearTimeout(resumeTimeout);
+        el.removeEventListener('mouseenter', pause);
+        el.removeEventListener('mouseleave', resume);
+        el.removeEventListener('touchstart', pause);
+        el.removeEventListener('touchend', resume);
+        el.removeEventListener('mousedown', pause);
+        el.removeEventListener('mouseup', resume);
+        el.removeEventListener('scroll', handleManualScroll);
+      };
+    };
+
+    const cleanupArsenal = setupMarquee(arsenalRef, 9, setArsenalActive);
+    const cleanupMedia = setupMarquee(mediaRef, 10, setMediaActive);
+
+    // Portfolio Auto-Step Logic (unchanged)
     let portfolioInterval: ReturnType<typeof setInterval>;
     const pel = portfolioRef.current;
     if (pel) {
@@ -59,7 +132,12 @@ export default function Home() {
        pel.addEventListener('touchstart', pPause);
        pel.addEventListener('touchend', pResume);
     }
-    return () => { clearInterval(portfolioInterval); };
+
+    return () => {
+      cleanupArsenal?.();
+      cleanupMedia?.();
+      clearInterval(portfolioInterval);
+    };
   }, []);
 
   const handleContact = async (e: React.FormEvent) => {
@@ -182,7 +260,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. ARSENAL SECTION (White) - Infinite CSS Scroll, Full Color to Grey on Hover */}
+      {/* 4. ARSENAL SECTION (White) - Hybrid Auto/Manual Scroll + Live Dots */}
       <section className="py-24 bg-white border-y border-slate-200 overflow-hidden">
         <div className="text-center mb-16 px-6">
           <span className="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-label-sm font-bold uppercase tracking-wider mb-4">Our Arsenal</span>
@@ -194,7 +272,7 @@ export default function Home() {
           <div className="absolute left-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
           
-          <div className="flex animate-[scroll_40s_linear_infinite] hover:[animation-play-state:paused] gap-8 px-4">
+          <div ref={arsenalRef} className="flex overflow-x-auto scrollbar-hide gap-8 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {[
               "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png",
               "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png"
@@ -206,12 +284,15 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Live Syncing Dots */}
         <div className="flex justify-center gap-2 mt-12">
-          {[...Array(9)].map((_, i) => (<div key={i} className="h-1.5 w-3 bg-slate-300 rounded-full transition-all duration-300"></div>))}
+          {[...Array(9)].map((_, i) => (
+            <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${arsenalActive === i ? 'w-6 bg-slate-800' : 'w-3 bg-slate-300'}`}></div>
+          ))}
         </div>
       </section>
 
-      {/* 5. MEDIA PARTNERS SECTION (Dark Blue) - Infinite CSS Scroll, Full Color to Grey on Hover */}
+      {/* 5. MEDIA PARTNERS SECTION (Dark Blue) - Hybrid Auto/Manual Scroll + Live Dots */}
       <section className="py-24 bg-slate-900 border-y border-slate-800 overflow-hidden text-white relative">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_50%)] pointer-events-none" />
         
@@ -225,7 +306,7 @@ export default function Home() {
           <div className="absolute left-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-r from-slate-900 to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-l from-slate-900 to-transparent z-10 pointer-events-none" />
           
-          <div className="flex animate-[scroll_40s_linear_infinite] hover:[animation-play-state:paused] gap-6 px-4">
+          <div ref={mediaRef} className="flex overflow-x-auto scrollbar-hide gap-6 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {[
               "/Punch.png", "/Tribune.png", "/Guardianng.png", "/nation.png", "/Vanguard.png", 
               "/BusinessDay.png", "/Independent.png", "/The_Sun.png", "/pmnews.png", "/Telegraph.png",
@@ -239,8 +320,11 @@ export default function Home() {
           </div>
         </div>
 
+        {/* Live Syncing Dots */}
         <div className="flex justify-center gap-2 mt-12 relative z-10">
-          {[...Array(10)].map((_, i) => (<div key={i} className="h-1.5 w-3 bg-white/30 rounded-full transition-all duration-300"></div>))}
+          {[...Array(10)].map((_, i) => (
+            <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${mediaActive === i ? 'w-6 bg-white' : 'w-3 bg-white/30'}`}></div>
+          ))}
         </div>
       </section>
 
@@ -379,14 +463,6 @@ export default function Home() {
           </div>
         </motion.div>
       </section>
-
-      {/* Global CSS for Infinite Scroll Animation */}
-      <style>{`
-        @keyframes scroll { 
-          0% { transform: translateX(0); } 
-          100% { transform: translateX(-50%); } 
-        }
-      `}</style>
     </div>
   );
 }
