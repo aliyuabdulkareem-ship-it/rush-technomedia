@@ -51,29 +51,35 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
             </ul>
           </div>
 
+
+
+
+          
+          
+          
+          
+          
+        
           {solution.mediaPartners.length > 0 && (
             <div className="bg-surface-container/40 border border-outline-variant/20 rounded-3xl p-8 md:p-10">
-              <h3 className="text-xl font-display font-bold text-on-surface mb-6 text-center">Featured In & Media Partners</h3>
+              <h3 className="text-xl font-display font-bold text-on-surface mb-8 text-center">Featured In & Media Partners</h3>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-
-
-
-              {solution.mediaPartners.map((partner: string, i: number) => (
-                <div key={i} className="flex items-center justify-center p-4 bg-white rounded-xl border border-slate-200 shadow-sm h-20 hover:shadow-md transition-all duration-300">
-                  {partner.startsWith('/') ? (
-                    <img src={partner} alt="Media Partner Logo" className="h-full w-auto object-contain grayscale hover:grayscale-0 transition-all duration-300" loading="lazy" />
-                  ) : (
-                    <span className="text-slate-600 font-bold text-sm md:text-base text-center">{partner}</span>
-                  )}
-                </div>
-              ))}
-
-
-                
+                {solution.mediaPartners.map((partner: string, i: number) => (
+                  <div key={i} className="flex items-center justify-center p-4 bg-white rounded-xl border border-slate-200 shadow-sm h-20 hover:shadow-md transition-all duration-300">
+                    {partner.startsWith('/') ? (
+                      <img src={partner} alt="Media Partner Logo" className="h-full w-auto object-contain hover:grayscale hover:opacity-60 transition-all duration-300" loading="lazy" />
+                    ) : (
+                      <span className="text-slate-600 font-bold text-sm md:text-base text-center">{partner}</span>
+                    )}
+                  </div>
+                ))}
               </div>
             </div>
           )}
-        </div>
+
+
+
+          
 
         <div className="lg:col-span-1">
           <div className="sticky top-24 bg-surface-container/40 border border-outline-variant/20 rounded-3xl p-6">
