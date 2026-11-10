@@ -247,7 +247,14 @@ export default function Home() {
               "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png"
             ].map((src, i) => (
               <div key={i} className="flex-shrink-0 mx-4 md:mx-8 flex items-center justify-center">
-                <img src={src} alt="Tool Logo" className="h-8 md:h-10 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300" loading="lazy" />
+
+              
+              
+              
+                 <img src={src} alt="Tool Logo" className="h-full w-auto object-contain group-hover:grayscale group-hover:opacity-70 group-hover:scale-110 transition-all duration-300" loading="lazy" />
+              
+              
+              
               </div>
             ))}
           </div>
@@ -278,7 +285,14 @@ export default function Home() {
               "/BusinessDay.png", "/Independent.png", "/The_Sun.png", "/pmnews.png", "/Telegraph.png"
             ].map((src, i) => (
               <div key={i} className="flex-shrink-0 mx-4 md:mx-8 flex items-center justify-center">
-                <img src={src} alt="Media Partner Logo" className="h-10 md:h-14 w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300" loading="lazy" />
+
+              
+              
+              <img src={src} alt="Media Partner Logo" className="h-full w-auto object-contain group-hover:grayscale group-hover:opacity-70 group-hover:scale-110 transition-all duration-300" loading="lazy" />
+              
+              
+              
+              
               </div>
             ))}
           </div>
