@@ -37,7 +37,6 @@ export default function Home() {
   const [selectedScope, setSelectedScope] = useState("Web & Mobile Apps");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   
-  // State for live dot tracking
   const [arsenalActive, setArsenalActive] = useState(0);
   const [mediaActive, setMediaActive] = useState(0);
 
@@ -46,7 +45,7 @@ export default function Home() {
   const mediaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // --- HYBRID AUTO/MANUAL SCROLL LOGIC ---
+    // --- BULLETPROOF HYBRID SCROLL LOGIC ---
     const setupMarquee = (ref: React.RefObject<HTMLDivElement>, uniqueCount: number, setActive: React.Dispatch<React.SetStateAction<number>>) => {
       const el = ref.current;
       if (!el) return;
@@ -54,23 +53,27 @@ export default function Home() {
       let animationId: number;
       let isInteracting = false;
       let resumeTimeout: ReturnType<typeof setTimeout>;
-      const speed = 0.6; // Smooth auto-scroll speed
+      const speed = 0.5; // Smooth auto-scroll speed
 
-      const scroll = () => {
-        if (!isInteracting) {
-          el.scrollLeft += speed;
-          // Seamless infinite loop reset
-          if (el.scrollLeft >= el.scrollWidth / 2) {
-            el.scrollLeft = 0;
+      const animate = () => {
+        // Only scroll if images have loaded and content is wider than container
+        if (el.scrollWidth > el.clientWidth) {
+          if (!isInteracting) {
+            el.scrollLeft += speed;
+            // Seamless infinite loop reset
+            if (el.scrollLeft >= el.scrollWidth / 2) {
+              el.scrollLeft = 0;
+            }
+            // Update active dot based on scroll progress
+            const progress = el.scrollLeft / (el.scrollWidth / 2);
+            setActive(Math.floor(progress * uniqueCount) % uniqueCount);
           }
-          // Update active dot based on scroll progress
-          const progress = el.scrollLeft / (el.scrollWidth / 2);
-          setActive(Math.floor(progress * uniqueCount) % uniqueCount);
         }
-        animationId = requestAnimationFrame(scroll);
+        animationId = requestAnimationFrame(animate);
       };
 
-      animationId = requestAnimationFrame(scroll);
+      // Start the loop
+      animationId = requestAnimationFrame(animate);
 
       const pause = () => { 
         isInteracting = true; 
@@ -88,11 +91,13 @@ export default function Home() {
       el.addEventListener('mousedown', pause);
       el.addEventListener('mouseup', resume);
       
-      // Sync dots during manual drag
+      // Sync dots and pause during manual drag/scroll
       const handleManualScroll = () => {
         pause();
-        const progress = el.scrollLeft / (el.scrollWidth / 2);
-        setActive(Math.floor(progress * uniqueCount) % uniqueCount);
+        if (el.scrollWidth > el.clientWidth) {
+          const progress = el.scrollLeft / (el.scrollWidth / 2);
+          setActive(Math.floor(progress * uniqueCount) % uniqueCount);
+        }
         resume();
       };
       el.addEventListener('scroll', handleManualScroll, { passive: true });
@@ -113,7 +118,7 @@ export default function Home() {
     const cleanupArsenal = setupMarquee(arsenalRef, 9, setArsenalActive);
     const cleanupMedia = setupMarquee(mediaRef, 10, setMediaActive);
 
-    // Portfolio Auto-Step Logic (unchanged)
+    // Portfolio Auto-Step Logic
     let portfolioInterval: ReturnType<typeof setInterval>;
     const pel = portfolioRef.current;
     if (pel) {
