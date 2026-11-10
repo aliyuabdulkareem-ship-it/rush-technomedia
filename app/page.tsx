@@ -241,25 +241,24 @@ export default function Home() {
           <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
           
+
+
+
           <div ref={arsenalRef} className="flex overflow-x-auto scrollbar-hide gap-8 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {[
               "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png",
               "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png"
             ].map((src, i) => (
               <div key={i} className="flex-shrink-0 mx-4 md:mx-8 flex items-center justify-center">
-
-              
-              
-              
-                 <img src={src} alt="Tool Logo" className="h-full w-auto object-contain group-hover:grayscale group-hover:opacity-70 group-hover:scale-110 transition-all duration-300" loading="lazy" />
-              
-              
-              
+                {/* Full color by default, turns grey on hover */}
+                <img src={src} alt="Tool Logo" className="h-8 md:h-10 w-auto object-contain hover:grayscale hover:opacity-60 transition-all duration-300" loading="lazy" />
               </div>
             ))}
           </div>
-        </div>
 
+
+
+          
         <div className="flex justify-center gap-2 mt-12">
           {[...Array(9)].map((_, i) => (<div key={i} className="h-1.5 w-3 bg-slate-300 rounded-full"></div>))}
         </div>
@@ -277,7 +276,8 @@ export default function Home() {
           <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-slate-900 to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-slate-900 to-transparent z-10 pointer-events-none" />
           
-          <div ref={mediaRef} className="flex overflow-x-auto scrollbar-hide gap-6 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+
+                    <div ref={mediaRef} className="flex overflow-x-auto scrollbar-hide gap-6 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {[
               "/Punch.png", "/Tribune.png", "/Guardianng.png", "/nation.png", "/Vanguard.png", 
               "/BusinessDay.png", "/Independent.png", "/The_Sun.png", "/pmnews.png", "/Telegraph.png",
@@ -285,19 +285,14 @@ export default function Home() {
               "/BusinessDay.png", "/Independent.png", "/The_Sun.png", "/pmnews.png", "/Telegraph.png"
             ].map((src, i) => (
               <div key={i} className="flex-shrink-0 mx-4 md:mx-8 flex items-center justify-center">
-
-              
-              
-              <img src={src} alt="Media Partner Logo" className="h-full w-auto object-contain group-hover:grayscale group-hover:opacity-70 group-hover:scale-110 transition-all duration-300" loading="lazy" />
-              
-              
-              
-              
+                {/* Full color by default, turns grey on hover */}
+                <img src={src} alt="Media Partner Logo" className="h-10 md:h-14 w-auto object-contain hover:grayscale hover:opacity-60 transition-all duration-300" loading="lazy" />
               </div>
             ))}
           </div>
-        </div>
 
+
+          
         <div className="flex justify-center gap-2 mt-12">
           {[...Array(10)].map((_, i) => (<div key={i} className="h-1.5 w-3 bg-white/30 rounded-full"></div>))}
         </div>
