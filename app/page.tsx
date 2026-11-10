@@ -37,53 +37,10 @@ export default function Home() {
   const [selectedScope, setSelectedScope] = useState("Web & Mobile Apps");
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
-  const arsenalRef = useRef<HTMLDivElement>(null);
   const portfolioRef = useRef<HTMLDivElement>(null);
-  const mediaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const setupAutoScroll = (el: HTMLDivElement | null, speed: number, resetThreshold: number) => {
-      if (!el) return;
-      let animationId: number;
-      let isInteracting = false;
-
-      const scroll = () => {
-        if (!isInteracting) {
-          el.scrollLeft += speed;
-          if (el.scrollLeft >= el.scrollWidth / resetThreshold) {
-            el.scrollLeft = 0;
-          }
-        }
-        animationId = requestAnimationFrame(scroll);
-      };
-      animationId = requestAnimationFrame(scroll);
-
-      const pause = () => { isInteracting = true; };
-      const resume = () => { isInteracting = false; };
-
-      el.addEventListener('mouseenter', pause);
-      el.addEventListener('mouseleave', resume);
-      el.addEventListener('touchstart', pause, { passive: true });
-      el.addEventListener('touchend', resume);
-      el.addEventListener('mousedown', pause);
-      el.addEventListener('mouseup', resume);
-      el.addEventListener('scroll', pause);
-
-      return () => {
-        cancelAnimationFrame(animationId);
-        el.removeEventListener('mouseenter', pause);
-        el.removeEventListener('mouseleave', resume);
-        el.removeEventListener('touchstart', pause);
-        el.removeEventListener('touchend', resume);
-        el.removeEventListener('mousedown', pause);
-        el.removeEventListener('mouseup', resume);
-        el.removeEventListener('scroll', pause);
-      };
-    };
-
-    const cleanupArsenal = setupAutoScroll(arsenalRef.current, 0.5, 2);
-    const cleanupMedia = setupAutoScroll(mediaRef.current, 0.5, 2);
-
+    // Portfolio Auto-Step Logic
     let portfolioInterval: ReturnType<typeof setInterval>;
     const pel = portfolioRef.current;
     if (pel) {
@@ -102,12 +59,7 @@ export default function Home() {
        pel.addEventListener('touchstart', pPause);
        pel.addEventListener('touchend', pResume);
     }
-
-    return () => {
-      cleanupArsenal?.();
-      cleanupMedia?.();
-      clearInterval(portfolioInterval);
-    };
+    return () => { clearInterval(portfolioInterval); };
   }, []);
 
   const handleContact = async (e: React.FormEvent) => {
@@ -230,7 +182,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. ARSENAL SECTION (White) - Full Color to Grey on Hover */}
+      {/* 4. ARSENAL SECTION (White) - Infinite CSS Scroll, Full Color to Grey on Hover */}
       <section className="py-24 bg-white border-y border-slate-200 overflow-hidden">
         <div className="text-center mb-16 px-6">
           <span className="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-label-sm font-bold uppercase tracking-wider mb-4">Our Arsenal</span>
@@ -242,13 +194,12 @@ export default function Home() {
           <div className="absolute left-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
           
-          <div ref={arsenalRef} className="flex overflow-x-auto scrollbar-hide gap-8 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div className="flex animate-[scroll_40s_linear_infinite] hover:[animation-play-state:paused] gap-8 px-4">
             {[
               "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png",
               "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png"
             ].map((src, i) => (
               <div key={i} className="flex-shrink-0 mx-4 md:mx-8 flex items-center justify-center">
-                {/* Full color by default, turns grey on hover */}
                 <img src={src} alt="Tool Logo" className="h-8 md:h-10 w-auto object-contain hover:grayscale hover:opacity-60 transition-all duration-300" loading="lazy" />
               </div>
             ))}
@@ -260,7 +211,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. MEDIA PARTNERS SECTION (Dark Blue) - Full Color to Grey on Hover */}
+      {/* 5. MEDIA PARTNERS SECTION (Dark Blue) - Infinite CSS Scroll, Full Color to Grey on Hover */}
       <section className="py-24 bg-slate-900 border-y border-slate-800 overflow-hidden text-white relative">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_50%)] pointer-events-none" />
         
@@ -274,7 +225,7 @@ export default function Home() {
           <div className="absolute left-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-r from-slate-900 to-transparent z-10 pointer-events-none" />
           <div className="absolute right-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-l from-slate-900 to-transparent z-10 pointer-events-none" />
           
-          <div ref={mediaRef} className="flex overflow-x-auto scrollbar-hide gap-6 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div className="flex animate-[scroll_40s_linear_infinite] hover:[animation-play-state:paused] gap-6 px-4">
             {[
               "/Punch.png", "/Tribune.png", "/Guardianng.png", "/nation.png", "/Vanguard.png", 
               "/BusinessDay.png", "/Independent.png", "/The_Sun.png", "/pmnews.png", "/Telegraph.png",
@@ -282,7 +233,6 @@ export default function Home() {
               "/BusinessDay.png", "/Independent.png", "/The_Sun.png", "/pmnews.png", "/Telegraph.png"
             ].map((src, i) => (
               <div key={i} className="flex-shrink-0 mx-4 md:mx-8 flex items-center justify-center">
-                {/* Full color by default, turns grey on hover */}
                 <img src={src} alt="Media Partner Logo" className="h-10 md:h-14 w-auto object-contain hover:grayscale hover:opacity-60 transition-all duration-300" loading="lazy" />
               </div>
             ))}
@@ -429,6 +379,14 @@ export default function Home() {
           </div>
         </motion.div>
       </section>
+
+      {/* Global CSS for Infinite Scroll Animation */}
+      <style>{`
+        @keyframes scroll { 
+          0% { transform: translateX(0); } 
+          100% { transform: translateX(-50%); } 
+        }
+      `}</style>
     </div>
   );
 }
