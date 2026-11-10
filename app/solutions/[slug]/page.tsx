@@ -67,7 +67,7 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
               </div>
               {/* Added "and more..." text */}
               <p className="text-center text-slate-500 text-sm mt-8 font-medium italic">
-                ...and many more top-tier outlets.
+                ...and more.
               </p>
             </div>
           )}
