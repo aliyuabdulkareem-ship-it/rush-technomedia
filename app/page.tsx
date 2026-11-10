@@ -230,20 +230,18 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. ARSENAL SECTION (White) */}
-      <section className="py-20 bg-white border-y border-slate-200 overflow-hidden">
-        <div className="text-center mb-12 px-6">
-          <span className="text-blue-600 text-label-sm font-bold uppercase tracking-wider">Our Arsenal</span>
-          <h2 className="font-display text-headline-md md:text-headline-lg text-slate-900 mt-2">Some Cutting-Edge Toolkit for Digital Success</h2>
+      {/* 4. ARSENAL SECTION (White) - Full Color to Grey on Hover */}
+      <section className="py-24 bg-white border-y border-slate-200 overflow-hidden">
+        <div className="text-center mb-16 px-6">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-label-sm font-bold uppercase tracking-wider mb-4">Our Arsenal</span>
+          <h2 className="font-display text-headline-md md:text-headline-lg text-slate-900 mt-2">Cutting-Edge Toolkit for Digital Success</h2>
+          <p className="text-slate-600 mt-4 max-w-2xl mx-auto">Powerful tools and technologies we leverage to deliver exceptional results</p>
         </div>
         
         <div className="relative w-full">
-          <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none" />
           
-
-
-
           <div ref={arsenalRef} className="flex overflow-x-auto scrollbar-hide gap-8 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {[
               "/html-js-css.png", "/google-analytics.png", "/google.png", "/meta-business-suite.png", "/google-ads.png", "/mailchimp.png", "/highlevel.png", "/adobe-suite.png", "/shopify.png",
@@ -255,29 +253,28 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
 
-
-
-          
         <div className="flex justify-center gap-2 mt-12">
-          {[...Array(9)].map((_, i) => (<div key={i} className="h-1.5 w-3 bg-slate-300 rounded-full"></div>))}
+          {[...Array(9)].map((_, i) => (<div key={i} className="h-1.5 w-3 bg-slate-300 rounded-full transition-all duration-300"></div>))}
         </div>
       </section>
 
-      {/* 5. MEDIA PARTNERS SECTION (Dark Blue) */}
-      <section className="py-20 bg-slate-900 border-y border-slate-800 overflow-hidden text-white">
-        <div className="text-center mb-12 px-6">
-          <span className="text-blue-400 text-label-sm font-bold uppercase tracking-wider">Media Partners</span>
+      {/* 5. MEDIA PARTNERS SECTION (Dark Blue) - Full Color to Grey on Hover */}
+      <section className="py-24 bg-slate-900 border-y border-slate-800 overflow-hidden text-white relative">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_50%)] pointer-events-none" />
+        
+        <div className="text-center mb-16 px-6 relative z-10">
+          <span className="inline-block px-4 py-1.5 rounded-full bg-blue-500/20 text-blue-400 text-label-sm font-bold uppercase tracking-wider mb-4 border border-blue-500/30">Media Partners</span>
           <h2 className="font-display text-headline-md md:text-headline-lg text-white mt-2">Featured In Nigeria's Top Outlets</h2>
           <p className="text-slate-400 mt-4 max-w-2xl mx-auto">We secure high-authority press coverage for our clients across the most trusted news platforms in the country.</p>
         </div>
         
-        <div className="relative w-full">
-          <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-slate-900 to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-slate-900 to-transparent z-10 pointer-events-none" />
+        <div className="relative w-full z-10">
+          <div className="absolute left-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-r from-slate-900 to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-24 md:w-48 bg-gradient-to-l from-slate-900 to-transparent z-10 pointer-events-none" />
           
-
-                    <div ref={mediaRef} className="flex overflow-x-auto scrollbar-hide gap-6 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
+          <div ref={mediaRef} className="flex overflow-x-auto scrollbar-hide gap-6 px-4" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {[
               "/Punch.png", "/Tribune.png", "/Guardianng.png", "/nation.png", "/Vanguard.png", 
               "/BusinessDay.png", "/Independent.png", "/The_Sun.png", "/pmnews.png", "/Telegraph.png",
@@ -290,11 +287,10 @@ export default function Home() {
               </div>
             ))}
           </div>
+        </div>
 
-
-          
-        <div className="flex justify-center gap-2 mt-12">
-          {[...Array(10)].map((_, i) => (<div key={i} className="h-1.5 w-3 bg-white/30 rounded-full"></div>))}
+        <div className="flex justify-center gap-2 mt-12 relative z-10">
+          {[...Array(10)].map((_, i) => (<div key={i} className="h-1.5 w-3 bg-white/30 rounded-full transition-all duration-300"></div>))}
         </div>
       </section>
 
