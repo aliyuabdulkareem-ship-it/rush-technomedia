@@ -45,72 +45,79 @@ export default function Home() {
   const mediaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // --- BULLETPROOF HYBRID SCROLL LOGIC ---
+    // --- FAST "STEP & GLIDE" AUTO-SCROLL LOGIC ---
     const setupMarquee = (ref: React.RefObject<HTMLDivElement>, uniqueCount: number, setActive: React.Dispatch<React.SetStateAction<number>>) => {
       const el = ref.current;
       if (!el) return;
 
-      let animationId: number;
-      let isInteracting = false;
+      let intervalId: ReturnType<typeof setInterval>;
       let resumeTimeout: ReturnType<typeof setTimeout>;
-      const speed = 0.5; // Smooth auto-scroll speed
+      let isPaused = false;
 
-      const animate = () => {
-        // Only scroll if images have loaded and content is wider than container
+      // Calculate the exact width of one logo + gap
+      const getStep = () => el.scrollWidth / (uniqueCount * 2);
+
+      const scrollStep = () => {
         if (el.scrollWidth > el.clientWidth) {
-          if (!isInteracting) {
-            el.scrollLeft += speed;
-            // Seamless infinite loop reset
-            if (el.scrollLeft >= el.scrollWidth / 2) {
-              el.scrollLeft = 0;
-            }
-            // Update active dot based on scroll progress
-            const progress = el.scrollLeft / (el.scrollWidth / 2);
-            setActive(Math.floor(progress * uniqueCount) % uniqueCount);
-          }
+          const step = getStep();
+          // Smoothly glide to the next logo
+          el.scrollBy({ left: step, behavior: 'smooth' });
         }
-        animationId = requestAnimationFrame(animate);
       };
 
-      // Start the loop
-      animationId = requestAnimationFrame(animate);
+      const startAutoScroll = () => {
+        intervalId = setInterval(scrollStep, 2500); // Glides to the next logo every 2.5 seconds
+      };
 
-      const pause = () => { 
-        isInteracting = true; 
+      const pause = () => {
+        isPaused = true;
+        clearInterval(intervalId);
         clearTimeout(resumeTimeout);
       };
-      const resume = () => { 
-        // Resume auto-scroll 1 second after user stops interacting
-        resumeTimeout = setTimeout(() => { isInteracting = false; }, 1000); 
+
+      const resume = () => {
+        isPaused = false;
+        clearTimeout(resumeTimeout);
+        resumeTimeout = setTimeout(startAutoScroll, 2000); // Resumes 2 seconds after you stop touching it
       };
 
+      // Event listeners for manual control
       el.addEventListener('mouseenter', pause);
       el.addEventListener('mouseleave', resume);
       el.addEventListener('touchstart', pause, { passive: true });
       el.addEventListener('touchend', resume);
-      el.addEventListener('mousedown', pause);
-      el.addEventListener('mouseup', resume);
       
-      // Sync dots and pause during manual drag/scroll
+      // Sync dots and handle manual drag
       const handleManualScroll = () => {
-        pause();
         if (el.scrollWidth > el.clientWidth) {
-          const progress = el.scrollLeft / (el.scrollWidth / 2);
-          setActive(Math.floor(progress * uniqueCount) % uniqueCount);
+          const step = getStep();
+          // Calculate which logo is currently in view
+          const index = Math.round(el.scrollLeft / step) % uniqueCount;
+          setActive(index);
+
+          // Seamless infinite loop reset
+          if (el.scrollLeft >= el.scrollWidth / 2) {
+            el.scrollLeft = 0;
+          }
         }
-        resume();
+        
+        // Pause while dragging, resume after
+        if (!isPaused) {
+          pause();
+          resume();
+        }
       };
       el.addEventListener('scroll', handleManualScroll, { passive: true });
 
+      startAutoScroll();
+
       return () => {
-        cancelAnimationFrame(animationId);
+        clearInterval(intervalId);
         clearTimeout(resumeTimeout);
         el.removeEventListener('mouseenter', pause);
         el.removeEventListener('mouseleave', resume);
         el.removeEventListener('touchstart', pause);
         el.removeEventListener('touchend', resume);
-        el.removeEventListener('mousedown', pause);
-        el.removeEventListener('mouseup', resume);
         el.removeEventListener('scroll', handleManualScroll);
       };
     };
@@ -265,7 +272,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. ARSENAL SECTION (White) - Hybrid Auto/Manual Scroll + Live Dots */}
+      {/* 4. ARSENAL SECTION (White) - Fast Step & Glide + Live Dots */}
       <section className="py-24 bg-white border-y border-slate-200 overflow-hidden">
         <div className="text-center mb-16 px-6">
           <span className="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-label-sm font-bold uppercase tracking-wider mb-4">Our Arsenal</span>
@@ -297,7 +304,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. MEDIA PARTNERS SECTION (Dark Blue) - Hybrid Auto/Manual Scroll + Live Dots */}
+      {/* 5. MEDIA PARTNERS SECTION (Dark Blue) - Fast Step & Glide + Live Dots */}
       <section className="py-24 bg-slate-900 border-y border-slate-800 overflow-hidden text-white relative">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_50%)] pointer-events-none" />
         
