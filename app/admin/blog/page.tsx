@@ -3,12 +3,12 @@
 import { useState, useEffect, useRef } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
-import dynamic from 'next/dynamic';
+import dynamic from "next/dynamic";
 import { Trash2, Plus, LogOut, Upload, Image as ImageIcon, Save } from "lucide-react";
 
-// Dynamically import React Quill to prevent SSR errors
-const ReactQuill = dynamic(() => import('react-quill'), { ssr: false });
-import 'react-quill/dist/quill.snow.css';
+// Dynamically import React Quill to prevent SSR errors and bypass TS ref issue
+const ReactQuill = dynamic(() => import("react-quill"), { ssr: false }) as any;
+import "react-quill/dist/quill.snow.css";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
