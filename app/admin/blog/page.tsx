@@ -4,9 +4,9 @@ import { useState, useEffect, useRef } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { Trash2, Plus, LogOut, Upload, Image as ImageIcon, Save } from "lucide-react";
+import { Trash2, LogOut, Upload, Image as ImageIcon, Save } from "lucide-react";
 
-// Dynamically import React Quill to prevent SSR errors and bypass TS ref issue
+// Dynamically import React Quill to prevent SSR errors
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false }) as any;
 import "react-quill/dist/quill.snow.css";
 
@@ -113,6 +113,10 @@ export default function AdminBlog() {
     }
   };
 
+  const quillFormats = [
+    'header', 'bold', 'italic', 'underline', 'strike', 'list', 'bullet', 'link', 'image'
+  ];
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -193,6 +197,29 @@ export default function AdminBlog() {
 
   return (
     <div className="min-h-screen bg-slate-100 p-4 md:p-8">
+      {/* FORCE QUILL EDITOR VISIBILITY & EDITABILITY */}
+      <style>{`
+        .ql-editor {
+          color: #0f172a !important; /* slate-900: Forces text to be dark and visible */
+          background-color: white !important;
+          min-height: 200px !important;
+          font-size: 16px !important;
+        }
+        .ql-editor.ql-blank::before {
+          color: #94a3b8 !important; /* slate-400: Visible placeholder text */
+          font-style: normal !important;
+        }
+        .ql-toolbar.ql-snow {
+          border-top-left-radius: 0.5rem;
+          border-top-right-radius: 0.5rem;
+          background-color: #f8fafc;
+        }
+        .ql-container.ql-snow {
+          border-bottom-left-radius: 0.5rem;
+          border-bottom-right-radius: 0.5rem;
+        }
+      `}</style>
+
       <div className="max-w-6xl mx-auto">
         <div className="flex justify-between items-center mb-8 bg-white p-4 rounded-xl shadow-sm">
           <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2"><ImageIcon className="w-6 h-6 text-blue-600" /> Rush CMS</h1>
@@ -219,7 +246,15 @@ export default function AdminBlog() {
               <div>
                 <label className="block text-sm font-semibold text-slate-700 mb-1">Content *</label>
                 <div className="bg-white rounded-lg border border-slate-300 focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
-                  <ReactQuill ref={quillRef} theme="snow" value={content} onChange={setContent} modules={quillModules} className="h-64 mb-12" />
+                  <ReactQuill 
+                    ref={quillRef} 
+                    theme="snow" 
+                    value={content} 
+                    onChange={setContent} 
+                    modules={quillModules} 
+                    formats={quillFormats}
+                    className="h-64 mb-12" 
+                  />
                 </div>
               </div>
 
