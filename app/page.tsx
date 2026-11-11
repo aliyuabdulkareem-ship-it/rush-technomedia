@@ -360,11 +360,21 @@ export default function Home() {
         </div>
 
         <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 px-6 md:px-12 pb-8 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          {blogPosts.map((post: any, i: number) => (
+         
+          
+          
+                  {blogPosts.map((post: any, i: number) => (
             <article key={i} className="flex-shrink-0 w-[85vw] md:w-[calc(25%-1.125rem)] snap-center group rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden hover:border-blue-500/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              <div className="h-32 bg-gradient-to-br from-blue-900 to-slate-900 flex items-center justify-center border-b border-slate-800">
-                <span className="text-4xl font-display font-bold text-white/20">0{i + 1}</span>
-              </div>
+              {/* Featured Image Display */}
+              {post.featured_image ? (
+                <div className="h-48 overflow-hidden">
+                  <img src={post.featured_image} alt={post.alt_text || post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                </div>
+              ) : (
+                <div className="h-32 bg-gradient-to-br from-blue-900 to-slate-900 flex items-center justify-center border-b border-slate-800">
+                  <span className="text-4xl font-display font-bold text-white/20">0{i + 1}</span>
+                </div>
+              )}
               <div className="p-6">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 text-[10px] font-bold uppercase">{post.category}</span>
@@ -379,6 +389,9 @@ export default function Home() {
               </div>
             </article>
           ))}
+
+
+          
         </div>
       </section>
 
