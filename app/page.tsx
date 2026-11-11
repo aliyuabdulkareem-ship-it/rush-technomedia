@@ -4,14 +4,19 @@ import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Bolt, PlayCircle, Star, ShieldCheck, Clock, Handshake, ExternalLink, Plus, Minus, Quote } from "lucide-react";
 import Link from "next/link";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+const supabase = createClient(supabaseUrl, supabaseKey);
 
 const fadeInUp = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } } };
 
-const blogPosts = [
-  { title: "Why 90% of Nigerian Businesses Fail at SEO", excerpt: "Most businesses build beautiful websites that nobody can find. Here's the data-driven framework we use to fix that.", category: "SEO Strategy", readTime: "5 min read", date: "Oct 28, 2026" },
-  { title: "The Visibility Economy: How Being Found Online Became Your Biggest Asset", excerpt: "In 2026, digital visibility isn't marketing—it's survival.", category: "Digital Strategy", readTime: "7 min read", date: "Oct 22, 2026" },
-  { title: "From 0 to 10,000 Monthly Visitors: A Lagos Startup's SEO Journey", excerpt: "How a small fintech in Yaba tripled their organic traffic in 6 months.", category: "Case Study", readTime: "6 min read", date: "Oct 15, 2026" },
-  { title: "AI-Powered Content: How to Scale Your Brand Without Losing Your Voice", excerpt: "Generative AI can 10x your content output.", category: "AI & Media", readTime: "8 min read", date: "Oct 10, 2026" }
+const defaultBlogPosts = [
+  { title: "Why 90% of Nigerian Businesses Fail at SEO", excerpt: "Most businesses build beautiful websites that nobody can find. Here's the data-driven framework we use to fix that.", category: "SEO Strategy", read_time: "5 min read", date: "Oct 28, 2026" },
+  { title: "The Visibility Economy: How Being Found Online Became Your Biggest Asset", excerpt: "In 2026, digital visibility isn't marketing—it's survival.", category: "Digital Strategy", read_time: "7 min read", date: "Oct 22, 2026" },
+  { title: "From 0 to 10,000 Monthly Visitors: A Lagos Startup's SEO Journey", excerpt: "How a small fintech in Yaba tripled their organic traffic in 6 months.", category: "Case Study", read_time: "6 min read", date: "Oct 15, 2026" },
+  { title: "AI-Powered Content: How to Scale Your Brand Without Losing Your Voice", excerpt: "Generative AI can 10x your content output.", category: "AI & Media", read_time: "8 min read", date: "Oct 10, 2026" }
 ];
 
 const testimonials = [
@@ -29,6 +34,7 @@ const faqs = [
 ];
 
 export default function Home() {
+  const [blogPosts, setBlogPosts] = useState(defaultBlogPosts);
   const [contactStatus, setContactStatus] = useState<"idle" | "loading" | "success">("idle");
   const [contactName, setContactName] = useState("");
   const [contactEmail, setContactEmail] = useState("");
@@ -44,8 +50,18 @@ export default function Home() {
   const arsenalRef = useRef<HTMLDivElement>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
 
+  // Fetch blog posts from Supabase safely in the background
   useEffect(() => {
-    // --- FAST "STEP & GLIDE" AUTO-SCROLL LOGIC ---
+    const fetchPosts = async () => {
+      const { data, error } = await supabase.from("blog_posts").select("*").order("created_at", { ascending: false });
+      if (data && data.length > 0) {
+        setBlogPosts(data);
+      }
+    };
+    fetchPosts();
+  }, []);
+
+  useEffect(() => {
     const setupMarquee = (ref: React.RefObject<HTMLDivElement>, uniqueCount: number, setActive: React.Dispatch<React.SetStateAction<number>>) => {
       const el = ref.current;
       if (!el) return;
@@ -54,19 +70,17 @@ export default function Home() {
       let resumeTimeout: ReturnType<typeof setTimeout>;
       let isPaused = false;
 
-      // Calculate the exact width of one logo + gap
       const getStep = () => el.scrollWidth / (uniqueCount * 2);
 
       const scrollStep = () => {
         if (el.scrollWidth > el.clientWidth) {
           const step = getStep();
-          // Smoothly glide to the next logo
           el.scrollBy({ left: step, behavior: 'smooth' });
         }
       };
 
       const startAutoScroll = () => {
-        intervalId = setInterval(scrollStep, 2500); // Glides to the next logo every 2.5 seconds
+        intervalId = setInterval(scrollStep, 2500);
       };
 
       const pause = () => {
@@ -78,30 +92,23 @@ export default function Home() {
       const resume = () => {
         isPaused = false;
         clearTimeout(resumeTimeout);
-        resumeTimeout = setTimeout(startAutoScroll, 2000); // Resumes 2 seconds after you stop touching it
+        resumeTimeout = setTimeout(startAutoScroll, 2000);
       };
 
-      // Event listeners for manual control
       el.addEventListener('mouseenter', pause);
       el.addEventListener('mouseleave', resume);
       el.addEventListener('touchstart', pause, { passive: true });
       el.addEventListener('touchend', resume);
       
-      // Sync dots and handle manual drag
       const handleManualScroll = () => {
         if (el.scrollWidth > el.clientWidth) {
           const step = getStep();
-          // Calculate which logo is currently in view
           const index = Math.round(el.scrollLeft / step) % uniqueCount;
           setActive(index);
-
-          // Seamless infinite loop reset
           if (el.scrollLeft >= el.scrollWidth / 2) {
             el.scrollLeft = 0;
           }
         }
-        
-        // Pause while dragging, resume after
         if (!isPaused) {
           pause();
           resume();
@@ -125,7 +132,6 @@ export default function Home() {
     const cleanupArsenal = setupMarquee(arsenalRef, 9, setArsenalActive);
     const cleanupMedia = setupMarquee(mediaRef, 10, setMediaActive);
 
-    // Portfolio Auto-Step Logic
     let portfolioInterval: ReturnType<typeof setInterval>;
     const pel = portfolioRef.current;
     if (pel) {
@@ -196,7 +202,7 @@ export default function Home() {
         </motion.div>
       </section>
 
-      {/* 2. SOLUTIONS SECTION (White Background, Dark Circular Cards) */}
+      {/* 2. SOLUTIONS SECTION (White Background, Perfect Circles) */}
       <section id="solutions" className="py-24 bg-white border-y border-slate-200 overflow-hidden">
         <div className="max-w-7xl mx-auto px-6 mb-12">
           <div className="text-center">
@@ -204,12 +210,6 @@ export default function Home() {
             <h2 className="font-display text-headline-md md:text-headline-lg text-slate-900 mt-2">Our Solutions</h2>
           </div>
         </div>
-
-
-
-        
-
-
         <div className="relative max-w-7xl mx-auto px-4">
           <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 pb-8 scrollbar-hide scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {[
@@ -221,7 +221,7 @@ export default function Home() {
               { slug: "ai-and-it-solutions", title: "AI & IT Solutions", icon: "/ai.png", color: "bg-cyan-500" }
             ].map((sol, i) => (
               <Link key={i} href={`/solutions/${sol.slug}`} className="flex-shrink-0 w-[160px] md:w-[280px] snap-center">
-                {/* Strict aspect-square ensures perfect circles on all devices */}
+                {/* aspect-square guarantees a perfect circle on all devices */}
                 <div className="group flex flex-col items-center justify-center p-4 md:p-8 rounded-full bg-slate-900 border border-slate-800 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-900/20 transition-all duration-300 cursor-pointer aspect-square">
                   <img src={sol.icon} alt={sol.title} className="w-12 h-12 md:w-24 md:h-24 object-contain mb-2 md:mb-4 group-hover:scale-110 transition-transform duration-300 invert brightness-0" loading="lazy" />
                   <h3 className="text-center text-white font-bold text-[11px] md:text-lg font-display group-hover:text-blue-400 transition-colors leading-tight px-2 line-clamp-3">{sol.title}</h3>
@@ -230,17 +230,12 @@ export default function Home() {
             ))}
           </div>
         </div>
-        {/* Added >>> indicator for mobile */}
+        {/* Fixed >>> syntax and added indicator */}
         <div className="md:hidden text-center mt-4">
           <p className="text-slate-500 text-sm flex items-center justify-center gap-1.5 font-medium">
-            <span className="text-blue-600 text-lg">>>></span> Swipe to explore more solutions
+            <span className="text-blue-600 text-lg">{'>>>'}</span> Swipe to explore more solutions
           </p>
         </div>
-
-
-
-        
-        
       </section>
 
       {/* 3. PORTFOLIO SECTION (Dark Blue) */}
@@ -257,20 +252,15 @@ export default function Home() {
           
           <div className="w-[300px] md:w-[752px] mx-auto">
             <div className="overflow-hidden pb-16">
-              
-              
-
-
               <div ref={portfolioRef} className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-8 px-4 scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {[
                   { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence", image: "/Rulers.png" },
-                  { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Digital Publishing & News Website", image: "/18mk.png" },
+                  { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy", image: "/18mk.png" },
                   { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture", image: "/DPSR.png" },
                   { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform", image: "/Voters.png" },
                   { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal", image: "/Borderless.png" },
-                  // Duplicates for seamless infinite loop
                   { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence", image: "/Rulers.png" },
-                  { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Digital Publishing & News Website", image: "/18mk.png" },
+                  { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy", image: "/18mk.png" },
                   { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture", image: "/DPSR.png" },
                   { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform", image: "/Voters.png" },
                   { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal", image: "/Borderless.png" }
@@ -286,11 +276,6 @@ export default function Home() {
                   </a>
                 ))}
               </div>
-
-              
-
-
-              
             </div>
           </div>
           <div className="flex justify-center gap-2 mt-8">
@@ -299,7 +284,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. ARSENAL SECTION (White) - Fast Step & Glide + Live Dots */}
+      {/* 4. ARSENAL SECTION (White) */}
       <section className="py-24 bg-white border-y border-slate-200 overflow-hidden">
         <div className="text-center mb-16 px-6">
           <span className="inline-block px-4 py-1.5 rounded-full bg-blue-50 text-blue-600 text-label-sm font-bold uppercase tracking-wider mb-4">Our Arsenal</span>
@@ -323,7 +308,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Live Syncing Dots */}
         <div className="flex justify-center gap-2 mt-12">
           {[...Array(9)].map((_, i) => (
             <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${arsenalActive === i ? 'w-6 bg-slate-800' : 'w-3 bg-slate-300'}`}></div>
@@ -331,12 +315,13 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 5. MEDIA PARTNERS SECTION (Dark Blue) - Fast Step & Glide + Live Dots */}
+      {/* 5. MEDIA PARTNERS SECTION (Dark Blue) */}
       <section className="py-24 bg-slate-900 border-y border-slate-800 overflow-hidden text-white relative">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(59,130,246,0.1),transparent_50%)] pointer-events-none" />
         
         <div className="text-center mb-16 px-6 relative z-10">
           <span className="inline-block px-4 py-1.5 rounded-full bg-blue-500/20 text-blue-400 text-label-sm font-bold uppercase tracking-wider mb-4 border border-blue-500/30">Media Partners</span>
+          {/* Removed "Nigeria's" */}
           <h2 className="font-display text-headline-md md:text-headline-lg text-white mt-2">Featured In Top Outlets</h2>
           <p className="text-slate-400 mt-4 max-w-2xl mx-auto">We secure high-authority press coverage for our clients across the most trusted news platforms in the country.</p>
         </div>
@@ -359,7 +344,6 @@ export default function Home() {
           </div>
         </div>
 
-        {/* Live Syncing Dots */}
         <div className="flex justify-center gap-2 mt-12 relative z-10">
           {[...Array(10)].map((_, i) => (
             <div key={i} className={`h-1.5 rounded-full transition-all duration-300 ${mediaActive === i ? 'w-6 bg-white' : 'w-3 bg-white/30'}`}></div>
@@ -376,7 +360,7 @@ export default function Home() {
         </div>
 
         <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 px-6 md:px-12 pb-8 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-          {blogPosts.map((post, i) => (
+          {blogPosts.map((post: any, i: number) => (
             <article key={i} className="flex-shrink-0 w-[85vw] md:w-[calc(25%-1.125rem)] snap-center group rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden hover:border-blue-500/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
               <div className="h-32 bg-gradient-to-br from-blue-900 to-slate-900 flex items-center justify-center border-b border-slate-800">
                 <span className="text-4xl font-display font-bold text-white/20">0{i + 1}</span>
@@ -384,7 +368,7 @@ export default function Home() {
               <div className="p-6">
                 <div className="flex items-center gap-2 mb-3">
                   <span className="px-2 py-0.5 rounded-full bg-blue-500/20 text-blue-400 text-[10px] font-bold uppercase">{post.category}</span>
-                  <span className="text-[10px] text-slate-500">{post.readTime}</span>
+                  <span className="text-[10px] text-slate-500">{post.read_time}</span>
                 </div>
                 <h3 className="font-display text-headline-sm text-white mb-2 group-hover:text-blue-400 transition-colors line-clamp-2">{post.title}</h3>
                 <p className="text-body-sm text-slate-400 line-clamp-3 mb-4">{post.excerpt}</p>
