@@ -9,12 +9,12 @@ const getPartnerUrl = (filename: string) => {
     "/Tribune.png": "https://tribuneonlineng.com",
     "/Guardianng.png": "https://guardian.ng",
     "/nation.png": "https://thenationonlineng.net",
-    "/Vanguard.png": "https://guardian.ng", // Placeholder if specific URL unknown, usually guardian.ng or vanguardngr.com
+    "/Vanguard.png": "https://vanguardngr.com",
     "/BusinessDay.png": "https://businessday.ng",
     "/Independent.png": "https://independent.ng",
     "/The_Sun.png": "https://sunnewsonline.com",
     "/pmnews.png": "https://pmnewsnigeria.com",
-    "/Telegraph.png": "https://telegraph.com.ng"
+    "/Telegraph.png": "https://newtelegraphng.com"
   };
   return map[filename] || "#";
 };
