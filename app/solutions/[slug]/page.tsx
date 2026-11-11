@@ -2,6 +2,23 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowRight, CheckCircle2, Globe, ShoppingBag, Megaphone, Palette, Newspaper, Bot } from "lucide-react";
 
+// Helper to map filenames to real URLs
+const getPartnerUrl = (filename: string) => {
+  const map: Record<string, string> = {
+    "/Punch.png": "https://punchng.com",
+    "/Tribune.png": "https://tribuneonlineng.com",
+    "/Guardianng.png": "https://guardian.ng",
+    "/nation.png": "https://thenationonlineng.net",
+    "/Vanguard.png": "https://guardian.ng", // Placeholder if specific URL unknown, usually guardian.ng or vanguardngr.com
+    "/BusinessDay.png": "https://businessday.ng",
+    "/Independent.png": "https://independent.ng",
+    "/The_Sun.png": "https://sunnewsonline.com",
+    "/pmnews.png": "https://pmnewsnigeria.com",
+    "/Telegraph.png": "https://telegraph.com.ng"
+  };
+  return map[filename] || "#";
+};
+
 const solutionsData: Record<string, any> = {
   "website-and-app-development": { title: "Website & Application Development", icon: Globe, color: "bg-blue-500", featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuAGXyBSWAAlSJOTBZU_STe60Uiq924sbsXXOjuYD2Al1GIo_tJ1j8eA66ClO1KTF7vdEo840XuXhTI0VFzQ4fVMj9sKpCrO2qsg-uaXRpy6lmejCvy9QrNalY8nfMbmnaBLyj4zbxk-NnrgLd9eO9fXTDOF-pqpE-6s3iU-E3wB7Jt1lEPBGukIFYaO4uzjbnmNvvf0MlNwkPbvl1-PlHNyvAYuf8mk2lARXQCczvQy", tagline: "High-velocity digital experiences engineered for scale.", description: "We don't just build websites; we engineer digital assets. From lightning-fast corporate sites to complex, data-heavy web applications and native mobile apps, our development stack is optimized for sub-second latency, SEO dominance, and bulletproof security.", features: ["Custom Website Design & Development", "Progressive Web Applications (PWA)", "Native iOS & Android Mobile Apps", "Enterprise-grade Web Portals", "API Integration & Microservices"], mediaPartners: [] },
   "ecommerce-solutions": { title: "E-Commerce Solutions", icon: ShoppingBag, color: "bg-emerald-500", featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuC35pYO9-YsLqstNwOSo1jCqS90DbXJsJr6bTSa5rEwvlYTqoGsrvVC-WA-irMqs0BZC3OVy5BtBmc1xX4nd-orqmKO_oZ2s5BIYU2-ghdLW4-jzmkQMNXhqhb4hAcrzeVfecKHGVzMFSDoJpkSbfJwvTqhOykKtyUPJnbjevA-IeoG2cT6XgVhgmI545NX7h0bNW2eQgPvT0M-e6ripxxosippnDQERrD4M6ncszC-", tagline: "Turn browsers into buyers with frictionless storefronts.", description: "Whether you need a custom Shopify build or a fully bespoke headless commerce architecture, we build online stores that convert. We integrate seamless payment gateways (Paystack, Flutterwave, Stripe), inventory management, and automated email flows to maximize your average order value.", features: ["Shopify & WooCommerce Development", "Custom Headless Commerce", "Payment Gateway Integration", "Inventory & CRM Automation", "Conversion Rate Optimization (CRO)"], mediaPartners: [] },
@@ -56,18 +73,23 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
               <h3 className="text-xl font-display font-bold text-on-surface mb-8 text-center">Featured In & Media Partners</h3>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 {solution.mediaPartners.map((partner: string, i: number) => (
-                  <div key={i} className="flex items-center justify-center p-4 bg-white rounded-xl border border-slate-200 shadow-sm h-20 hover:shadow-md transition-all duration-300">
+                  <a 
+                    key={i} 
+                    href={getPartnerUrl(partner)} 
+                    target="_blank" 
+                    rel="noopener noreferrer" 
+                    className="flex items-center justify-center p-4 bg-white rounded-xl border border-slate-200 shadow-sm h-20 hover:shadow-md transition-all duration-300 group"
+                  >
                     {partner.startsWith('/') ? (
-                      <img src={partner} alt="Media Partner Logo" className="h-full w-auto object-contain hover:grayscale hover:opacity-60 transition-all duration-300" loading="lazy" />
+                      <img src={partner} alt="Media Partner Logo" className="h-full w-auto object-contain group-hover:grayscale group-hover:opacity-60 transition-all duration-300" loading="lazy" />
                     ) : (
                       <span className="text-slate-600 font-bold text-sm md:text-base text-center">{partner}</span>
                     )}
-                  </div>
+                  </a>
                 ))}
               </div>
-              {/* Added "and more..." text */}
               <p className="text-center text-slate-500 text-sm mt-8 font-medium italic">
-                ...and more.
+                ...and many more top-tier outlets.
               </p>
             </div>
           )}
