@@ -240,18 +240,23 @@ export default function Home() {
           
           <div className="w-[300px] md:w-[752px] mx-auto">
             <div className="overflow-hidden pb-16">
+              
+              
+
+
               <div ref={portfolioRef} className="flex overflow-x-auto scrollbar-hide snap-x snap-mandatory gap-8 px-4 scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
                 {[
                   { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence", image: "/Rulers.png" },
-                  { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy", image: "/18mk.png" },
+                  { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Digital Publishing & News Website", image: "/18mk.png" },
                   { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture", image: "/DPSR.png" },
-                  { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform", image: "/18mk.png" },
-                  { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal", image: "/18mk.png" },
+                  { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform", image: "/Voters.png" },
+                  { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal", image: "/Borderless.png" },
+                  // Duplicates for seamless infinite loop
                   { name: "Rulers World TV", url: "https://rulersworldtv.com/", desc: "Media Broadcasting & Digital Presence", image: "/Rulers.png" },
-                  { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Creative Media & Brand Strategy", image: "/18mk.png" },
+                  { name: "Eighteen Eleven Media", url: "https://eighteenelevenmedia.com/", desc: "Digital Publishing & News Website", image: "/18mk.png" },
                   { name: "DPSR International", url: "https://dpsrinternational.com/", desc: "Corporate Web Architecture", image: "/DPSR.png" },
-                  { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform", image: "/18mk.png" },
-                  { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal", image: "/18mk.png" }
+                  { name: "Voters Awareness Org", url: "https://votersawareness.org.ng/", desc: "Civic Tech & Information Platform", image: "/Voters.png" },
+                  { name: "Borderless Online NG", url: "https://borderlessonlineng.com/", desc: "Digital Publishing & News Portal", image: "/Borderless.png" }
                 ].map((site, i) => (
                   <a key={i} href={site.url} target="_blank" rel="noopener noreferrer" className="flex-shrink-0 w-[300px] md:w-[360px] snap-center group relative">
                     <div className="h-[220px] md:h-[260px] rounded-xl overflow-hidden bg-slate-800 border border-slate-700 shadow-sm">
@@ -264,6 +269,11 @@ export default function Home() {
                   </a>
                 ))}
               </div>
+
+              
+
+
+              
             </div>
           </div>
           <div className="flex justify-center gap-2 mt-8">
