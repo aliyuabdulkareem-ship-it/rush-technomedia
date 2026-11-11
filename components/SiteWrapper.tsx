@@ -198,12 +198,28 @@ export default function SiteWrapper({ children }: { children: React.ReactNode })
                 <a href="tel:+2348108031437" className="flex items-center gap-2 hover:text-primary-container transition-colors w-fit"><Phone className="w-4 h-4 flex-shrink-0" /> +234 810 803 1437</a>
                 <a href="mailto:hello@rushtechnomedia.com" className="flex items-center gap-2 hover:text-primary-container transition-colors w-fit"><Mail className="w-4 h-4 flex-shrink-0" /> hello@rushtechnomedia.com</a>
               </div>
+              
+              
+              
               <div className="flex items-center gap-3 pt-2">
                 <a href="#" className="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center hover:scale-110 transition-transform"><Facebook className="w-4 h-4" /></a>
-                <a href="#" className="w-9 h-9 rounded-full bg-sky-500 text-white flex items-center justify-center hover:scale-110 transition-transform"><Twitter className="w-4 h-4" /></a>
+                
+                {/* Updated X / Twitter Icon */}
+                <a href="#" className="w-9 h-9 rounded-full bg-black text-white flex items-center justify-center hover:scale-110 transition-transform">
+                  <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current">
+                    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+                  </svg>
+                </a>
+                
                 <a href="#" className="w-9 h-9 rounded-full bg-blue-700 text-white flex items-center justify-center hover:scale-110 transition-transform"><Linkedin className="w-4 h-4" /></a>
                 <a href="#" className="w-9 h-9 rounded-full bg-gradient-to-tr from-yellow-400 via-pink-500 to-purple-600 text-white flex items-center justify-center hover:scale-110 transition-transform"><Instagram className="w-4 h-4" /></a>
               </div>
+
+
+              
+
+
+              
             </div>
             <div className="md:col-span-2 space-y-3">
               <p className="text-label-md text-slate-900 font-bold">Solutions</p>
