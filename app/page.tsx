@@ -204,6 +204,12 @@ export default function Home() {
             <h2 className="font-display text-headline-md md:text-headline-lg text-slate-900 mt-2">Our Solutions</h2>
           </div>
         </div>
+
+
+
+        
+
+
         <div className="relative max-w-7xl mx-auto px-4">
           <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 md:gap-6 pb-8 scrollbar-hide scroll-smooth" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
             {[
@@ -214,16 +220,27 @@ export default function Home() {
               { slug: "media-publications", title: "Media Publications", icon: "/Publication.png", color: "bg-orange-500" },
               { slug: "ai-and-it-solutions", title: "AI & IT Solutions", icon: "/ai.png", color: "bg-cyan-500" }
             ].map((sol, i) => (
-              <Link key={i} href={`/solutions/${sol.slug}`} className="flex-shrink-0 w-[45%] md:w-[280px] snap-center">
-                <div className="group flex flex-col items-center justify-center p-6 md:p-8 rounded-full bg-slate-900 border border-slate-800 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-900/20 transition-all duration-300 cursor-pointer aspect-square">
-                  <img src={sol.icon} alt={sol.title} className="w-16 h-16 md:w-24 md:h-24 object-contain mb-4 group-hover:scale-110 transition-transform duration-300 invert brightness-0" loading="lazy" />
-                  <h3 className="text-center text-white font-bold text-sm md:text-lg font-display group-hover:text-blue-400 transition-colors leading-tight px-2">{sol.title}</h3>
+              <Link key={i} href={`/solutions/${sol.slug}`} className="flex-shrink-0 w-[160px] md:w-[280px] snap-center">
+                {/* Strict aspect-square ensures perfect circles on all devices */}
+                <div className="group flex flex-col items-center justify-center p-4 md:p-8 rounded-full bg-slate-900 border border-slate-800 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-900/20 transition-all duration-300 cursor-pointer aspect-square">
+                  <img src={sol.icon} alt={sol.title} className="w-12 h-12 md:w-24 md:h-24 object-contain mb-2 md:mb-4 group-hover:scale-110 transition-transform duration-300 invert brightness-0" loading="lazy" />
+                  <h3 className="text-center text-white font-bold text-[11px] md:text-lg font-display group-hover:text-blue-400 transition-colors leading-tight px-2 line-clamp-3">{sol.title}</h3>
                 </div>
               </Link>
             ))}
           </div>
         </div>
-        <div className="md:hidden text-center mt-4"><p className="text-slate-500 text-sm">Swipe to explore more solutions</p></div>
+        {/* Added >>> indicator for mobile */}
+        <div className="md:hidden text-center mt-4">
+          <p className="text-slate-500 text-sm flex items-center justify-center gap-1.5 font-medium">
+            <span className="text-blue-600 text-lg">>>></span> Swipe to explore more solutions
+          </p>
+        </div>
+
+
+
+        
+        
       </section>
 
       {/* 3. PORTFOLIO SECTION (Dark Blue) */}
@@ -320,7 +337,7 @@ export default function Home() {
         
         <div className="text-center mb-16 px-6 relative z-10">
           <span className="inline-block px-4 py-1.5 rounded-full bg-blue-500/20 text-blue-400 text-label-sm font-bold uppercase tracking-wider mb-4 border border-blue-500/30">Media Partners</span>
-          <h2 className="font-display text-headline-md md:text-headline-lg text-white mt-2">Featured In Nigeria's Top Outlets</h2>
+          <h2 className="font-display text-headline-md md:text-headline-lg text-white mt-2">Featured In Top Outlets</h2>
           <p className="text-slate-400 mt-4 max-w-2xl mx-auto">We secure high-authority press coverage for our clients across the most trusted news platforms in the country.</p>
         </div>
         
