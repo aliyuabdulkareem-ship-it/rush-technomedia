@@ -14,6 +14,11 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
+// MUST be outside the component to prevent constant re-rendering and focus loss
+const quillFormats = [
+  'header', 'bold', 'italic', 'underline', 'strike', 'list', 'bullet', 'link', 'image'
+];
+
 export default function AdminBlog() {
   const [user, setUser] = useState<any>(null);
   const [email, setEmail] = useState("");
@@ -40,6 +45,49 @@ export default function AdminBlog() {
   const [altText, setAltText] = useState("");
 
   const router = useRouter();
+
+  // Custom Image Handler for Quill Editor
+  const imageHandler = () => {
+    const input = document.createElement('input');
+    input.setAttribute('type', 'file');
+    input.setAttribute('accept', 'image/*');
+    input.click();
+    input.onchange = async () => {
+      const file = input.files?.[0];
+      if (file) {
+        setLoading(true);
+        try {
+          const fileExt = file.name.split('.').pop();
+          const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+          const { error } = await supabase.storage.from('blog-images').upload(fileName, file);
+          if (error) throw error;
+          
+          const { data: { publicUrl } } = supabase.storage.from('blog-images').getPublicUrl(fileName);
+          
+          const quill = quillRef.current?.getEditor();
+          const range = quill?.getSelection();
+          quill?.insertEmbed(range?.index || 0, 'image', publicUrl);
+        } catch (error) {
+          alert('Failed to upload image to Supabase Storage.');
+        }
+        setLoading(false);
+      }
+    };
+  };
+
+  // MUST be inside component but stable, or defined outside. We define it here using the stable imageHandler
+  const quillModules = {
+    toolbar: {
+      container: [
+        [{ 'header': [1, 2, 3, false] }],
+        ['bold', 'italic', 'underline', 'strike'],
+        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        ['link', 'image'],
+        ['clean']
+      ],
+      handlers: { image: imageHandler }
+    }
+  };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -68,55 +116,6 @@ export default function AdminBlog() {
     router.refresh();
   };
 
-  const uploadImage = async (file: File) => {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-    const { error } = await supabase.storage.from('blog-images').upload(fileName, file);
-    if (error) throw error;
-    const { data: { publicUrl } } = supabase.storage.from('blog-images').getPublicUrl(fileName);
-    return publicUrl;
-  };
-
-  // Custom Image Handler for Quill Editor
-  const imageHandler = () => {
-    const input = document.createElement('input');
-    input.setAttribute('type', 'file');
-    input.setAttribute('accept', 'image/*');
-    input.click();
-    input.onchange = async () => {
-      const file = input.files?.[0];
-      if (file) {
-        setLoading(true);
-        try {
-          const url = await uploadImage(file);
-          const quill = quillRef.current?.getEditor();
-          const range = quill?.getSelection();
-          quill?.insertEmbed(range?.index || 0, 'image', url);
-        } catch (error) {
-          alert('Failed to upload image to Supabase Storage.');
-        }
-        setLoading(false);
-      }
-    };
-  };
-
-  const quillModules = {
-    toolbar: {
-      container: [
-        [{ 'header': [1, 2, 3, false] }],
-        ['bold', 'italic', 'underline', 'strike'],
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-        ['link', 'image'],
-        ['clean']
-      ],
-      handlers: { image: imageHandler }
-    }
-  };
-
-  const quillFormats = [
-    'header', 'bold', 'italic', 'underline', 'strike', 'list', 'bullet', 'link', 'image'
-  ];
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -124,7 +123,12 @@ export default function AdminBlog() {
     let finalFeaturedImageUrl = featuredImageUrl;
     if (featuredImage) {
       try {
-        finalFeaturedImageUrl = await uploadImage(featuredImage);
+        const fileExt = featuredImage.name.split('.').pop();
+        const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+        const { error } = await supabase.storage.from('blog-images').upload(fileName, featuredImage);
+        if (error) throw error;
+        const { data: { publicUrl } } = supabase.storage.from('blog-images').getPublicUrl(fileName);
+        finalFeaturedImageUrl = publicUrl;
       } catch (error) {
         alert("Failed to upload featured image.");
         setLoading(false);
@@ -200,23 +204,25 @@ export default function AdminBlog() {
       {/* FORCE QUILL EDITOR VISIBILITY & EDITABILITY */}
       <style>{`
         .ql-editor {
-          color: #0f172a !important; /* slate-900: Forces text to be dark and visible */
+          color: #0f172a !important;
           background-color: white !important;
           min-height: 200px !important;
           font-size: 16px !important;
         }
         .ql-editor.ql-blank::before {
-          color: #94a3b8 !important; /* slate-400: Visible placeholder text */
+          color: #94a3b8 !important;
           font-style: normal !important;
         }
         .ql-toolbar.ql-snow {
           border-top-left-radius: 0.5rem;
           border-top-right-radius: 0.5rem;
           background-color: #f8fafc;
+          border-color: #cbd5e1 !important;
         }
         .ql-container.ql-snow {
           border-bottom-left-radius: 0.5rem;
           border-bottom-right-radius: 0.5rem;
+          border-color: #cbd5e1 !important;
         }
       `}</style>
 
@@ -228,8 +234,8 @@ export default function AdminBlog() {
           </button>
         </div>
 
-        {/* Editor Form */}
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-slate-200 mb-8 overflow-hidden">
+        {/* Editor Form - REMOVED overflow-hidden so it doesn't clip the Quill toolbar */}
+        <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-sm border border-slate-200 mb-8">
           <div className="p-6 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
             <h2 className="text-lg font-bold text-slate-900">{editId ? "Edit Post" : "Create New Post"}</h2>
             {editId && <button type="button" onClick={resetForm} className="text-sm text-slate-500 hover:text-slate-800">Cancel Edit</button>}
