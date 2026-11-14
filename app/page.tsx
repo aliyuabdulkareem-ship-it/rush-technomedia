@@ -1,10 +1,10 @@
 "use client";
-   import Link from "next/link";
-   import Image from "next/image"; // Add this line
+
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Bolt, PlayCircle, Star, ShieldCheck, Clock, Handshake, ExternalLink, Plus, Minus, Quote } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 import { createClient } from "@supabase/supabase-js";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
@@ -51,7 +51,6 @@ export default function Home() {
   const arsenalRef = useRef<HTMLDivElement>(null);
   const mediaRef = useRef<HTMLDivElement>(null);
 
-  // Fetch blog posts from Supabase safely in the background
   useEffect(() => {
     const fetchPosts = async () => {
       const { data, error } = await supabase.from("blog_posts").select("*").order("created_at", { ascending: false });
@@ -222,7 +221,6 @@ export default function Home() {
               { slug: "ai-and-it-solutions", title: "AI & IT Solutions", icon: "/ai.png", color: "bg-cyan-500" }
             ].map((sol, i) => (
               <Link key={i} href={`/solutions/${sol.slug}`} className="flex-shrink-0 w-[160px] md:w-[280px] snap-center">
-                {/* aspect-square guarantees a perfect circle on all devices */}
                 <div className="group flex flex-col items-center justify-center p-4 md:p-8 rounded-full bg-slate-900 border border-slate-800 hover:border-blue-500/50 hover:shadow-xl hover:shadow-blue-900/20 transition-all duration-300 cursor-pointer aspect-square">
                   <img src={sol.icon} alt={sol.title} className="w-12 h-12 md:w-24 md:h-24 object-contain mb-2 md:mb-4 group-hover:scale-110 transition-transform duration-300 invert brightness-0" loading="lazy" />
                   <h3 className="text-center text-white font-bold text-[11px] md:text-lg font-display group-hover:text-blue-400 transition-colors leading-tight px-2 line-clamp-3">{sol.title}</h3>
@@ -231,7 +229,6 @@ export default function Home() {
             ))}
           </div>
         </div>
-        {/* Fixed >>> syntax and added indicator */}
         <div className="md:hidden text-center mt-4">
           <p className="text-slate-500 text-sm flex items-center justify-center gap-1.5 font-medium">
             <span className="text-blue-600 text-lg">{'>>>'}</span> Swipe to explore more solutions
@@ -322,7 +319,6 @@ export default function Home() {
         
         <div className="text-center mb-16 px-6 relative z-10">
           <span className="inline-block px-4 py-1.5 rounded-full bg-blue-500/20 text-blue-400 text-label-sm font-bold uppercase tracking-wider mb-4 border border-blue-500/30">Media Partners</span>
-          {/* Removed "Nigeria's" */}
           <h2 className="font-display text-headline-md md:text-headline-lg text-white mt-2">Featured In Top Outlets</h2>
           <p className="text-slate-400 mt-4 max-w-2xl mx-auto">We secure high-authority press coverage for our clients across the most trusted news platforms in the country.</p>
         </div>
@@ -361,15 +357,9 @@ export default function Home() {
         </div>
 
         <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 px-6 md:px-12 pb-8 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
-         
-          
-          
-                  {blogPosts.map((post: any, i: number) => (
+          {blogPosts.map((post: any, i: number) => (
             <article key={i} className="flex-shrink-0 w-[85vw] md:w-[calc(25%-1.125rem)] snap-center group rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden hover:border-blue-500/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              
-               
-               
-              {/* Featured Image Display - Optimized for Speed */}
+              {/* OPTIMIZED IMAGE: Automatically compresses and serves perfect size */}
               {post.featured_image ? (
                 <div className="h-48 relative overflow-hidden">
                   <Image 
@@ -381,10 +371,6 @@ export default function Home() {
                   />
                 </div>
               ) : (
-
-               
-
-               
                 <div className="h-32 bg-gradient-to-br from-blue-900 to-slate-900 flex items-center justify-center border-b border-slate-800">
                   <span className="text-4xl font-display font-bold text-white/20">0{i + 1}</span>
                 </div>
@@ -403,9 +389,6 @@ export default function Home() {
               </div>
             </article>
           ))}
-
-
-          
         </div>
       </section>
 
