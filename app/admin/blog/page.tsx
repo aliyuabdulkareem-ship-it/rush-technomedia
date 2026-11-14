@@ -17,6 +17,35 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const CATEGORIES = ["Tech", "SEO", "AI", "DIY", "Business", "Digital Strategy", "Case Study", "Media"];
 const TODAY = new Date().toISOString().split("T")[0];
 
+// AUTO-COMPRESS: shrinks any image to max 1920px wide, ~85% quality, WebP (falls back to JPEG)
+const compressImage = (file: File, maxWidth = 1920, quality = 0.85): Promise<File> => {
+  return new Promise((resolve) => {
+    if (file.size < 300 * 1024) { resolve(file); return; } // already small, skip
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = () => {
+      let w = img.naturalWidth, h = img.naturalHeight;
+      if (w > maxWidth) { h = Math.round((h * maxWidth) / w); w = maxWidth; }
+      const canvas = document.createElement("canvas");
+      canvas.width = w; canvas.height = h;
+      const ctx = canvas.getContext("2d")!;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(img, 0, 0, w, h);
+      URL.revokeObjectURL(url);
+      const finish = (blob: Blob | null, mime: string, ext: string) => {
+        if (!blob) { resolve(file); return; }
+        resolve(new File([blob], file.name.replace(/\.[^.]+$/, "") + "." + ext, { type: mime }));
+      };
+      canvas.toBlob((b) => {
+        if (b && b.type === "image/webp") finish(b, "image/webp", "webp");
+        else canvas.toBlob((b2) => finish(b2, "image/jpeg", "jpg"), "image/jpeg", quality);
+      }, "image/webp", quality);
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
+    img.src = url;
+  });
+};
+
 export default function AdminBlog() {
   const [user, setUser] = useState<any>(null);
   const [email, setEmail] = useState("");
@@ -61,10 +90,10 @@ export default function AdminBlog() {
   };
 
   const fetchMedia = async () => {
-    const { data } = await supabase.storage.from("blog-images").list();
+    const { data, error } = await supabase.storage.from("blog-images").list();
+    if (error) { console.error("Media library error:", error.message); return; }
     if (data) {
-      const urls = data.map((file: any) => supabase.storage.from("blog-images").getPublicUrl(file.name).data.publicUrl);
-      setMediaFiles(urls);
+      setMediaFiles(data.map((f: any) => supabase.storage.from("blog-images").getPublicUrl(f.name).data.publicUrl));
     }
   };
 
@@ -81,31 +110,46 @@ export default function AdminBlog() {
     setUser(null);
   };
 
+  // Uploads a COMPRESSED version of any image
   const uploadImageToStorage = async (file: File) => {
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-    const { error } = await supabase.storage.from('blog-images').upload(fileName, file);
+    const compressed = await compressImage(file, 1920, 0.85);
+    const ext = compressed.name.split(".").pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+    const { error } = await supabase.storage.from("blog-images").upload(fileName, compressed, { contentType: compressed.type });
     if (error) throw error;
-    const { data: { publicUrl } } = supabase.storage.from('blog-images').getPublicUrl(fileName);
+    const { data } = supabase.storage.from("blog-images").getPublicUrl(fileName);
     fetchMedia();
-    return publicUrl;
+    return data.publicUrl;
   };
 
   const insertImageToEditor = (url: string) => {
     const quill = quillRef.current?.getEditor();
     const range = quill?.getSelection();
-    quill?.insertEmbed(range?.index || 0, 'image', url);
+    quill?.insertEmbed(range?.index || 0, "image", url);
     setIsMediaModalOpen(false);
+  };
+
+  const handleModalUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setLoading(true);
+    try {
+      const url = await uploadImageToStorage(file);
+      insertImageToEditor(url);
+    } catch (err: any) {
+      alert("Upload failed: " + (err?.message || "unknown error"));
+    }
+    setLoading(false);
   };
 
   const quillModules = useMemo(() => ({
     toolbar: {
       container: [
-        [{ 'header': [1, 2, 3, false] }],
-        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
-        ['link', 'image'],
-        ['clean']
+        [{ "header": [1, 2, 3, false] }],
+        ["bold", "italic", "underline", "strike", "blockquote"],
+        [{ "list": "ordered" }, { "list": "bullet" }],
+        ["link", "image"],
+        ["clean"]
       ],
       handlers: { image: () => openMediaRef.current() }
     }
@@ -113,31 +157,26 @@ export default function AdminBlog() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
-    // Extra safety check for required fields
     if (!title || !excerpt || !category || !readTime || !date) {
       alert("Please fill in all required fields marked with *");
       return;
     }
-
     setLoading(true);
     let finalImgUrl = featuredImageUrl;
     if (featuredImage) {
       try {
         finalImgUrl = await uploadImageToStorage(featuredImage);
-      } catch (err) {
-        alert("Failed to upload featured image.");
+      } catch (err: any) {
+        alert("Failed to upload featured image: " + (err?.message || "unknown error"));
         setLoading(false);
         return;
       }
     }
-
     const postData = {
       title, excerpt, content, category, read_time: readTime, date,
       featured_image: finalImgUrl,
       meta_description: metaDescription, keyphrase, alt_text: altText
     };
-
     let error;
     if (editId) {
       const res = await supabase.from("blog_posts").update(postData).eq("id", editId);
@@ -146,10 +185,8 @@ export default function AdminBlog() {
       const res = await supabase.from("blog_posts").insert([postData]);
       error = res.error;
     }
-
-    if (error) {
-      alert("Error saving post: " + error.message);
-    } else {
+    if (error) alert("Error saving post: " + error.message);
+    else {
       alert(editId ? "Post updated successfully!" : "Post published successfully!");
       resetForm();
       setView("dashboard");
@@ -198,7 +235,6 @@ export default function AdminBlog() {
     <div className="min-h-screen bg-slate-100 flex">
       <AdminChrome />
 
-      {/* FORCED BLACK TEXT IN EDITOR */}
       <style>{`
         .ql-editor { color: #000000 !important; min-height: 300px !important; font-size: 16px !important; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important; }
         .ql-editor * { color: #000000 !important; }
@@ -207,26 +243,25 @@ export default function AdminBlog() {
         .ql-container.ql-snow { border: 1px solid #cbd5e1 !important; border-radius: 0 0 8px 8px !important; }
       `}</style>
 
-      {/* FULL WORDPRESS-STYLE SIDEBAR */}
       <aside className="w-64 bg-slate-900 text-slate-300 fixed left-0 top-0 bottom-0 flex flex-col p-4 z-20">
         <div className="flex items-center gap-2 text-white font-bold text-xl mb-8 px-2">
           <LayoutDashboard className="w-6 h-6 text-blue-500" /> Rush CMS
         </div>
         <nav className="space-y-1 flex-1">
-          <button onClick={() => setView("dashboard")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${view === 'dashboard' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`}>
+          <button onClick={() => setView("dashboard")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium ${view === "dashboard" ? "bg-blue-600 text-white" : "text-slate-300 hover:bg-slate-800 hover:text-white"}`}>
             <LayoutDashboard className="w-4 h-4" /> Dashboard
           </button>
-          <button onClick={() => setView("dashboard")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${view === 'dashboard' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`}>
+          <button onClick={() => setView("dashboard")} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white">
             <FileText className="w-4 h-4" /> All Posts
           </button>
-          <button onClick={() => { resetForm(); setView("editor"); }} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${view === 'editor' && !editId ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`}>
+          <button onClick={() => { resetForm(); setView("editor"); }} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium ${view === "editor" && !editId ? "bg-blue-600 text-white" : "text-slate-300 hover:bg-slate-800 hover:text-white"}`}>
             <Plus className="w-4 h-4" /> Add New Post
           </button>
-          <button onClick={() => setView("media")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${view === 'media' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`}>
+          <button onClick={() => setView("media")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium ${view === "media" ? "bg-blue-600 text-white" : "text-slate-300 hover:bg-slate-800 hover:text-white"}`}>
             <ImageIcon className="w-4 h-4" /> Media Library
           </button>
         </nav>
-        <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-400 hover:bg-slate-800 hover:text-red-300 mt-auto transition-colors">
+        <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-400 hover:bg-slate-800 hover:text-red-300 mt-auto">
           <LogOut className="w-4 h-4" /> Logout
         </button>
       </aside>
@@ -234,14 +269,14 @@ export default function AdminBlog() {
       <main className="ml-64 flex-1 p-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-slate-900">
-            {view === 'dashboard' ? 'Dashboard' : view === 'editor' ? (editId ? 'Edit Post' : 'Add New Post') : 'Media Library'}
+            {view === "dashboard" ? "Dashboard" : view === "editor" ? (editId ? "Edit Post" : "Add New Post") : "Media Library"}
           </h1>
           <a href="/" target="_blank" className="flex items-center gap-2 text-sm text-blue-600 hover:underline font-medium">
             <Eye className="w-4 h-4" /> View Live Site
           </a>
         </div>
 
-        {view === 'dashboard' && (
+        {view === "dashboard" && (
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="p-6 border-b border-slate-200 flex justify-between items-center">
               <h2 className="text-lg font-bold text-slate-900">All Posts ({posts.length})</h2>
@@ -270,9 +305,15 @@ export default function AdminBlog() {
           </div>
         )}
 
-        {view === 'media' && (
+        {view === "media" && (
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-            <h2 className="text-lg font-bold text-slate-900 mb-4">Media Library</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-lg font-bold text-slate-900">Media Library</h2>
+              <label className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 flex items-center gap-2">
+                <Upload className="w-4 h-4" /> Upload New
+                <input type="file" accept="image/*" onChange={handleModalUpload} className="hidden" />
+              </label>
+            </div>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {mediaFiles.map((url, i) => (
                 <div key={i} className="relative group aspect-square bg-slate-100 rounded-lg overflow-hidden border border-slate-200">
@@ -282,12 +323,12 @@ export default function AdminBlog() {
                   </button>
                 </div>
               ))}
-              {mediaFiles.length === 0 && <p className="col-span-full text-center text-slate-500 py-12">No images uploaded yet. Use the "Add New Post" image button to upload.</p>}
+              {mediaFiles.length === 0 && <p className="col-span-full text-center text-slate-500 py-12">No images uploaded yet.</p>}
             </div>
           </div>
         )}
 
-        {view === 'editor' && (
+        {view === "editor" && (
           <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
@@ -297,7 +338,6 @@ export default function AdminBlog() {
                   <ReactQuill ref={quillRef} theme="snow" value={content} onChange={setContent} modules={quillModules} />
                 </div>
               </div>
-
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                 <label className="block text-sm font-semibold text-slate-700 mb-1">Excerpt <span className="text-red-500">*</span></label>
                 <textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} required rows={3} className="w-full p-3 border border-slate-200 rounded-lg outline-none focus:border-blue-500 text-sm" placeholder="Short summary for the blog card..." />
@@ -322,7 +362,7 @@ export default function AdminBlog() {
                     <label className="block text-xs font-semibold text-slate-600 mb-1">Read Time <span className="text-red-500">*</span></label>
                     <input type="text" value={readTime} onChange={(e) => setReadTime(e.target.value)} required placeholder="e.g., 5 min read" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
                   </div>
-                  <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-bold hover:bg-blue-700 flex items-center justify-center gap-2 transition-colors">
+                  <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-bold hover:bg-blue-700 flex items-center justify-center gap-2">
                     <Save className="w-4 h-4" /> {loading ? "Saving..." : (editId ? "Update Post" : "Publish Post")}
                   </button>
                 </div>
@@ -331,8 +371,8 @@ export default function AdminBlog() {
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
                 <h3 className="font-bold text-slate-900 mb-4 border-b border-slate-100 pb-2">Featured Image</h3>
                 {featuredImageUrl && <img src={featuredImageUrl} className="w-full h-40 object-cover rounded-lg mb-3 border border-slate-200" />}
-                <label className="block w-full cursor-pointer bg-slate-50 border border-dashed border-slate-300 text-slate-600 py-3 rounded-lg text-sm font-medium hover:bg-slate-100 text-center transition-colors">
-                  <Upload className="w-4 h-4 inline mr-1" /> {featuredImage ? featuredImage.name : "Choose Image"}
+                <label className="block w-full cursor-pointer bg-slate-50 border border-dashed border-slate-300 text-slate-600 py-3 rounded-lg text-sm font-medium hover:bg-slate-100 text-center">
+                  <Upload className="w-4 h-4 inline mr-1" /> {featuredImage ? featuredImage.name : "Choose Image (auto-compressed)"}
                   <input type="file" accept="image/*" onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) { setFeaturedImage(file); setFeaturedImageUrl(URL.createObjectURL(file)); }
@@ -346,12 +386,11 @@ export default function AdminBlog() {
                   <input type="text" value={keyphrase} onChange={(e) => setKeyphrase(e.target.value)} placeholder="Focus Keyphrase" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
                   <textarea value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} rows={3} placeholder="Meta Description" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
                   <input type="text" value={altText} onChange={(e) => setAltText(e.target.value)} placeholder="Featured Image Alt Text" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
-                  
                   <div className="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
                     <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Google Search Preview</p>
-                    <p className="text-blue-700 text-lg font-medium truncate hover:underline cursor-pointer">{title || "Your Post Title Will Appear Here"}</p>
+                    <p className="text-blue-700 text-lg font-medium truncate">{title || "Your Post Title Will Appear Here"}</p>
                     <p className="text-green-700 text-xs truncate">rushtechnomedia.com/blog/...</p>
-                    <p className="text-slate-600 text-sm mt-1 line-clamp-2">{metaDescription || "Your meta description will appear here in search results..."}</p>
+                    <p className="text-slate-600 text-sm mt-1 line-clamp-2">{metaDescription || "Your meta description will appear here..."}</p>
                   </div>
                 </div>
               </div>
@@ -364,8 +403,14 @@ export default function AdminBlog() {
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[80vh] flex flex-col">
             <div className="p-4 border-b border-slate-200 flex justify-between items-center">
-              <h3 className="font-bold text-lg">Select Image from Library</h3>
-              <button onClick={() => setIsMediaModalOpen(false)} className="text-slate-500 hover:text-slate-800 text-2xl">&times;</button>
+              <h3 className="font-bold text-lg">Select Image</h3>
+              <div className="flex items-center gap-3">
+                <label className="cursor-pointer bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-blue-700 flex items-center gap-2">
+                  <Upload className="w-4 h-4" /> Upload New
+                  <input type="file" accept="image/*" onChange={handleModalUpload} className="hidden" />
+                </label>
+                <button onClick={() => setIsMediaModalOpen(false)} className="text-slate-500 hover:text-slate-800 text-2xl">&times;</button>
+              </div>
             </div>
             <div className="p-4 overflow-y-auto flex-1">
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
@@ -375,7 +420,7 @@ export default function AdminBlog() {
                   </div>
                 ))}
               </div>
-              {mediaFiles.length === 0 && <p className="text-center text-slate-500 py-12">No images yet. Upload via the Featured Image box.</p>}
+              {mediaFiles.length === 0 && <p className="text-center text-slate-500 py-12">No images yet. Use "Upload New" above.</p>}
             </div>
           </div>
         </div>
