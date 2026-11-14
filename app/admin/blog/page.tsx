@@ -98,7 +98,6 @@ export default function AdminBlog() {
     setIsMediaModalOpen(false);
   };
 
-  // STABLE modules (useMemo) so the editor never remounts/disappears
   const quillModules = useMemo(() => ({
     toolbar: {
       container: [
@@ -114,9 +113,24 @@ export default function AdminBlog() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Extra safety check for required fields
+    if (!title || !excerpt || !category || !readTime || !date) {
+      alert("Please fill in all required fields marked with *");
+      return;
+    }
+
     setLoading(true);
     let finalImgUrl = featuredImageUrl;
-    if (featuredImage) finalImgUrl = await uploadImageToStorage(featuredImage);
+    if (featuredImage) {
+      try {
+        finalImgUrl = await uploadImageToStorage(featuredImage);
+      } catch (err) {
+        alert("Failed to upload featured image.");
+        setLoading(false);
+        return;
+      }
+    }
 
     const postData = {
       title, excerpt, content, category, read_time: readTime, date,
@@ -133,9 +147,10 @@ export default function AdminBlog() {
       error = res.error;
     }
 
-    if (error) alert("Error: " + error.message);
-    else {
-      alert(editId ? "Updated!" : "Published!");
+    if (error) {
+      alert("Error saving post: " + error.message);
+    } else {
+      alert(editId ? "Post updated successfully!" : "Post published successfully!");
       resetForm();
       setView("dashboard");
       fetchPosts();
@@ -183,29 +198,35 @@ export default function AdminBlog() {
     <div className="min-h-screen bg-slate-100 flex">
       <AdminChrome />
 
+      {/* FORCED BLACK TEXT IN EDITOR */}
       <style>{`
-        .ql-editor { color: #1e293b !important; min-height: 300px !important; font-size: 16px !important; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important; }
+        .ql-editor { color: #000000 !important; min-height: 300px !important; font-size: 16px !important; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important; }
+        .ql-editor * { color: #000000 !important; }
         .ql-editor.ql-blank::before { color: #94a3b8 !important; font-style: normal !important; }
         .ql-toolbar.ql-snow { border: 1px solid #cbd5e1 !important; border-bottom: none !important; border-radius: 8px 8px 0 0 !important; background: #f8fafc !important; }
         .ql-container.ql-snow { border: 1px solid #cbd5e1 !important; border-radius: 0 0 8px 8px !important; }
       `}</style>
 
+      {/* FULL WORDPRESS-STYLE SIDEBAR */}
       <aside className="w-64 bg-slate-900 text-slate-300 fixed left-0 top-0 bottom-0 flex flex-col p-4 z-20">
         <div className="flex items-center gap-2 text-white font-bold text-xl mb-8 px-2">
           <LayoutDashboard className="w-6 h-6 text-blue-500" /> Rush CMS
         </div>
         <nav className="space-y-1 flex-1">
-          <button onClick={() => setView("dashboard")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium ${view === 'dashboard' ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`}>
+          <button onClick={() => setView("dashboard")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${view === 'dashboard' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`}>
             <LayoutDashboard className="w-4 h-4" /> Dashboard
           </button>
-          <button onClick={() => { resetForm(); setView("editor"); }} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium ${view === 'editor' && !editId ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`}>
+          <button onClick={() => setView("dashboard")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${view === 'dashboard' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`}>
+            <FileText className="w-4 h-4" /> All Posts
+          </button>
+          <button onClick={() => { resetForm(); setView("editor"); }} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${view === 'editor' && !editId ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`}>
             <Plus className="w-4 h-4" /> Add New Post
           </button>
-          <button onClick={() => setView("media")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium ${view === 'media' ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`}>
+          <button onClick={() => setView("media")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${view === 'media' ? 'bg-blue-600 text-white' : 'text-slate-300 hover:bg-slate-800 hover:text-white'}`}>
             <ImageIcon className="w-4 h-4" /> Media Library
           </button>
         </nav>
-        <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-400 hover:bg-slate-800 mt-auto">
+        <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-400 hover:bg-slate-800 hover:text-red-300 mt-auto transition-colors">
           <LogOut className="w-4 h-4" /> Logout
         </button>
       </aside>
@@ -223,7 +244,7 @@ export default function AdminBlog() {
         {view === 'dashboard' && (
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="p-6 border-b border-slate-200 flex justify-between items-center">
-              <h2 className="text-lg font-bold text-slate-900">Recent Posts ({posts.length})</h2>
+              <h2 className="text-lg font-bold text-slate-900">All Posts ({posts.length})</h2>
               <button onClick={() => { resetForm(); setView("editor"); }} className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 flex items-center gap-2">
                 <Plus className="w-4 h-4" /> Add New
               </button>
@@ -244,12 +265,14 @@ export default function AdminBlog() {
                   </div>
                 </div>
               ))}
+              {posts.length === 0 && <p className="p-8 text-center text-slate-500">No posts yet. Click "Add New" to create one!</p>}
             </div>
           </div>
         )}
 
         {view === 'media' && (
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+            <h2 className="text-lg font-bold text-slate-900 mb-4">Media Library</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {mediaFiles.map((url, i) => (
                 <div key={i} className="relative group aspect-square bg-slate-100 rounded-lg overflow-hidden border border-slate-200">
@@ -259,7 +282,7 @@ export default function AdminBlog() {
                   </button>
                 </div>
               ))}
-              {mediaFiles.length === 0 && <p className="col-span-full text-center text-slate-500 py-12">No images uploaded yet.</p>}
+              {mediaFiles.length === 0 && <p className="col-span-full text-center text-slate-500 py-12">No images uploaded yet. Use the "Add New Post" image button to upload.</p>}
             </div>
           </div>
         )}
@@ -268,13 +291,15 @@ export default function AdminBlog() {
           <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="Add title" className="w-full text-3xl font-bold text-slate-900 placeholder:text-slate-300 outline-none mb-4" />
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Post Title <span className="text-red-500">*</span></label>
+                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="Add title" className="w-full text-2xl font-bold text-slate-900 placeholder:text-slate-300 outline-none mb-4 p-2 -ml-2 rounded focus:bg-slate-50" />
                 <div className="border border-slate-200 rounded-lg bg-white">
                   <ReactQuill ref={quillRef} theme="snow" value={content} onChange={setContent} modules={quillModules} />
                 </div>
               </div>
+
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Search className="w-4 h-4" /> Excerpt</h3>
+                <label className="block text-sm font-semibold text-slate-700 mb-1">Excerpt <span className="text-red-500">*</span></label>
                 <textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} required rows={3} className="w-full p-3 border border-slate-200 rounded-lg outline-none focus:border-blue-500 text-sm" placeholder="Short summary for the blog card..." />
               </div>
             </div>
@@ -284,21 +309,21 @@ export default function AdminBlog() {
                 <h3 className="font-bold text-slate-900 mb-4 border-b border-slate-100 pb-2">Publish</h3>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-xs font-semibold text-slate-600 mb-1 flex items-center gap-1"><Calendar className="w-3 h-3" /> Date</label>
+                    <label className="block text-xs font-semibold text-slate-600 mb-1 flex items-center gap-1"><Calendar className="w-3 h-3" /> Date <span className="text-red-500">*</span></label>
                     <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-600 mb-1 flex items-center gap-1"><Tag className="w-3 h-3" /> Category</label>
-                    <select value={category} onChange={(e) => setCategory(e.target.value)} className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500 bg-white">
+                    <label className="block text-xs font-semibold text-slate-600 mb-1 flex items-center gap-1"><Tag className="w-3 h-3" /> Category <span className="text-red-500">*</span></label>
+                    <select value={category} onChange={(e) => setCategory(e.target.value)} required className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500 bg-white">
                       {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold text-slate-600 mb-1">Read Time</label>
-                    <input type="text" value={readTime} onChange={(e) => setReadTime(e.target.value)} required className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
+                    <label className="block text-xs font-semibold text-slate-600 mb-1">Read Time <span className="text-red-500">*</span></label>
+                    <input type="text" value={readTime} onChange={(e) => setReadTime(e.target.value)} required placeholder="e.g., 5 min read" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
                   </div>
-                  <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white py-2 rounded-lg font-bold hover:bg-blue-700 flex items-center justify-center gap-2">
-                    <Save className="w-4 h-4" /> {editId ? "Update" : "Publish"}
+                  <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-bold hover:bg-blue-700 flex items-center justify-center gap-2 transition-colors">
+                    <Save className="w-4 h-4" /> {loading ? "Saving..." : (editId ? "Update Post" : "Publish Post")}
                   </button>
                 </div>
               </div>
@@ -306,8 +331,8 @@ export default function AdminBlog() {
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
                 <h3 className="font-bold text-slate-900 mb-4 border-b border-slate-100 pb-2">Featured Image</h3>
                 {featuredImageUrl && <img src={featuredImageUrl} className="w-full h-40 object-cover rounded-lg mb-3 border border-slate-200" />}
-                <label className="block w-full cursor-pointer bg-slate-50 border border-dashed border-slate-300 text-slate-600 py-3 rounded-lg text-sm font-medium hover:bg-slate-100 text-center">
-                  <Upload className="w-4 h-4 inline mr-1" /> {featuredImage ? "Change Image" : "Set Featured Image"}
+                <label className="block w-full cursor-pointer bg-slate-50 border border-dashed border-slate-300 text-slate-600 py-3 rounded-lg text-sm font-medium hover:bg-slate-100 text-center transition-colors">
+                  <Upload className="w-4 h-4 inline mr-1" /> {featuredImage ? featuredImage.name : "Choose Image"}
                   <input type="file" accept="image/*" onChange={(e) => {
                     const file = e.target.files?.[0];
                     if (file) { setFeaturedImage(file); setFeaturedImageUrl(URL.createObjectURL(file)); }
@@ -318,14 +343,15 @@ export default function AdminBlog() {
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
                 <h3 className="font-bold text-slate-900 mb-4 border-b border-slate-100 pb-2 flex items-center gap-2"><Globe className="w-4 h-4 text-blue-500" /> SEO Settings</h3>
                 <div className="space-y-3">
-                  <input type="text" value={keyphrase} onChange={(e) => setKeyphrase(e.target.value)} placeholder="Focus Keyphrase" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none" />
-                  <textarea value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} rows={3} placeholder="Meta Description" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none" />
-                  <input type="text" value={altText} onChange={(e) => setAltText(e.target.value)} placeholder="Image Alt Text" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none" />
+                  <input type="text" value={keyphrase} onChange={(e) => setKeyphrase(e.target.value)} placeholder="Focus Keyphrase" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
+                  <textarea value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} rows={3} placeholder="Meta Description" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
+                  <input type="text" value={altText} onChange={(e) => setAltText(e.target.value)} placeholder="Featured Image Alt Text" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
+                  
                   <div className="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
-                    <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Google Preview</p>
-                    <p className="text-blue-700 text-lg font-medium truncate">{title || "Your Post Title"}</p>
+                    <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Google Search Preview</p>
+                    <p className="text-blue-700 text-lg font-medium truncate hover:underline cursor-pointer">{title || "Your Post Title Will Appear Here"}</p>
                     <p className="text-green-700 text-xs truncate">rushtechnomedia.com/blog/...</p>
-                    <p className="text-slate-600 text-sm mt-1 line-clamp-2">{metaDescription || "Your meta description will appear here..."}</p>
+                    <p className="text-slate-600 text-sm mt-1 line-clamp-2">{metaDescription || "Your meta description will appear here in search results..."}</p>
                   </div>
                 </div>
               </div>
@@ -349,7 +375,7 @@ export default function AdminBlog() {
                   </div>
                 ))}
               </div>
-              {mediaFiles.length === 0 && <p className="text-center text-slate-500 py-12">No images yet.</p>}
+              {mediaFiles.length === 0 && <p className="text-center text-slate-500 py-12">No images yet. Upload via the Featured Image box.</p>}
             </div>
           </div>
         </div>
