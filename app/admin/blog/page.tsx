@@ -289,7 +289,13 @@ export default function AdminBlog() {
                   placeholder="Add title" 
                   className="w-full text-3xl font-bold text-slate-900 placeholder:text-slate-300 outline-none mb-4" 
                 />
-                <div className="border border-slate-200 rounded-lg overflow-hidden">
+              
+
+
+   <div className="border border-slate-200 rounded-lg bg-white">
+
+
+                
                   <ReactQuill ref={quillRef} theme="snow" value={content} onChange={setContent} modules={quillModules} />
                 </div>
               </div>
