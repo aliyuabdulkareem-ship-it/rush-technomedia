@@ -1,5 +1,6 @@
 "use client";
-
+   import Link from "next/link";
+   import Image from "next/image"; // Add this line
 import { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, Bolt, PlayCircle, Star, ShieldCheck, Clock, Handshake, ExternalLink, Plus, Minus, Quote } from "lucide-react";
