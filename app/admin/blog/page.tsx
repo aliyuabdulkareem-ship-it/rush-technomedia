@@ -4,10 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
-import { 
-  LayoutDashboard, FileText, Image as ImageIcon, LogOut, Plus, Trash2, 
-  Save, Upload, Search, Eye, Calendar, Tag, Globe 
-} from "lucide-react";
+import { LayoutDashboard, FileText, Image as ImageIcon, LogOut, Plus, Trash2, Save, Upload, Search, Eye, Calendar, Tag, Globe } from "lucide-react";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false }) as any;
 import "react-quill/dist/quill.snow.css";
@@ -31,7 +28,6 @@ export default function AdminBlog() {
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
   const quillRef = useRef<any>(null);
 
-  // Form State
   const [title, setTitle] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [content, setContent] = useState("");
@@ -40,15 +36,12 @@ export default function AdminBlog() {
   const [date, setDate] = useState(TODAY);
   const [featuredImage, setFeaturedImage] = useState<File | null>(null);
   const [featuredImageUrl, setFeaturedImageUrl] = useState("");
-  
-  // SEO State
   const [metaDescription, setMetaDescription] = useState("");
   const [keyphrase, setKeyphrase] = useState("");
   const [altText, setAltText] = useState("");
 
   const router = useRouter();
 
-  // --- AUTH & DATA FETCHING ---
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
@@ -82,14 +75,13 @@ export default function AdminBlog() {
     setUser(null);
   };
 
-  // --- IMAGE HANDLING ---
   const uploadImageToStorage = async (file: File) => {
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
     const { error } = await supabase.storage.from('blog-images').upload(fileName, file);
     if (error) throw error;
     const { data: { publicUrl } } = supabase.storage.from('blog-images').getPublicUrl(fileName);
-    fetchMedia(); // Refresh media library
+    fetchMedia();
     return publicUrl;
   };
 
@@ -109,13 +101,10 @@ export default function AdminBlog() {
         ['link', 'image'],
         ['clean']
       ],
-      handlers: { 
-        image: () => setIsMediaModalOpen(true) 
-      }
+      handlers: { image: () => setIsMediaModalOpen(true) }
     }
   };
 
-  // --- FORM ACTIONS ---
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
@@ -171,34 +160,7 @@ export default function AdminBlog() {
   };
 
   if (!user) {
-   
-
-
-
-  return (
-    <>
-      {/* Hide Main Site Header & Footer on Admin Dashboard */}
-      <style>{`
-        header, footer, nav { display: none !important; }
-        body { background-color: #f1f5f9 !important; }
-      `}</style>
-      
-      <div className="min-h-screen bg-slate-100 flex">
-        {/* ... rest of your code ... */}
-
-
-    
-
-        return (
-    <>
-      {/* Hide Main Site Header & Footer on Admin Dashboard */}
-      <style>{`
-        header, footer, nav { display: none !important; }
-        body { background-color: #f1f5f9 !important; }
-      `}</style>
-      
-      <div className="min-h-screen bg-slate-100 flex">
-        {/* ... rest of your code ... */}
+    return (
       <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4">
         <form onSubmit={handleLogin} className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-4">
           <h2 className="text-2xl font-bold text-slate-900 text-center">Rush CMS Login</h2>
@@ -246,7 +208,6 @@ export default function AdminBlog() {
 
       {/* MAIN CONTENT AREA */}
       <main className="ml-64 flex-1 p-8">
-        {/* TOP BAR */}
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-slate-900">
             {view === 'dashboard' ? 'Dashboard' : view === 'editor' ? (editId ? 'Edit Post' : 'Add New Post') : 'Media Library'}
@@ -256,7 +217,6 @@ export default function AdminBlog() {
           </a>
         </div>
 
-        {/* DASHBOARD / POSTS LIST VIEW */}
         {view === 'dashboard' && (
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
             <div className="p-6 border-b border-slate-200 flex justify-between items-center">
@@ -285,7 +245,6 @@ export default function AdminBlog() {
           </div>
         )}
 
-        {/* MEDIA LIBRARY VIEW */}
         {view === 'media' && (
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
@@ -302,27 +261,13 @@ export default function AdminBlog() {
           </div>
         )}
 
-        {/* EDITOR VIEW */}
         {view === 'editor' && (
           <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* LEFT COLUMN: Content */}
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-                <input 
-                  type="text" 
-                  value={title} 
-                  onChange={(e) => setTitle(e.target.value)} 
-                  required 
-                  placeholder="Add title" 
-                  className="w-full text-3xl font-bold text-slate-900 placeholder:text-slate-300 outline-none mb-4" 
-                />
-              
-
-
-   <div className="border border-slate-200 rounded-lg bg-white">
-
-
-                
+                <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="Add title" className="w-full text-3xl font-bold text-slate-900 placeholder:text-slate-300 outline-none mb-4" />
+                {/* FIXED: Removed overflow-hidden so the editor doesn't disappear */}
+                <div className="border border-slate-200 rounded-lg bg-white">
                   <ReactQuill ref={quillRef} theme="snow" value={content} onChange={setContent} modules={quillModules} />
                 </div>
               </div>
@@ -333,9 +278,7 @@ export default function AdminBlog() {
               </div>
             </div>
 
-            {/* RIGHT COLUMN: Meta Boxes (WordPress Style) */}
             <div className="space-y-6">
-              {/* Publish Box */}
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
                 <h3 className="font-bold text-slate-900 mb-4 border-b border-slate-100 pb-2">Publish</h3>
                 <div className="space-y-4">
@@ -359,7 +302,6 @@ export default function AdminBlog() {
                 </div>
               </div>
 
-              {/* Featured Image Box */}
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
                 <h3 className="font-bold text-slate-900 mb-4 border-b border-slate-100 pb-2">Featured Image</h3>
                 {featuredImageUrl && <img src={featuredImageUrl} className="w-full h-40 object-cover rounded-lg mb-3 border border-slate-200" />}
@@ -372,7 +314,6 @@ export default function AdminBlog() {
                 </label>
               </div>
 
-              {/* SEO Box */}
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
                 <h3 className="font-bold text-slate-900 mb-4 border-b border-slate-100 pb-2 flex items-center gap-2"><Globe className="w-4 h-4 text-blue-500" /> SEO Settings</h3>
                 <div className="space-y-3">
@@ -380,7 +321,6 @@ export default function AdminBlog() {
                   <textarea value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} rows={3} placeholder="Meta Description" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none" />
                   <input type="text" value={altText} onChange={(e) => setAltText(e.target.value)} placeholder="Image Alt Text" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none" />
                   
-                  {/* Live Google Preview */}
                   <div className="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
                     <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Google Preview</p>
                     <p className="text-blue-700 text-lg font-medium truncate hover:underline cursor-pointer">{title || "Your Post Title"}</p>
@@ -394,7 +334,6 @@ export default function AdminBlog() {
         )}
       </main>
 
-      {/* MEDIA MODAL (For inserting images into editor) */}
       {isMediaModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[80vh] flex flex-col">
