@@ -171,7 +171,34 @@ export default function AdminBlog() {
   };
 
   if (!user) {
-    return (
+   
+
+
+
+  return (
+    <>
+      {/* Hide Main Site Header & Footer on Admin Dashboard */}
+      <style>{`
+        header, footer, nav { display: none !important; }
+        body { background-color: #f1f5f9 !important; }
+      `}</style>
+      
+      <div className="min-h-screen bg-slate-100 flex">
+        {/* ... rest of your code ... */}
+
+
+    
+
+        return (
+    <>
+      {/* Hide Main Site Header & Footer on Admin Dashboard */}
+      <style>{`
+        header, footer, nav { display: none !important; }
+        body { background-color: #f1f5f9 !important; }
+      `}</style>
+      
+      <div className="min-h-screen bg-slate-100 flex">
+        {/* ... rest of your code ... */}
       <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4">
         <form onSubmit={handleLogin} className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-4">
           <h2 className="text-2xl font-bold text-slate-900 text-center">Rush CMS Login</h2>
