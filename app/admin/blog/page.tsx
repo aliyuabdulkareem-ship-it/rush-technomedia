@@ -1,9 +1,10 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { createClient } from "@supabase/supabase-js";
 import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
+import AdminChrome from "@/components/AdminChrome";
 import { LayoutDashboard, FileText, Image as ImageIcon, LogOut, Plus, Trash2, Save, Upload, Search, Eye, Calendar, Tag, Globe } from "lucide-react";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false }) as any;
@@ -27,6 +28,7 @@ export default function AdminBlog() {
   const [editId, setEditId] = useState<number | null>(null);
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
   const quillRef = useRef<any>(null);
+  const openMediaRef = useRef<() => void>(() => {});
 
   const [title, setTitle] = useState("");
   const [excerpt, setExcerpt] = useState("");
@@ -41,6 +43,10 @@ export default function AdminBlog() {
   const [altText, setAltText] = useState("");
 
   const router = useRouter();
+
+  useEffect(() => {
+    openMediaRef.current = () => setIsMediaModalOpen(true);
+  }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -92,18 +98,19 @@ export default function AdminBlog() {
     setIsMediaModalOpen(false);
   };
 
-  const quillModules = {
+  // STABLE modules (useMemo) so the editor never remounts/disappears
+  const quillModules = useMemo(() => ({
     toolbar: {
       container: [
         [{ 'header': [1, 2, 3, false] }],
         ['bold', 'italic', 'underline', 'strike', 'blockquote'],
-        [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' }],
         ['link', 'image'],
         ['clean']
       ],
-      handlers: { image: () => setIsMediaModalOpen(true) }
+      handlers: { image: () => openMediaRef.current() }
     }
-  };
+  }), []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -137,18 +144,18 @@ export default function AdminBlog() {
   };
 
   const resetForm = () => {
-    setTitle(""); setExcerpt(""); setContent(""); setCategory(CATEGORIES[0]); 
-    setReadTime("5 min read"); setDate(TODAY); setFeaturedImage(null); 
-    setFeaturedImageUrl(""); setMetaDescription(""); setKeyphrase(""); 
+    setTitle(""); setExcerpt(""); setContent(""); setCategory(CATEGORIES[0]);
+    setReadTime("5 min read"); setDate(TODAY); setFeaturedImage(null);
+    setFeaturedImageUrl(""); setMetaDescription(""); setKeyphrase("");
     setAltText(""); setEditId(null);
   };
 
   const handleEdit = (post: any) => {
     setEditId(post.id);
-    setTitle(post.title); setExcerpt(post.excerpt); setContent(post.content || ""); 
-    setCategory(post.category || CATEGORIES[0]); setReadTime(post.read_time || "5 min read"); 
+    setTitle(post.title); setExcerpt(post.excerpt); setContent(post.content || "");
+    setCategory(post.category || CATEGORIES[0]); setReadTime(post.read_time || "5 min read");
     setDate(post.date || TODAY); setFeaturedImageUrl(post.featured_image || "");
-    setMetaDescription(post.meta_description || ""); setKeyphrase(post.keyphrase || ""); 
+    setMetaDescription(post.meta_description || ""); setKeyphrase(post.keyphrase || "");
     setAltText(post.alt_text || "");
     setView("editor");
   };
@@ -174,30 +181,27 @@ export default function AdminBlog() {
 
   return (
     <div className="min-h-screen bg-slate-100 flex">
-      {/* FORCE EDITOR STYLES */}
+      <AdminChrome />
+
       <style>{`
         .ql-editor { color: #1e293b !important; min-height: 300px !important; font-size: 16px !important; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important; }
         .ql-editor.ql-blank::before { color: #94a3b8 !important; font-style: normal !important; }
         .ql-toolbar.ql-snow { border: 1px solid #cbd5e1 !important; border-bottom: none !important; border-radius: 8px 8px 0 0 !important; background: #f8fafc !important; }
-        .ql-container.ql-snow { border: 1px solid #cbd5e1 !important; border-radius: 0 0 8px 8px !important; font-family: inherit !important; }
+        .ql-container.ql-snow { border: 1px solid #cbd5e1 !important; border-radius: 0 0 8px 8px !important; }
       `}</style>
 
-      {/* LEFT SIDEBAR */}
       <aside className="w-64 bg-slate-900 text-slate-300 fixed left-0 top-0 bottom-0 flex flex-col p-4 z-20">
         <div className="flex items-center gap-2 text-white font-bold text-xl mb-8 px-2">
           <LayoutDashboard className="w-6 h-6 text-blue-500" /> Rush CMS
         </div>
         <nav className="space-y-1 flex-1">
-          <button onClick={() => setView("dashboard")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${view === 'dashboard' ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`}>
+          <button onClick={() => setView("dashboard")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium ${view === 'dashboard' ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`}>
             <LayoutDashboard className="w-4 h-4" /> Dashboard
           </button>
-          <button onClick={() => { resetForm(); setView("editor"); }} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${view === 'editor' && !editId ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`}>
+          <button onClick={() => { resetForm(); setView("editor"); }} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium ${view === 'editor' && !editId ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`}>
             <Plus className="w-4 h-4" /> Add New Post
           </button>
-          <button onClick={() => setView("dashboard")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors hover:bg-slate-800`}>
-            <FileText className="w-4 h-4" /> All Posts
-          </button>
-          <button onClick={() => setView("media")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${view === 'media' ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`}>
+          <button onClick={() => setView("media")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium ${view === 'media' ? 'bg-blue-600 text-white' : 'hover:bg-slate-800'}`}>
             <ImageIcon className="w-4 h-4" /> Media Library
           </button>
         </nav>
@@ -206,7 +210,6 @@ export default function AdminBlog() {
         </button>
       </aside>
 
-      {/* MAIN CONTENT AREA */}
       <main className="ml-64 flex-1 p-8">
         <div className="flex justify-between items-center mb-8">
           <h1 className="text-2xl font-bold text-slate-900">
@@ -256,7 +259,7 @@ export default function AdminBlog() {
                   </button>
                 </div>
               ))}
-              {mediaFiles.length === 0 && <p className="col-span-full text-center text-slate-500 py-12">No images uploaded yet. Use the "Add New Post" image button to upload.</p>}
+              {mediaFiles.length === 0 && <p className="col-span-full text-center text-slate-500 py-12">No images uploaded yet.</p>}
             </div>
           </div>
         )}
@@ -266,12 +269,10 @@ export default function AdminBlog() {
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                 <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} required placeholder="Add title" className="w-full text-3xl font-bold text-slate-900 placeholder:text-slate-300 outline-none mb-4" />
-                {/* FIXED: Removed overflow-hidden so the editor doesn't disappear */}
                 <div className="border border-slate-200 rounded-lg bg-white">
                   <ReactQuill ref={quillRef} theme="snow" value={content} onChange={setContent} modules={quillModules} />
                 </div>
               </div>
-
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                 <h3 className="font-bold text-slate-900 mb-3 flex items-center gap-2"><Search className="w-4 h-4" /> Excerpt</h3>
                 <textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} required rows={3} className="w-full p-3 border border-slate-200 rounded-lg outline-none focus:border-blue-500 text-sm" placeholder="Short summary for the blog card..." />
@@ -320,12 +321,11 @@ export default function AdminBlog() {
                   <input type="text" value={keyphrase} onChange={(e) => setKeyphrase(e.target.value)} placeholder="Focus Keyphrase" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none" />
                   <textarea value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} rows={3} placeholder="Meta Description" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none" />
                   <input type="text" value={altText} onChange={(e) => setAltText(e.target.value)} placeholder="Image Alt Text" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none" />
-                  
                   <div className="mt-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
                     <p className="text-[10px] font-bold text-slate-400 uppercase mb-1">Google Preview</p>
-                    <p className="text-blue-700 text-lg font-medium truncate hover:underline cursor-pointer">{title || "Your Post Title"}</p>
+                    <p className="text-blue-700 text-lg font-medium truncate">{title || "Your Post Title"}</p>
                     <p className="text-green-700 text-xs truncate">rushtechnomedia.com/blog/...</p>
-                    <p className="text-slate-600 text-sm mt-1 line-clamp-2">{metaDescription || "Your meta description will appear here in search results..."}</p>
+                    <p className="text-slate-600 text-sm mt-1 line-clamp-2">{metaDescription || "Your meta description will appear here..."}</p>
                   </div>
                 </div>
               </div>
@@ -349,7 +349,7 @@ export default function AdminBlog() {
                   </div>
                 ))}
               </div>
-              {mediaFiles.length === 0 && <p className="text-center text-slate-500 py-12">No images yet. Upload via the Featured Image box.</p>}
+              {mediaFiles.length === 0 && <p className="text-center text-slate-500 py-12">No images yet.</p>}
             </div>
           </div>
         </div>
