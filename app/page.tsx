@@ -358,8 +358,15 @@ export default function Home() {
 
         <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 px-6 md:px-12 pb-8 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {blogPosts.map((post: any, i: number) => (
-            <article key={i} className="flex-shrink-0 w-[85vw] md:w-[calc(25%-1.125rem)] snap-center group rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden hover:border-blue-500/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              {/* OPTIMIZED IMAGE: Automatically compresses and serves perfect size */}
+
+      
+      
+      
+                   <Link href={`/blog/${post.id}`} key={i} className="flex-shrink-0 w-[85vw] md:w-[calc(25%-1.125rem)] snap-center group rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden hover:border-blue-500/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 block"> 
+      
+      
+      
+      {/* OPTIMIZED IMAGE: Automatically compresses and serves perfect size */}
               {post.featured_image ? (
                 <div className="h-48 relative overflow-hidden">
                   <Image 
@@ -387,7 +394,10 @@ export default function Home() {
                   <span className="text-xs text-blue-400 font-semibold group-hover:translate-x-1 transition-transform">Read more →</span>
                 </div>
               </div>
-            </article>
+           
+</Link>
+
+                     
           ))}
         </div>
       </section>
