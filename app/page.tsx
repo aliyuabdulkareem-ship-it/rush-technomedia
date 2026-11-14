@@ -366,12 +366,25 @@ export default function Home() {
           
                   {blogPosts.map((post: any, i: number) => (
             <article key={i} className="flex-shrink-0 w-[85vw] md:w-[calc(25%-1.125rem)] snap-center group rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden hover:border-blue-500/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
-              {/* Featured Image Display */}
+              
+               
+               
+              {/* Featured Image Display - Optimized for Speed */}
               {post.featured_image ? (
-                <div className="h-48 overflow-hidden">
-                  <img src={post.featured_image} alt={post.alt_text || post.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy" />
+                <div className="h-48 relative overflow-hidden">
+                  <Image 
+                    src={post.featured_image} 
+                    alt={post.alt_text || post.title} 
+                    fill 
+                    className="object-cover transition-transform duration-500 group-hover:scale-105" 
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                  />
                 </div>
               ) : (
+
+               
+
+               
                 <div className="h-32 bg-gradient-to-br from-blue-900 to-slate-900 flex items-center justify-center border-b border-slate-800">
                   <span className="text-4xl font-display font-bold text-white/20">0{i + 1}</span>
                 </div>
