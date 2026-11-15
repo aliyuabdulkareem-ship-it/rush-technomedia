@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { createClient } from "@supabase/supabase-js";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, Calendar, Clock } from "lucide-react";
@@ -8,14 +9,61 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
 const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 const supabase = createClient(supabaseUrl, supabaseKey);
 
-export default async function BlogPostPage({ params }: { params: { id: string } }) {
-  const { data: post, error } = await supabase
+const SITE_URL = "https://rushtechnomedia.com"; // Change this if your domain is different
+
+async function getPost(id: string) {
+  const { data, error } = await supabase
     .from("blog_posts")
     .select("*")
-    .eq("id", params.id)
+    .eq("id", id)
     .single();
+  if (error || !data) return null;
+  return data;
+}
 
-  if (error || !post) {
+// This function generates the SEO and Social Media tags for each specific post
+export async function generateMetadata({ params }: { params: { id: string } }): Promise<Metadata> {
+  const post = await getPost(params.id);
+  
+  if (!post) {
+    return { title: "Post Not Found" };
+  }
+
+  const imageUrl = post.featured_image || `${SITE_URL}/R.png`;
+  const description = post.meta_description || post.excerpt || post.title;
+
+  return {
+    title: post.title,
+    description: description,
+    openGraph: {
+      title: post.title,
+      description: description,
+      url: `${SITE_URL}/blog/${post.id}`,
+      siteName: "Rush Technomedia",
+      images: [
+        {
+          url: imageUrl,
+          width: 1200,
+          height: 630,
+          alt: post.alt_text || post.title,
+        },
+      ],
+      locale: "en_US",
+      type: "article",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: post.title,
+      description: description,
+      images: [imageUrl],
+    },
+  };
+}
+
+export default async function BlogPostPage({ params }: { params: { id: string } }) {
+  const post = await getPost(params.id);
+
+  if (!post) {
     notFound();
   }
 
@@ -52,8 +100,6 @@ export default async function BlogPostPage({ params }: { params: { id: string } 
         )}
 
         {/* Rich Text Content */}
-        {/* We use dangerouslySetInnerHTML because React Quill saves HTML. 
-            The classes below style the HTML elements beautifully without needing extra plugins. */}
         <div
           className="text-slate-700 text-lg leading-relaxed space-y-6
                      [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:text-slate-900 [&_h1]:mt-8 [&_h1]:mb-4
