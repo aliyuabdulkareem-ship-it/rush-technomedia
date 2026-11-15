@@ -362,7 +362,7 @@ export default function Home() {
       
       
       
-                   <Link href={`/blog/${post.id}`} key={i} className="flex-shrink-0 w-[85vw] md:w-[calc(25%-1.125rem)] snap-center group rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden hover:border-blue-500/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 block"> 
+                   <Link href={\`/blog/{post.slug}`} key={i} className="flex-shrink-0 w-[85vw] md:w-[calc(25%-1.125rem)] snap-center group rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden hover:border-blue-500/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 block"> 
       
       
       
