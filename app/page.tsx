@@ -14,10 +14,10 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const fadeInUp = { hidden: { opacity: 0, y: 24 }, visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } } };
 
 const defaultBlogPosts = [
-  { title: "Why 90% of Nigerian Businesses Fail at SEO", excerpt: "Most businesses build beautiful websites that nobody can find. Here's the data-driven framework we use to fix that.", category: "SEO Strategy", read_time: "5 min read", date: "Oct 28, 2026" },
-  { title: "The Visibility Economy: How Being Found Online Became Your Biggest Asset", excerpt: "In 2026, digital visibility isn't marketing—it's survival.", category: "Digital Strategy", read_time: "7 min read", date: "Oct 22, 2026" },
-  { title: "From 0 to 10,000 Monthly Visitors: A Lagos Startup's SEO Journey", excerpt: "How a small fintech in Yaba tripled their organic traffic in 6 months.", category: "Case Study", read_time: "6 min read", date: "Oct 15, 2026" },
-  { title: "AI-Powered Content: How to Scale Your Brand Without Losing Your Voice", excerpt: "Generative AI can 10x your content output.", category: "AI & Media", read_time: "8 min read", date: "Oct 10, 2026" }
+  { title: "Why 90% of Nigerian Businesses Fail at SEO", excerpt: "Most businesses build beautiful websites that nobody can find. Here's the data-driven framework we use to fix that.", category: "SEO Strategy", read_time: "5 min read", date: "Oct 28, 2026", slug: "why-90-of-nigerian-businesses-fail-at-seo" },
+  { title: "The Visibility Economy: How Being Found Online Became Your Biggest Asset", excerpt: "In 2026, digital visibility isn't marketing—it's survival.", category: "Digital Strategy", read_time: "7 min read", date: "Oct 22, 2026", slug: "the-visibility-economy" },
+  { title: "From 0 to 10,000 Monthly Visitors: A Lagos Startup's SEO Journey", excerpt: "How a small fintech in Yaba tripled their organic traffic in 6 months.", category: "Case Study", read_time: "6 min read", date: "Oct 15, 2026", slug: "from-0-to-10000-monthly-visitors" },
+  { title: "AI-Powered Content: How to Scale Your Brand Without Losing Your Voice", excerpt: "Generative AI can 10x your content output.", category: "AI & Media", read_time: "8 min read", date: "Oct 10, 2026", slug: "ai-powered-content" }
 ];
 
 const testimonials = [
@@ -358,15 +358,8 @@ export default function Home() {
 
         <div className="flex overflow-x-auto snap-x snap-mandatory gap-6 px-6 md:px-12 pb-8 scrollbar-hide" style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}>
           {blogPosts.map((post: any, i: number) => (
-
-      
-      
-      
-                   <Link href={\`/blog/{post.slug}`} key={i} className="flex-shrink-0 w-[85vw] md:w-[calc(25%-1.125rem)] snap-center group rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden hover:border-blue-500/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 block"> 
-      
-      
-      
-      {/* OPTIMIZED IMAGE: Automatically compresses and serves perfect size */}
+            <Link href={`/blog/${post.slug}`} key={i} className="flex-shrink-0 w-[85vw] md:w-[calc(25%-1.125rem)] snap-center group rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden hover:border-blue-500/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-1 block">
+              {/* Featured Image Display - Optimized for Speed */}
               {post.featured_image ? (
                 <div className="h-48 relative overflow-hidden">
                   <Image 
@@ -394,10 +387,7 @@ export default function Home() {
                   <span className="text-xs text-blue-400 font-semibold group-hover:translate-x-1 transition-transform">Read more →</span>
                 </div>
               </div>
-           
-</Link>
-
-                     
+            </Link>
           ))}
         </div>
       </section>
