@@ -2,10 +2,13 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { createClient } from "@supabase/supabase-js";
-import { useRouter } from "next/navigation";
 import dynamic from "next/dynamic";
 import AdminChrome from "@/components/AdminChrome";
-import { LayoutDashboard, FileText, Image as ImageIcon, LogOut, Plus, Trash2, Save, Upload, Search, Eye, Calendar, Tag, Globe } from "lucide-react";
+import {
+  LayoutDashboard, FileText, Image as ImageIcon, LogOut, Plus, Trash2, Save,
+  Upload, Search, Eye, Calendar, Tag, Globe, Bold, Italic, Underline,
+  Strikethrough, Link2, ListOrdered, ListUnordered, Quote as QuoteIcon, RotateCcw, X
+} from "lucide-react";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false }) as any;
 import "react-quill/dist/quill.snow.css";
@@ -17,16 +20,11 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const CATEGORIES = ["Tech", "SEO", "AI", "DIY", "Business", "Digital Strategy", "Case Study", "Media"];
 const TODAY = new Date().toISOString().split("T")[0];
 
-// Helper to generate clean URL slugs from titles
-const generateSlug = (text: string) => {
-  return text
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/(^-|-$)+/g, '');
-};
+const generateSlug = (text: string) =>
+  text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
 
-const compressImage = (file: File, maxWidth = 1920, quality = 0.85): Promise<File> => {
-  return new Promise((resolve) => {
+const compressImage = (file: File, maxWidth = 1920, quality = 0.85): Promise<File> =>
+  new Promise((resolve) => {
     if (file.size < 300 * 1024) { resolve(file); return; }
     const url = URL.createObjectURL(file);
     const img = new Image();
@@ -51,7 +49,6 @@ const compressImage = (file: File, maxWidth = 1920, quality = 0.85): Promise<Fil
     img.onerror = () => { URL.revokeObjectURL(url); resolve(file); };
     img.src = url;
   });
-};
 
 export default function AdminBlog() {
   const [user, setUser] = useState<any>(null);
@@ -65,21 +62,28 @@ export default function AdminBlog() {
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
   const quillRef = useRef<any>(null);
   const openMediaRef = useRef<() => void>(() => {});
+  const wrapperRef = useRef<HTMLDivElement>(null);
+
+  // Floating (bubble) toolbar state
+  const [bubble, setBubble] = useState<{ show: boolean; top: number; left: number }>({ show: false, top: 0, left: 0 });
+
+  // Media metadata editor state
+  const [mediaDetail, setMediaDetail] = useState<{ open: boolean; url: string; title: string; alt: string; caption: string; description: string }>({ open: false, url: "", title: "", alt: "", caption: "", description: "" });
 
   const [title, setTitle] = useState("");
   const [slug, setSlug] = useState("");
   const [excerpt, setExcerpt] = useState("");
   const [content, setContent] = useState("");
   const [category, setCategory] = useState(CATEGORIES[0]);
+  const [tags, setTags] = useState("");
   const [readTime, setReadTime] = useState("5 min read");
   const [date, setDate] = useState(TODAY);
   const [featuredImage, setFeaturedImage] = useState<File | null>(null);
   const [featuredImageUrl, setFeaturedImageUrl] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
   const [keyphrase, setKeyphrase] = useState("");
+  const [keyphraseSynonyms, setKeyphraseSynonyms] = useState("");
   const [altText, setAltText] = useState("");
-
-  const router = useRouter();
 
   useEffect(() => { openMediaRef.current = () => setIsMediaModalOpen(true); }, []);
 
@@ -89,6 +93,44 @@ export default function AdminBlog() {
       if (session?.user) { fetchPosts(); fetchMedia(); }
     });
   }, []);
+
+  // Attach selection-change listener for the floating toolbar (retry until editor ready)
+  useEffect(() => {
+    if (!user || view !== "editor") { setBubble((b) => ({ ...b, show: false })); return; }
+    let tries = 0;
+    const attach = () => {
+      const quill = quillRef.current?.getEditor?.();
+      if (!quill) { if (tries++ < 50) setTimeout(attach, 100); return; }
+      const handler = (index: number | undefined, length: number) => {
+        if (length > 0 && index !== undefined && wrapperRef.current) {
+          const sel = window.getSelection();
+          if (!sel || sel.rangeCount === 0) { setBubble((b) => ({ ...b, show: false })); return; }
+          const r = sel.getRangeAt(0).getBoundingClientRect();
+          const w = wrapperRef.current.getBoundingClientRect();
+          const top = r.top - w.top - 42;
+          const left = Math.min(Math.max(r.left - w.left + r.width / 2, 70), w.width - 70);
+          setBubble({ show: true, top: top < 0 ? r.bottom - w.top + 6 : top, left });
+        } else {
+          setBubble((b) => ({ ...b, show: false }));
+        }
+      };
+      quill.on("selection-change", handler);
+      return () => quill.off("selection-change", handler);
+    };
+    const cleanup = attach();
+    return () => { if (typeof cleanup === "function") cleanup(); };
+  }, [user, view]);
+
+  const applyFormat = (name: string, value: any) => {
+    const quill = quillRef.current?.getEditor?.();
+    if (!quill) return;
+    if (name === "link") {
+      const url = prompt("Enter URL (leave blank to remove link):");
+      quill.format("link", url ? url : false, "user");
+    } else {
+      quill.format(name, value, "user");
+    }
+  };
 
   const fetchPosts = async () => {
     const { data } = await supabase.from("blog_posts").select("*").order("created_at", { ascending: false });
@@ -101,13 +143,10 @@ export default function AdminBlog() {
   };
 
   const handleLogin = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
+    e.preventDefault(); setLoading(true);
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) alert(error.message);
-    setLoading(false);
+    if (error) alert(error.message); setLoading(false);
   };
-
   const handleLogout = async () => { await supabase.auth.signOut(); setUser(null); };
 
   const uploadImageToStorage = async (file: File) => {
@@ -122,24 +161,48 @@ export default function AdminBlog() {
   };
 
   const insertImageToEditor = (url: string) => {
-    const quill = quillRef.current?.getEditor();
+    const quill = quillRef.current?.getEditor?.();
     const range = quill?.getSelection();
     quill?.insertEmbed(range?.index || 0, "image", url);
     setIsMediaModalOpen(false);
   };
 
   const handleModalUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const file = e.target.files?.[0]; if (!file) return;
     setLoading(true);
-    try { const url = await uploadImageToStorage(file); insertImageToEditor(url); } 
+    try { const url = await uploadImageToStorage(file); insertImageToEditor(url); }
     catch (err: any) { alert("Upload failed: " + (err?.message || "unknown error")); }
     setLoading(false);
   };
 
+  // Media metadata
+  const openMediaDetail = async (url: string) => {
+    const { data } = await supabase.from("media_metadata").select("*").eq("url", url).maybeSingle();
+    setMediaDetail({
+      open: true, url,
+      title: data?.title || "", alt: data?.alt_text || "",
+      caption: data?.caption || "", description: data?.description || "",
+    });
+  };
+  const saveMediaDetail = async () => {
+    setLoading(true);
+    const { error } = await supabase.from("media_metadata").upsert(
+      { url: mediaDetail.url, title: mediaDetail.title, alt_text: mediaDetail.alt, caption: mediaDetail.caption, description: mediaDetail.description },
+      { onConflict: "url" }
+    );
+    setLoading(false);
+    if (error) alert("Save failed: " + error.message);
+    else { alert("Image details saved!"); setMediaDetail((m) => ({ ...m, open: false })); }
+  };
+
   const quillModules = useMemo(() => ({
     toolbar: {
-      container: [[{ "header": [1, 2, 3, false] }], ["bold", "italic", "underline", "strike", "blockquote"], [{ "list": "ordered" }, { "list": "bullet" }], ["link", "image"], ["clean"]],
+      container: [
+        [{ "header": [1, 2, 3, false] }],
+        ["bold", "italic", "underline", "strike", "blockquote"],
+        [{ "list": "ordered" }, { "list": "bullet" }],
+        ["link", "image"], ["clean"]
+      ],
       handlers: { image: () => openMediaRef.current() }
     }
   }), []);
@@ -150,57 +213,42 @@ export default function AdminBlog() {
     setLoading(true);
     let finalImgUrl = featuredImageUrl;
     if (featuredImage) {
-      try { finalImgUrl = await uploadImageToStorage(featuredImage); } 
+      try { finalImgUrl = await uploadImageToStorage(featuredImage); }
       catch (err: any) { alert("Failed to upload featured image: " + (err?.message || "unknown error")); setLoading(false); return; }
     }
-    
-    // Auto-generate slug if empty
     const finalSlug = slug || generateSlug(title);
-
     const postData = {
-      title, slug: finalSlug, excerpt, content, category, read_time: readTime, date,
+      title, slug: finalSlug, excerpt, content, category, tags, read_time: readTime, date,
       featured_image: finalImgUrl,
-      meta_description: metaDescription, keyphrase, alt_text: altText
+      meta_description: metaDescription, keyphrase, keyphrase_synonyms: keyphraseSynonyms, alt_text: altText
     };
     let error;
-    if (editId) {
-      const res = await supabase.from("blog_posts").update(postData).eq("id", editId);
-      error = res.error;
-    } else {
-      const res = await supabase.from("blog_posts").insert([postData]);
-      error = res.error;
-    }
+    if (editId) { const res = await supabase.from("blog_posts").update(postData).eq("id", editId); error = res.error; }
+    else { const res = await supabase.from("blog_posts").insert([postData]); error = res.error; }
     if (error) alert("Error saving post: " + error.message);
-    else {
-      alert(editId ? "Post updated successfully!" : "Post published successfully!");
-      resetForm();
-      setView("dashboard");
-      fetchPosts();
-    }
+    else { alert(editId ? "Post updated successfully!" : "Post published successfully!"); resetForm(); setView("dashboard"); fetchPosts(); }
     setLoading(false);
   };
 
   const resetForm = () => {
-    setTitle(""); setSlug(""); setExcerpt(""); setContent(""); setCategory(CATEGORIES[0]);
-    setReadTime("5 min read"); setDate(TODAY); setFeaturedImage(null);
-    setFeaturedImageUrl(""); setMetaDescription(""); setKeyphrase("");
-    setAltText(""); setEditId(null);
+    setTitle(""); setSlug(""); setExcerpt(""); setContent(""); setCategory(CATEGORIES[0]); setTags("");
+    setReadTime("5 min read"); setDate(TODAY); setFeaturedImage(null); setFeaturedImageUrl("");
+    setMetaDescription(""); setKeyphrase(""); setKeyphraseSynonyms(""); setAltText(""); setEditId(null);
   };
 
   const handleEdit = (post: any) => {
     setEditId(post.id);
     setTitle(post.title); setSlug(post.slug || generateSlug(post.title)); setExcerpt(post.excerpt); setContent(post.content || "");
-    setCategory(post.category || CATEGORIES[0]); setReadTime(post.read_time || "5 min read");
+    setCategory(post.category || CATEGORIES[0]); setTags(post.tags || ""); setReadTime(post.read_time || "5 min read");
     setDate(post.date || TODAY); setFeaturedImageUrl(post.featured_image || "");
     setMetaDescription(post.meta_description || ""); setKeyphrase(post.keyphrase || "");
-    setAltText(post.alt_text || "");
+    setKeyphraseSynonyms(post.keyphrase_synonyms || ""); setAltText(post.alt_text || "");
     setView("editor");
   };
 
   const handleDelete = async (id: number) => {
     if (!confirm("Delete this post?")) return;
-    await supabase.from("blog_posts").delete().eq("id", id);
-    fetchPosts();
+    await supabase.from("blog_posts").delete().eq("id", id); fetchPosts();
   };
 
   if (!user) {
@@ -216,6 +264,8 @@ export default function AdminBlog() {
     );
   }
 
+  const bubbleBtn = "p-1.5 hover:bg-slate-200 rounded text-slate-700 text-sm font-semibold";
+
   return (
     <div className="min-h-screen bg-slate-100 flex">
       <AdminChrome />
@@ -223,8 +273,8 @@ export default function AdminBlog() {
         .ql-editor { color: #000000 !important; min-height: 300px !important; font-size: 16px !important; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important; }
         .ql-editor * { color: #000000 !important; }
         .ql-editor.ql-blank::before { color: #94a3b8 !important; font-style: normal !important; }
-        .ql-toolbar.ql-snow { border: 1px solid #cbd5e1 !important; border-bottom: none !important; border-radius: 8px 8px 0 0 !important; background: #f8fafc !important; }
-        .ql-container.ql-snow { border: 1px solid #cbd5e1 !important; border-radius: 0 0 8px 8px !important; }
+        .ql-toolbar.ql-snow { border: 1px solid #cbd5e1 !important; border-bottom: none !important; background: #f8fafc !important; position: sticky; top: 0; z-index: 30; }
+        .ql-container.ql-snow { border: 1px solid #cbd5e1 !important; border-top: none !important; }
       `}</style>
 
       <aside className="w-64 bg-slate-900 text-slate-300 fixed left-0 top-0 bottom-0 flex flex-col p-4 z-20">
@@ -274,14 +324,16 @@ export default function AdminBlog() {
         {view === "media" && (
           <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-bold text-slate-900">Media Library</h2>
+              <h2 className="text-lg font-bold text-slate-900">Media Library <span className="text-xs font-normal text-slate-400">(click an image to edit its details)</span></h2>
               <label className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700 flex items-center gap-2"><Upload className="w-4 h-4" /> Upload New<input type="file" accept="image/*" onChange={handleModalUpload} className="hidden" /></label>
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
               {mediaFiles.map((url, i) => (
-                <div key={i} className="relative group aspect-square bg-slate-100 rounded-lg overflow-hidden border border-slate-200">
+                <div key={i} onClick={() => openMediaDetail(url)} className="relative group aspect-square bg-slate-100 rounded-lg overflow-hidden border border-slate-200 cursor-pointer hover:border-blue-500">
                   <img src={url} className="w-full h-full object-cover" />
-                  <button onClick={() => insertImageToEditor(url)} className="absolute inset-0 bg-blue-600/80 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity font-bold text-sm">Insert</button>
+                  <div className="absolute inset-0 bg-slate-900/0 group-hover:bg-slate-900/40 transition-colors flex items-center justify-center">
+                    <span className="text-white text-xs font-bold opacity-0 group-hover:opacity-100 transition-opacity">Edit Details</span>
+                  </div>
                 </div>
               ))}
               {mediaFiles.length === 0 && <p className="col-span-full text-center text-slate-500 py-12">No images uploaded yet.</p>}
@@ -295,8 +347,32 @@ export default function AdminBlog() {
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                 <label className="block text-sm font-semibold text-slate-700 mb-1">Post Title <span className="text-red-500">*</span></label>
                 <input type="text" value={title} onChange={(e) => { setTitle(e.target.value); if (!editId) setSlug(generateSlug(e.target.value)); }} required placeholder="Add title" className="w-full text-2xl font-bold text-slate-900 placeholder:text-slate-300 outline-none mb-4 p-2 -ml-2 rounded focus:bg-slate-50" />
-                <div className="border border-slate-200 rounded-lg bg-white">
+                <div ref={wrapperRef} className="border border-slate-200 rounded-lg bg-white relative">
                   <ReactQuill ref={quillRef} theme="snow" value={content} onChange={setContent} modules={quillModules} />
+                  {/* Floating bubble toolbar */}
+                  {bubble.show && (
+                    <div
+                      onMouseDown={(e) => e.preventDefault()}
+                      style={{ top: bubble.top, left: bubble.left }}
+                      className="absolute -translate-x-1/2 z-40 flex items-center gap-0.5 bg-slate-800 text-white rounded-lg shadow-xl px-1.5 py-1"
+                    >
+                      <button type="button" className={bubbleBtn} onClick={() => applyFormat("header", 2)}>H2</button>
+                      <button type="button" className={bubbleBtn} onClick={() => applyFormat("header", 3)}>H3</button>
+                      <span className="w-px h-5 bg-slate-600 mx-0.5" />
+                      <button type="button" className={bubbleBtn} onClick={() => applyFormat("bold", true)}><Bold className="w-4 h-4" /></button>
+                      <button type="button" className={bubbleBtn} onClick={() => applyFormat("italic", true)}><Italic className="w-4 h-4" /></button>
+                      <button type="button" className={bubbleBtn} onClick={() => applyFormat("underline", true)}><Underline className="w-4 h-4" /></button>
+                      <button type="button" className={bubbleBtn} onClick={() => applyFormat("strike", true)}><Strikethrough className="w-4 h-4" /></button>
+                      <button type="button" className={bubbleBtn} onClick={() => applyFormat("blockquote", true)}><QuoteIcon className="w-4 h-4" /></button>
+                      <span className="w-px h-5 bg-slate-600 mx-0.5" />
+                      <button type="button" className={bubbleBtn} onClick={() => applyFormat("list", "ordered")}><ListOrdered className="w-4 h-4" /></button>
+                      <button type="button" className={bubbleBtn} onClick={() => applyFormat("list", "bullet")}><ListUnordered className="w-4 h-4" /></button>
+                      <button type="button" className={bubbleBtn} onClick={() => applyFormat("link", "")}><Link2 className="w-4 h-4" /></button>
+                      <button type="button" className={bubbleBtn} onClick={() => openMediaRef.current()}><ImageIcon className="w-4 h-4" /></button>
+                      <span className="w-px h-5 bg-slate-600 mx-0.5" />
+                      <button type="button" className={bubbleBtn} onClick={() => applyFormat("clean", true)}><RotateCcw className="w-4 h-4" /></button>
+                    </div>
+                  )}
                 </div>
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
@@ -320,6 +396,10 @@ export default function AdminBlog() {
                     </select>
                   </div>
                   <div>
+                    <label className="block text-xs font-semibold text-slate-600 mb-1">Tags <span className="text-slate-400 font-normal">(comma separated)</span></label>
+                    <input type="text" value={tags} onChange={(e) => setTags(e.target.value)} placeholder="seo, marketing, growth" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
+                  </div>
+                  <div>
                     <label className="block text-xs font-semibold text-slate-600 mb-1">Read Time <span className="text-red-500">*</span></label>
                     <input type="text" value={readTime} onChange={(e) => setReadTime(e.target.value)} required placeholder="e.g., 5 min read" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
                   </div>
@@ -341,14 +421,13 @@ export default function AdminBlog() {
                 <div className="space-y-3">
                   <input type="text" value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="URL Slug (auto-generated)" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500 font-mono text-xs" />
                   <input type="text" value={keyphrase} onChange={(e) => setKeyphrase(e.target.value)} placeholder="Focus Keyphrase" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
+                  <input type="text" value={keyphraseSynonyms} onChange={(e) => setKeyphraseSynonyms(e.target.value)} placeholder="Keyphrase Synonyms (comma separated)" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
                   <textarea value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} rows={3} placeholder="Meta Description" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
                   <input type="text" value={altText} onChange={(e) => setAltText(e.target.value)} placeholder="Featured Image Alt Text" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
-                  
-                  {/* LIVE PREVIEW WITH IMAGE */}
                   <div className="mt-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
                     <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">Google & Social Preview</p>
                     {featuredImageUrl && <img src={featuredImageUrl} alt="Preview" className="w-full h-32 object-cover rounded mb-3 border border-slate-200" />}
-                    <p className="text-blue-700 text-lg font-medium truncate hover:underline cursor-pointer">{title || "Your Post Title Will Appear Here"}</p>
+                    <p className="text-blue-700 text-lg font-medium truncate">{title || "Your Post Title Will Appear Here"}</p>
                     <p className="text-green-700 text-xs truncate">rushtechnomedia.com/blog/{slug || "your-post-slug"}</p>
                     <p className="text-slate-600 text-sm mt-1 line-clamp-2">{metaDescription || "Your meta description will appear here..."}</p>
                   </div>
@@ -359,6 +438,7 @@ export default function AdminBlog() {
         )}
       </main>
 
+      {/* Insert-from-library modal (used by editor) */}
       {isMediaModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[80vh] flex flex-col">
@@ -378,6 +458,38 @@ export default function AdminBlog() {
                 ))}
               </div>
               {mediaFiles.length === 0 && <p className="text-center text-slate-500 py-12">No images yet.</p>}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Media metadata editor modal (WordPress-style) */}
+      {mediaDetail.open && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
+            <div className="p-4 border-b border-slate-200 flex justify-between items-center sticky top-0 bg-white">
+              <h3 className="font-bold text-lg">Image Details</h3>
+              <button onClick={() => setMediaDetail((m) => ({ ...m, open: false }))} className="text-slate-500 hover:text-slate-800"><X className="w-5 h-5" /></button>
+            </div>
+            <div className="p-4 space-y-4">
+              <img src={mediaDetail.url} alt="preview" className="w-full h-48 object-cover rounded-lg border border-slate-200" />
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Name (Title)</label>
+                <input type="text" value={mediaDetail.title} onChange={(e) => setMediaDetail((m) => ({ ...m, title: e.target.value }))} className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Alt Text</label>
+                <input type="text" value={mediaDetail.alt} onChange={(e) => setMediaDetail((m) => ({ ...m, alt: e.target.value }))} className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Caption</label>
+                <input type="text" value={mediaDetail.caption} onChange={(e) => setMediaDetail((m) => ({ ...m, caption: e.target.value }))} className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-slate-600 mb-1">Description</label>
+                <textarea value={mediaDetail.description} onChange={(e) => setMediaDetail((m) => ({ ...m, description: e.target.value }))} rows={3} className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
+              </div>
+              <button onClick={saveMediaDetail} disabled={loading} className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-bold hover:bg-blue-700 disabled:opacity-50">{loading ? "Saving..." : "Save Details"}</button>
             </div>
           </div>
         </div>
