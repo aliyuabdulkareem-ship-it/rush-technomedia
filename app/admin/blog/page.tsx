@@ -7,7 +7,7 @@ import AdminChrome from "@/components/AdminChrome";
 import {
   LayoutDashboard, FileText, Image as ImageIcon, LogOut, Plus, Trash2, Save,
   Upload, Search, Eye, Calendar, Tag, Globe, Bold, Italic, Underline,
-  Strikethrough, Link2, ListOrdered, ListUnordered, Quote as QuoteIcon, RotateCcw, X
+  Strikethrough, Link2, ListOrdered, List, Quote as QuoteIcon, RotateCcw, X
 } from "lucide-react";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false }) as any;
@@ -64,10 +64,7 @@ export default function AdminBlog() {
   const openMediaRef = useRef<() => void>(() => {});
   const wrapperRef = useRef<HTMLDivElement>(null);
 
-  // Floating (bubble) toolbar state
   const [bubble, setBubble] = useState<{ show: boolean; top: number; left: number }>({ show: false, top: 0, left: 0 });
-
-  // Media metadata editor state
   const [mediaDetail, setMediaDetail] = useState<{ open: boolean; url: string; title: string; alt: string; caption: string; description: string }>({ open: false, url: "", title: "", alt: "", caption: "", description: "" });
 
   const [title, setTitle] = useState("");
@@ -94,7 +91,6 @@ export default function AdminBlog() {
     });
   }, []);
 
-  // Attach selection-change listener for the floating toolbar (retry until editor ready)
   useEffect(() => {
     if (!user || view !== "editor") { setBubble((b) => ({ ...b, show: false })); return; }
     let tries = 0;
@@ -175,7 +171,6 @@ export default function AdminBlog() {
     setLoading(false);
   };
 
-  // Media metadata
   const openMediaDetail = async (url: string) => {
     const { data } = await supabase.from("media_metadata").select("*").eq("url", url).maybeSingle();
     setMediaDetail({
@@ -264,7 +259,7 @@ export default function AdminBlog() {
     );
   }
 
-  const bubbleBtn = "p-1.5 hover:bg-slate-200 rounded text-slate-700 text-sm font-semibold";
+  const bubbleBtn = "p-1.5 hover:bg-slate-700 rounded text-white text-sm font-semibold";
 
   return (
     <div className="min-h-screen bg-slate-100 flex">
@@ -349,7 +344,6 @@ export default function AdminBlog() {
                 <input type="text" value={title} onChange={(e) => { setTitle(e.target.value); if (!editId) setSlug(generateSlug(e.target.value)); }} required placeholder="Add title" className="w-full text-2xl font-bold text-slate-900 placeholder:text-slate-300 outline-none mb-4 p-2 -ml-2 rounded focus:bg-slate-50" />
                 <div ref={wrapperRef} className="border border-slate-200 rounded-lg bg-white relative">
                   <ReactQuill ref={quillRef} theme="snow" value={content} onChange={setContent} modules={quillModules} />
-                  {/* Floating bubble toolbar */}
                   {bubble.show && (
                     <div
                       onMouseDown={(e) => e.preventDefault()}
@@ -366,7 +360,7 @@ export default function AdminBlog() {
                       <button type="button" className={bubbleBtn} onClick={() => applyFormat("blockquote", true)}><QuoteIcon className="w-4 h-4" /></button>
                       <span className="w-px h-5 bg-slate-600 mx-0.5" />
                       <button type="button" className={bubbleBtn} onClick={() => applyFormat("list", "ordered")}><ListOrdered className="w-4 h-4" /></button>
-                      <button type="button" className={bubbleBtn} onClick={() => applyFormat("list", "bullet")}><ListUnordered className="w-4 h-4" /></button>
+                      <button type="button" className={bubbleBtn} onClick={() => applyFormat("list", "bullet")}><List className="w-4 h-4" /></button>
                       <button type="button" className={bubbleBtn} onClick={() => applyFormat("link", "")}><Link2 className="w-4 h-4" /></button>
                       <button type="button" className={bubbleBtn} onClick={() => openMediaRef.current()}><ImageIcon className="w-4 h-4" /></button>
                       <span className="w-px h-5 bg-slate-600 mx-0.5" />
@@ -438,7 +432,6 @@ export default function AdminBlog() {
         )}
       </main>
 
-      {/* Insert-from-library modal (used by editor) */}
       {isMediaModalOpen && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[80vh] flex flex-col">
@@ -463,7 +456,6 @@ export default function AdminBlog() {
         </div>
       )}
 
-      {/* Media metadata editor modal (WordPress-style) */}
       {mediaDetail.open && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-y-auto">
