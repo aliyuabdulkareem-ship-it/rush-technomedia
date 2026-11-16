@@ -3,11 +3,11 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { createClient } from "@supabase/supabase-js";
 import dynamic from "next/dynamic";
-import AdminChrome from "@/components/AdminChrome";
 import {
   LayoutDashboard, FileText, Image as ImageIcon, LogOut, Plus, Trash2, Save,
   Upload, Search, Eye, Calendar, Tag, Globe, Bold, Italic, Underline,
-  Strikethrough, Link2, ListOrdered, List, Quote as QuoteIcon, RotateCcw, X
+  Strikethrough, Link2, ListOrdered, List, Quote as QuoteIcon, RotateCcw, X,
+  Users, MessageSquare, Settings
 } from "lucide-react";
 
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false }) as any;
@@ -20,8 +20,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 const CATEGORIES = ["Tech", "SEO", "AI", "DIY", "Business", "Digital Strategy", "Case Study", "Media"];
 const TODAY = new Date().toISOString().split("T")[0];
 
-const generateSlug = (text: string) =>
-  text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
+const generateSlug = (text: string) => text.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)+/g, "");
 
 const compressImage = (file: File, maxWidth = 1920, quality = 0.85): Promise<File> =>
   new Promise((resolve) => {
@@ -60,6 +59,7 @@ export default function AdminBlog() {
   const [loading, setLoading] = useState(false);
   const [editId, setEditId] = useState<number | null>(null);
   const [isMediaModalOpen, setIsMediaModalOpen] = useState(false);
+  const [modalMode, setModalMode] = useState<'editor' | 'featured'>('editor'); // Tracks which button opened the modal
   const quillRef = useRef<any>(null);
   const openMediaRef = useRef<() => void>(() => {});
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -82,7 +82,7 @@ export default function AdminBlog() {
   const [keyphraseSynonyms, setKeyphraseSynonyms] = useState("");
   const [altText, setAltText] = useState("");
 
-  useEffect(() => { openMediaRef.current = () => setIsMediaModalOpen(true); }, []);
+  useEffect(() => { openMediaRef.current = () => { setModalMode('editor'); setIsMediaModalOpen(true); }; }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -91,30 +91,33 @@ export default function AdminBlog() {
     });
   }, []);
 
+  // Floating Toolbar Logic
   useEffect(() => {
     if (!user || view !== "editor") { setBubble((b) => ({ ...b, show: false })); return; }
-    let tries = 0;
+    let tries = 0; let cleanup: (() => void) | undefined;
     const attach = () => {
       const quill = quillRef.current?.getEditor?.();
-      if (!quill) { if (tries++ < 50) setTimeout(attach, 100); return; }
-      const handler = (index: number | undefined, length: number) => {
-        if (length > 0 && index !== undefined && wrapperRef.current) {
-          const sel = window.getSelection();
-          if (!sel || sel.rangeCount === 0) { setBubble((b) => ({ ...b, show: false })); return; }
-          const r = sel.getRangeAt(0).getBoundingClientRect();
-          const w = wrapperRef.current.getBoundingClientRect();
-          const top = r.top - w.top - 42;
-          const left = Math.min(Math.max(r.left - w.left + r.width / 2, 70), w.width - 70);
-          setBubble({ show: true, top: top < 0 ? r.bottom - w.top + 6 : top, left });
+      if (!quill) { if (tries++ < 60) setTimeout(attach, 100); return; }
+      const handler = (range: any) => {
+        if (range && range.length > 0 && wrapperRef.current) {
+          try {
+            const bounds = quill.getBounds(range.index, range.length);
+            const containerRect = quill.container.getBoundingClientRect();
+            const wrapperRect = wrapperRef.current.getBoundingClientRect();
+            const absTop = containerRect.top - wrapperRect.top + bounds.top;
+            const absLeft = containerRect.left - wrapperRect.left + bounds.left + bounds.width / 2;
+            const clampedLeft = Math.min(Math.max(absLeft, 90), wrapperRect.width - 90);
+            setBubble({ show: true, top: Math.max(absTop - 48, 0), left: clampedLeft });
+          } catch { setBubble((b) => ({ ...b, show: false })); }
         } else {
-          setBubble((b) => ({ ...b, show: false }));
+          setBubble({ show: false, top: 0, left: 0 });
         }
       };
       quill.on("selection-change", handler);
-      return () => quill.off("selection-change", handler);
+      cleanup = () => quill.off("selection-change", handler);
     };
-    const cleanup = attach();
-    return () => { if (typeof cleanup === "function") cleanup(); };
+    attach();
+    return () => { if (cleanup) cleanup(); };
   }, [user, view]);
 
   const applyFormat = (name: string, value: any) => {
@@ -156,28 +159,30 @@ export default function AdminBlog() {
     return data.publicUrl;
   };
 
-  const insertImageToEditor = (url: string) => {
-    const quill = quillRef.current?.getEditor?.();
-    const range = quill?.getSelection();
-    quill?.insertEmbed(range?.index || 0, "image", url);
+  // Handles clicking an image in the modal (either inserts to editor or sets as featured)
+  const handleImageSelect = (url: string) => {
+    if (modalMode === 'featured') {
+      setFeaturedImageUrl(url);
+      setFeaturedImage(null); 
+    } else {
+      const quill = quillRef.current?.getEditor?.();
+      const range = quill?.getSelection();
+      quill?.insertEmbed(range?.index || 0, "image", url);
+    }
     setIsMediaModalOpen(false);
   };
 
   const handleModalUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]; if (!file) return;
     setLoading(true);
-    try { const url = await uploadImageToStorage(file); insertImageToEditor(url); }
+    try { const url = await uploadImageToStorage(file); handleImageSelect(url); }
     catch (err: any) { alert("Upload failed: " + (err?.message || "unknown error")); }
     setLoading(false);
   };
 
   const openMediaDetail = async (url: string) => {
     const { data } = await supabase.from("media_metadata").select("*").eq("url", url).maybeSingle();
-    setMediaDetail({
-      open: true, url,
-      title: data?.title || "", alt: data?.alt_text || "",
-      caption: data?.caption || "", description: data?.description || "",
-    });
+    setMediaDetail({ open: true, url, title: data?.title || "", alt: data?.alt_text || "", caption: data?.caption || "", description: data?.description || "" });
   };
   const saveMediaDetail = async () => {
     setLoading(true);
@@ -212,11 +217,7 @@ export default function AdminBlog() {
       catch (err: any) { alert("Failed to upload featured image: " + (err?.message || "unknown error")); setLoading(false); return; }
     }
     const finalSlug = slug || generateSlug(title);
-    const postData = {
-      title, slug: finalSlug, excerpt, content, category, tags, read_time: readTime, date,
-      featured_image: finalImgUrl,
-      meta_description: metaDescription, keyphrase, keyphrase_synonyms: keyphraseSynonyms, alt_text: altText
-    };
+    const postData = { title, slug: finalSlug, excerpt, content, category, tags, read_time: readTime, date, featured_image: finalImgUrl, meta_description: metaDescription, keyphrase, keyphrase_synonyms: keyphraseSynonyms, alt_text: altText };
     let error;
     if (editId) { const res = await supabase.from("blog_posts").update(postData).eq("id", editId); error = res.error; }
     else { const res = await supabase.from("blog_posts").insert([postData]); error = res.error; }
@@ -251,20 +252,27 @@ export default function AdminBlog() {
       <div className="min-h-screen flex items-center justify-center bg-slate-900 p-4">
         <form onSubmit={handleLogin} className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md space-y-4">
           <h2 className="text-2xl font-bold text-slate-900 text-center">Rush CMS Login</h2>
-          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full p-3 border rounded-lg" />
-          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full p-3 border rounded-lg" />
+          <input type="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required className="w-full p-3 border rounded-lg text-slate-900" />
+          <input type="password" placeholder="Password" value={password} onChange={(e) => setPassword(e.target.value)} required className="w-full p-3 border rounded-lg text-slate-900" />
           <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700">{loading ? "..." : "Login"}</button>
         </form>
       </div>
     );
   }
 
-  const bubbleBtn = "p-1.5 hover:bg-slate-700 rounded text-white text-sm font-semibold";
+  const bubbleBtn = "p-1.5 hover:bg-slate-700 rounded text-white text-sm font-semibold flex items-center justify-center";
+  const inputClass = "w-full p-2 border border-slate-200 rounded-md text-sm text-slate-900 placeholder:text-slate-400 outline-none focus:border-blue-500 bg-white";
+  const navItemBase = "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors";
+  const navItemActive = "bg-blue-600 text-white";
+  const navItemInactive = "text-slate-300 hover:bg-slate-800 hover:text-white";
+  const navItemDisabled = "text-slate-500 opacity-60 cursor-not-allowed";
 
   return (
     <div className="min-h-screen bg-slate-100 flex">
-      <AdminChrome />
+      {/* Global CSS to hide WhatsApp button and force black text */}
       <style>{`
+        a[href*="wa.me"], a[href*="whatsapp"], .whatsapp-float, [class*="whatsapp"] { display: none !important; }
+        input, textarea, select { color: #0f172a !important; }
         .ql-editor { color: #000000 !important; min-height: 300px !important; font-size: 16px !important; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif !important; }
         .ql-editor * { color: #000000 !important; }
         .ql-editor.ql-blank::before { color: #94a3b8 !important; font-style: normal !important; }
@@ -275,10 +283,16 @@ export default function AdminBlog() {
       <aside className="w-64 bg-slate-900 text-slate-300 fixed left-0 top-0 bottom-0 flex flex-col p-4 z-20">
         <div className="flex items-center gap-2 text-white font-bold text-xl mb-8 px-2"><LayoutDashboard className="w-6 h-6 text-blue-500" /> Rush CMS</div>
         <nav className="space-y-1 flex-1">
-          <button onClick={() => setView("dashboard")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium ${view === "dashboard" ? "bg-blue-600 text-white" : "text-slate-300 hover:bg-slate-800 hover:text-white"}`}><LayoutDashboard className="w-4 h-4" /> Dashboard</button>
-          <button onClick={() => setView("dashboard")} className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white"><FileText className="w-4 h-4" /> All Posts</button>
-          <button onClick={() => { resetForm(); setView("editor"); }} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium ${view === "editor" && !editId ? "bg-blue-600 text-white" : "text-slate-300 hover:bg-slate-800 hover:text-white"}`}><Plus className="w-4 h-4" /> Add New Post</button>
-          <button onClick={() => setView("media")} className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium ${view === "media" ? "bg-blue-600 text-white" : "text-slate-300 hover:bg-slate-800 hover:text-white"}`}><ImageIcon className="w-4 h-4" /> Media Library</button>
+          <button onClick={() => setView("dashboard")} className={`${navItemBase} ${view === "dashboard" ? navItemActive : navItemInactive}`}><LayoutDashboard className="w-4 h-4" /> Dashboard</button>
+          <button onClick={() => setView("dashboard")} className={`${navItemBase} ${navItemInactive}`}><FileText className="w-4 h-4" /> All Posts</button>
+          <button onClick={() => { resetForm(); setView("editor"); }} className={`${navItemBase} ${view === "editor" && !editId ? navItemActive : navItemInactive}`}><Plus className="w-4 h-4" /> Add New Post</button>
+          <button onClick={() => setView("media")} className={`${navItemBase} ${view === "media" ? navItemActive : navItemInactive}`}><ImageIcon className="w-4 h-4" /> Media Library</button>
+          
+          {/* WordPress-style dummy menu items */}
+          <div className="pt-4 pb-2 px-3 text-[10px] font-bold text-slate-500 uppercase tracking-wider">Site Management</div>
+          <button className={`${navItemBase} ${navItemDisabled}`}><Users className="w-4 h-4" /> Users</button>
+          <button className={`${navItemBase} ${navItemDisabled}`}><MessageSquare className="w-4 h-4" /> Comments</button>
+          <button className={`${navItemBase} ${navItemDisabled}`}><Settings className="w-4 h-4" /> Settings</button>
         </nav>
         <button onClick={handleLogout} className="flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-400 hover:bg-slate-800 hover:text-red-300 mt-auto"><LogOut className="w-4 h-4" /> Logout</button>
       </aside>
@@ -341,14 +355,14 @@ export default function AdminBlog() {
             <div className="lg:col-span-2 space-y-6">
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                 <label className="block text-sm font-semibold text-slate-700 mb-1">Post Title <span className="text-red-500">*</span></label>
-                <input type="text" value={title} onChange={(e) => { setTitle(e.target.value); if (!editId) setSlug(generateSlug(e.target.value)); }} required placeholder="Add title" className="w-full text-2xl font-bold text-slate-900 placeholder:text-slate-300 outline-none mb-4 p-2 -ml-2 rounded focus:bg-slate-50" />
+                <input type="text" value={title} onChange={(e) => { setTitle(e.target.value); if (!editId) setSlug(generateSlug(e.target.value)); }} required placeholder="Add title" className="w-full text-2xl font-bold text-slate-900 placeholder:text-slate-400 outline-none mb-4 p-2 -ml-2 rounded focus:bg-slate-50" />
                 <div ref={wrapperRef} className="border border-slate-200 rounded-lg bg-white relative">
                   <ReactQuill ref={quillRef} theme="snow" value={content} onChange={setContent} modules={quillModules} />
                   {bubble.show && (
                     <div
                       onMouseDown={(e) => e.preventDefault()}
                       style={{ top: bubble.top, left: bubble.left }}
-                      className="absolute -translate-x-1/2 z-40 flex items-center gap-0.5 bg-slate-800 text-white rounded-lg shadow-xl px-1.5 py-1"
+                      className="absolute -translate-x-1/2 z-50 flex items-center gap-0.5 bg-slate-800 text-white rounded-lg shadow-xl px-1.5 py-1"
                     >
                       <button type="button" className={bubbleBtn} onClick={() => applyFormat("header", 2)}>H2</button>
                       <button type="button" className={bubbleBtn} onClick={() => applyFormat("header", 3)}>H3</button>
@@ -371,7 +385,7 @@ export default function AdminBlog() {
               </div>
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
                 <label className="block text-sm font-semibold text-slate-700 mb-1">Excerpt <span className="text-red-500">*</span></label>
-                <textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} required rows={3} className="w-full p-3 border border-slate-200 rounded-lg outline-none focus:border-blue-500 text-sm" placeholder="Short summary for the blog card..." />
+                <textarea value={excerpt} onChange={(e) => setExcerpt(e.target.value)} required rows={3} className={`${inputClass} resize-none`} placeholder="Short summary for the blog card..." />
               </div>
             </div>
 
@@ -381,21 +395,21 @@ export default function AdminBlog() {
                 <div className="space-y-4">
                   <div>
                     <label className="block text-xs font-semibold text-slate-600 mb-1 flex items-center gap-1"><Calendar className="w-3 h-3" /> Date <span className="text-red-500">*</span></label>
-                    <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
+                    <input type="date" value={date} onChange={(e) => setDate(e.target.value)} required className={inputClass} />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-slate-600 mb-1 flex items-center gap-1"><Tag className="w-3 h-3" /> Category <span className="text-red-500">*</span></label>
-                    <select value={category} onChange={(e) => setCategory(e.target.value)} required className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500 bg-white">
+                    <select value={category} onChange={(e) => setCategory(e.target.value)} required className={`${inputClass} bg-white`}>
                       {CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
                     </select>
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-slate-600 mb-1">Tags <span className="text-slate-400 font-normal">(comma separated)</span></label>
-                    <input type="text" value={tags} onChange={(e) => setTags(e.target.value)} placeholder="seo, marketing, growth" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
+                    <input type="text" value={tags} onChange={(e) => setTags(e.target.value)} placeholder="seo, marketing, growth" className={inputClass} />
                   </div>
                   <div>
                     <label className="block text-xs font-semibold text-slate-600 mb-1">Read Time <span className="text-red-500">*</span></label>
-                    <input type="text" value={readTime} onChange={(e) => setReadTime(e.target.value)} required placeholder="e.g., 5 min read" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
+                    <input type="text" value={readTime} onChange={(e) => setReadTime(e.target.value)} required placeholder="e.g., 5 min read" className={inputClass} />
                   </div>
                   <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-bold hover:bg-blue-700 flex items-center justify-center gap-2"><Save className="w-4 h-4" /> {loading ? "Saving..." : (editId ? "Update Post" : "Publish Post")}</button>
                 </div>
@@ -404,20 +418,25 @@ export default function AdminBlog() {
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
                 <h3 className="font-bold text-slate-900 mb-4 border-b border-slate-100 pb-2">Featured Image</h3>
                 {featuredImageUrl && <img src={featuredImageUrl} className="w-full h-40 object-cover rounded-lg mb-3 border border-slate-200" />}
-                <label className="block w-full cursor-pointer bg-slate-50 border border-dashed border-slate-300 text-slate-600 py-3 rounded-lg text-sm font-medium hover:bg-slate-100 text-center">
-                  <Upload className="w-4 h-4 inline mr-1" /> {featuredImage ? featuredImage.name : "Choose Image (auto-compressed)"}
-                  <input type="file" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) { setFeaturedImage(file); setFeaturedImageUrl(URL.createObjectURL(file)); } }} className="hidden" />
-                </label>
+                <div className="flex gap-2">
+                  <label className="flex-1 cursor-pointer bg-slate-50 border border-dashed border-slate-300 text-slate-600 py-3 rounded-lg text-sm font-medium hover:bg-slate-100 text-center">
+                    <Upload className="w-4 h-4 inline mr-1" /> Upload
+                    <input type="file" accept="image/*" onChange={(e) => { const file = e.target.files?.[0]; if (file) { setFeaturedImage(file); setFeaturedImageUrl(URL.createObjectURL(file)); } }} className="hidden" />
+                  </label>
+                  <button type="button" onClick={() => { setModalMode('featured'); setIsMediaModalOpen(true); }} className="flex-1 bg-white border border-slate-300 text-slate-700 py-3 rounded-lg text-sm font-medium hover:bg-slate-50 flex items-center justify-center gap-1">
+                    <ImageIcon className="w-4 h-4" /> Library
+                  </button>
+                </div>
               </div>
 
               <div className="bg-white rounded-xl shadow-sm border border-slate-200 p-5">
                 <h3 className="font-bold text-slate-900 mb-4 border-b border-slate-100 pb-2 flex items-center gap-2"><Globe className="w-4 h-4 text-blue-500" /> SEO Settings</h3>
                 <div className="space-y-3">
-                  <input type="text" value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="URL Slug (auto-generated)" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500 font-mono text-xs" />
-                  <input type="text" value={keyphrase} onChange={(e) => setKeyphrase(e.target.value)} placeholder="Focus Keyphrase" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
-                  <input type="text" value={keyphraseSynonyms} onChange={(e) => setKeyphraseSynonyms(e.target.value)} placeholder="Keyphrase Synonyms (comma separated)" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
-                  <textarea value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} rows={3} placeholder="Meta Description" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
-                  <input type="text" value={altText} onChange={(e) => setAltText(e.target.value)} placeholder="Featured Image Alt Text" className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
+                  <input type="text" value={slug} onChange={(e) => setSlug(e.target.value)} placeholder="URL Slug (auto-generated)" className={`${inputClass} font-mono text-xs`} />
+                  <input type="text" value={keyphrase} onChange={(e) => setKeyphrase(e.target.value)} placeholder="Focus Keyphrase" className={inputClass} />
+                  <input type="text" value={keyphraseSynonyms} onChange={(e) => setKeyphraseSynonyms(e.target.value)} placeholder="Keyphrase Synonyms (comma separated)" className={inputClass} />
+                  <textarea value={metaDescription} onChange={(e) => setMetaDescription(e.target.value)} rows={3} placeholder="Meta Description" className={`${inputClass} resize-none`} />
+                  <input type="text" value={altText} onChange={(e) => setAltText(e.target.value)} placeholder="Featured Image Alt Text" className={inputClass} />
                   <div className="mt-4 p-4 bg-slate-50 rounded-lg border border-slate-200">
                     <p className="text-[10px] font-bold text-slate-400 uppercase mb-2">Google & Social Preview</p>
                     {featuredImageUrl && <img src={featuredImageUrl} alt="Preview" className="w-full h-32 object-cover rounded mb-3 border border-slate-200" />}
@@ -436,7 +455,7 @@ export default function AdminBlog() {
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[80vh] flex flex-col">
             <div className="p-4 border-b border-slate-200 flex justify-between items-center">
-              <h3 className="font-bold text-lg">Select Image</h3>
+              <h3 className="font-bold text-lg">{modalMode === 'featured' ? 'Select Featured Image' : 'Select Image for Editor'}</h3>
               <div className="flex items-center gap-3">
                 <label className="cursor-pointer bg-blue-600 text-white px-3 py-1.5 rounded-lg text-sm font-bold hover:bg-blue-700 flex items-center gap-2"><Upload className="w-4 h-4" /> Upload New<input type="file" accept="image/*" onChange={handleModalUpload} className="hidden" /></label>
                 <button onClick={() => setIsMediaModalOpen(false)} className="text-slate-500 hover:text-slate-800 text-2xl">&times;</button>
@@ -445,7 +464,7 @@ export default function AdminBlog() {
             <div className="p-4 overflow-y-auto flex-1">
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                 {mediaFiles.map((url, i) => (
-                  <div key={i} onClick={() => insertImageToEditor(url)} className="aspect-square bg-slate-100 rounded-lg overflow-hidden border-2 border-transparent hover:border-blue-500 cursor-pointer transition-all">
+                  <div key={i} onClick={() => handleImageSelect(url)} className="aspect-square bg-slate-100 rounded-lg overflow-hidden border-2 border-transparent hover:border-blue-500 cursor-pointer transition-all">
                     <img src={url} className="w-full h-full object-cover" />
                   </div>
                 ))}
@@ -465,22 +484,10 @@ export default function AdminBlog() {
             </div>
             <div className="p-4 space-y-4">
               <img src={mediaDetail.url} alt="preview" className="w-full h-48 object-cover rounded-lg border border-slate-200" />
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Name (Title)</label>
-                <input type="text" value={mediaDetail.title} onChange={(e) => setMediaDetail((m) => ({ ...m, title: e.target.value }))} className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Alt Text</label>
-                <input type="text" value={mediaDetail.alt} onChange={(e) => setMediaDetail((m) => ({ ...m, alt: e.target.value }))} className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Caption</label>
-                <input type="text" value={mediaDetail.caption} onChange={(e) => setMediaDetail((m) => ({ ...m, caption: e.target.value }))} className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-slate-600 mb-1">Description</label>
-                <textarea value={mediaDetail.description} onChange={(e) => setMediaDetail((m) => ({ ...m, description: e.target.value }))} rows={3} className="w-full p-2 border border-slate-200 rounded-md text-sm outline-none focus:border-blue-500" />
-              </div>
+              <div><label className="block text-xs font-semibold text-slate-600 mb-1">Name (Title)</label><input type="text" value={mediaDetail.title} onChange={(e) => setMediaDetail((m) => ({ ...m, title: e.target.value }))} className={inputClass} /></div>
+              <div><label className="block text-xs font-semibold text-slate-600 mb-1">Alt Text</label><input type="text" value={mediaDetail.alt} onChange={(e) => setMediaDetail((m) => ({ ...m, alt: e.target.value }))} className={inputClass} /></div>
+              <div><label className="block text-xs font-semibold text-slate-600 mb-1">Caption</label><input type="text" value={mediaDetail.caption} onChange={(e) => setMediaDetail((m) => ({ ...m, caption: e.target.value }))} className={inputClass} /></div>
+              <div><label className="block text-xs font-semibold text-slate-600 mb-1">Description</label><textarea value={mediaDetail.description} onChange={(e) => setMediaDetail((m) => ({ ...m, description: e.target.value }))} rows={3} className={`${inputClass} resize-none`} /></div>
               <button onClick={saveMediaDetail} disabled={loading} className="w-full bg-blue-600 text-white py-2.5 rounded-lg font-bold hover:bg-blue-700 disabled:opacity-50">{loading ? "Saving..." : "Save Details"}</button>
             </div>
           </div>
