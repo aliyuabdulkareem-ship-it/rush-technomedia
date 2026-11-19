@@ -81,8 +81,10 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
                     className="flex items-center justify-center p-4 bg-white rounded-xl border border-slate-200 shadow-sm h-20 hover:shadow-md transition-all duration-300 group"
                   >
                     {partner.startsWith('/') ? (
-                      <img src={partner} alt="Media Partner Logo" className="h-full w-auto object-contain group-hover:grayscale group-hover:opacity-60 transition-all duration-300" loading="lazy" />
-                    ) : (
+
+                     <img src={partner} alt="Media Partner Logo" className="h-full w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300" loading="lazy" />
+                  
+                  ) : (
                       <span className="text-slate-600 font-bold text-sm md:text-base text-center">{partner}</span>
                     )}
                   </a>
