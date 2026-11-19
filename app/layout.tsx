@@ -11,10 +11,11 @@ export const metadata: Metadata = {
   title: "Rush Technomedia | Premier SEO, Web Development & Digital Media in Africa",
   description: "Founded by Aliyu Abdulkareem, Rush Technomedia combines strategic SEO consulting, modern web development, and digital media publishing to scale African businesses globally.",
   keywords: "SEO consultant Nigeria, web development Lagos, digital media publishing Africa, Rush Technomedia, Aliyu Abdulkareem",
-  robots: "index
-  
-  // ADD THIS LINE RIGHT HERE:
-  verification: { google: 'TlpKA0LXHYjg48kUKgGAsi0VmFb18saanjOtmwAjEOk' },
+  robots: "index, follow",
+  icons: { icon: '/R.png' },
+  verification: {
+    google: 'TlpKA0LXHYjg48kUKgGAsi0VmFb18saanjOtmwAjEOk',
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
