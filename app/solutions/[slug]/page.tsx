@@ -1,40 +1,115 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
+import { Metadata } from "next";
 import { ArrowRight, CheckCircle2, Globe, ShoppingBag, Megaphone, Palette, Newspaper, Bot } from "lucide-react";
 
-// Helper to map filenames to real URLs
-const getPartnerUrl = (filename: string) => {
-  const map: Record<string, string> = {
-    "/Punch.png": "https://punchng.com",
-    "/Tribune.png": "https://tribuneonlineng.com",
-    "/Guardianng.png": "https://guardian.ng",
-    "/nation.png": "https://thenationonlineng.net",
-    "/Vanguard.png": "https://vanguardngr.com",
-    "/BusinessDay.png": "https://businessday.ng",
-    "/Independent.png": "https://independent.ng",
-    "/The_Sun.png": "https://sunnewsonline.com",
-    "/pmnews.png": "https://pmnewsnigeria.com",
-    "/Telegraph.png": "https://newtelegraphng.com"
-  };
-  return map[filename] || "#";
-};
-
 const solutionsData: Record<string, any> = {
-  "website-and-app-development": { title: "Website & Application Development", icon: Globe, color: "bg-blue-500", featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuAGXyBSWAAlSJOTBZU_STe60Uiq924sbsXXOjuYD2Al1GIo_tJ1j8eA66ClO1KTF7vdEo840XuXhTI0VFzQ4fVMj9sKpCrO2qsg-uaXRpy6lmejCvy9QrNalY8nfMbmnaBLyj4zbxk-NnrgLd9eO9fXTDOF-pqpE-6s3iU-E3wB7Jt1lEPBGukIFYaO4uzjbnmNvvf0MlNwkPbvl1-PlHNyvAYuf8mk2lARXQCczvQy", tagline: "High-velocity digital experiences engineered for scale.", description: "We don't just build websites; we engineer digital assets. From lightning-fast corporate sites to complex, data-heavy web applications and native mobile apps, our development stack is optimized for sub-second latency, SEO dominance, and bulletproof security.", features: ["Custom Website Design & Development", "Progressive Web Applications (PWA)", "Native iOS & Android Mobile Apps", "Enterprise-grade Web Portals", "API Integration & Microservices"], mediaPartners: [] },
-  "ecommerce-solutions": { title: "E-Commerce Solutions", icon: ShoppingBag, color: "bg-emerald-500", featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuC35pYO9-YsLqstNwOSo1jCqS90DbXJsJr6bTSa5rEwvlYTqoGsrvVC-WA-irMqs0BZC3OVy5BtBmc1xX4nd-orqmKO_oZ2s5BIYU2-ghdLW4-jzmkQMNXhqhb4hAcrzeVfecKHGVzMFSDoJpkSbfJwvTqhOykKtyUPJnbjevA-IeoG2cT6XgVhgmI545NX7h0bNW2eQgPvT0M-e6ripxxosippnDQERrD4M6ncszC-", tagline: "Turn browsers into buyers with frictionless storefronts.", description: "Whether you need a custom Shopify build or a fully bespoke headless commerce architecture, we build online stores that convert. We integrate seamless payment gateways (Paystack, Flutterwave, Stripe), inventory management, and automated email flows to maximize your average order value.", features: ["Shopify & WooCommerce Development", "Custom Headless Commerce", "Payment Gateway Integration", "Inventory & CRM Automation", "Conversion Rate Optimization (CRO)"], mediaPartners: [] },
-  "digital-marketing": { title: "Digital Marketing", icon: Megaphone, color: "bg-purple-500", featuredImage: "https://lh3.googleusercontent.com/aida/AEtjO1VUxqxWTheCKdKtDDAOBI_Ku18CcQMrVxuurCE72VDI1SFpHd5PvELQ_bdkCVLWwDeFIOvrX9bJJBQCn5RaXsqEesfO2zpHL_MvQGosY2cTXQeEccNQPalFBvVJV15D98aKwoviHRdFK4B_vB-3SNzxtgPdEJuy98AuMBKBlGJix1BMnwrBlNEZ0Txn13QQCrmndNL3djTKTRD9uaBPkg3nvT8G-sy0zdBbD6uMi3ip", tagline: "Data-driven campaigns that dominate your market.", description: "Visibility is currency. Our digital marketing frameworks combine technical SEO, high-ROAS paid advertising, and strategic email marketing to put your brand in front of the right audience at the exact moment they are ready to buy.", features: ["Search Engine Optimization (SEO)", "Social Media Marketing & Ads", "Email Marketing Automation", "Pay-Per-Click (PPC) Management", "Content Marketing Strategy"], mediaPartners: [] },
-  "creative-design-and-branding": { title: "Creative Design & Branding", icon: Palette, color: "bg-pink-500", featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuDHKuoa8TSKUZaD7__ApNBsYQ-mqptRELM3QbkfZogQsI10fTrjZNrb3K3CoDmwQZbbxC7-y6iuzYsW23ZLyLiNI_dzjD8etpz9UNOLUx1eKBT6G24iaY1SEVLZGnTowCoCu2mnrcY653Zy7fujYa3JkO2NRrUBbe1yy-mQMCeNwAChp9THYm8-TLIqU5GirXmlLbKarVuD06cedOx2MmZkEvG1apa6V5VoS4QWBBDbqIJBlkO2IKE_iUSMmg3un-ay0fSaYwpvC_S2NQA", tagline: "Identities that command authority and trust.", description: "Your brand is more than a logo; it's the psychological footprint you leave on your audience. We craft comprehensive brand identity systems—from logo design and typography to full brand guidelines—that ensure you look like the market leader you are.", features: ["Logo & Visual Identity Design", "Complete Brand Guidelines", "UI/UX Design Systems", "Marketing Collateral & Print", "Motion Graphics & 3D Assets"], mediaPartners: [] },
-  "media-publications": { title: "Media Publications & Reputation", icon: Newspaper, color: "bg-orange-500", featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuAGXyBSWAAlSJOTBZU_STe60Uiq924sbsXXOjuYD2Al1GIo_tJ1j8eA66ClO1KTF7vdEo840XuXhTI0VFzQ4fVMj9sKpCrO2qsg-uaXRpy6lmejCvy9QrNalY8nfMbmnaBLyj4zbxk-NnrgLd9eO9fXTDOF-pqpE-6s3iU-E3wB7Jt1lEPBGukIFYaO4uzjbnmNvvf0MlNwkPbvl1-PlHNyvAYuf8mk2lARXQCczvQy", tagline: "Strategic visibility in Africa's top news outlets.", description: "We secure high-authority press coverage for your brand. Through our deep relationships with Nigeria's leading news platforms, we publish strategic interviews, press releases, and thought-leadership articles that build instant credibility and manage your online reputation.", features: ["Press Release Distribution", "Executive Interview Placements", "Online Reputation Management (ORM)", "Strategic News Coverage", "Crisis Communication Support"], mediaPartners: ["/Punch.png", "/Tribune.png", "/Guardianng.png", "/nation.png", "/Vanguard.png", "/BusinessDay.png", "/Independent.png", "/The_Sun.png", "/pmnews.png", "/Telegraph.png"] },
-  "ai-and-it-solutions": { title: "AI & IT Solutions", icon: Bot, color: "bg-cyan-500", featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuC35pYO9-YsLqstNwOSo1jCqS90DbXJsJr6bTSa5rEwvlYTqoGsrvVC-WA-irMqs0BZC3OVy5BtBmc1xX4nd-orqmKO_oZ2s5BIYU2-ghdLW4-jzmkQMNXhqhb4hAcrzeVfecKHGVzMFSDoJpkSbfJwvTqhOykKtyUPJnbjevA-IeoG2cT6XgVhgmI545NX7h0bNW2eQgPvT0M-e6ripxxosippnDQERrD4M6ncszC-", tagline: "Automate the mundane. Scale the exceptional.", description: "We integrate cutting-edge Artificial Intelligence into your business workflows. From custom AI chatbots and automated customer service agents to IT infrastructure consulting, we help you work smarter, faster, and with fewer overhead costs.", features: ["AI Automation Systems", "Custom AI Chatbots & Agents", "IT Infrastructure Consulting", "Cloud Architecture & Security", "Workflow Automation (Zapier/Make)"], mediaPartners: [] }
+  "website-and-app-development": { 
+    title: "Website & Application Development", 
+    icon: Globe, 
+    color: "bg-blue-500", 
+    featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuAGXyBSWAAlSJOTBZU_STe60Uiq924sbsXXOjuYD2Al1GIo_tJ1j8eA66ClO1KTF7vdEo840XuXhTI0VFzQ4fVMj9sKpCrO2qsg-uaXRpy6lmejCvy9QrNalY8nfMbmnaBLyj4zbxk-NnrgLd9eO9fXTDOF-pqpE-6s3iU-E3wB7Jt1lEPBGukIFYaO4uzjbnmNvvf0MlNwkPbvl1-PlHNyvAYuf8mk2lARXQCczvQy", 
+    tagline: "High-velocity digital experiences engineered for scale.", 
+    description: "We don't just build websites; we engineer digital assets. From lightning-fast corporate sites to complex, data-heavy web applications and native mobile apps, our development stack is optimized for sub-second latency, SEO dominance, and bulletproof security.", 
+    features: ["Custom Website Design & Development", "Progressive Web Applications (PWA)", "Native iOS & Android Mobile Apps", "Enterprise-grade Web Portals", "API Integration & Microservices"], 
+    mediaPartners: [] 
+  },
+  "ecommerce-solutions": { 
+    title: "E-Commerce Solutions", 
+    icon: ShoppingBag, 
+    color: "bg-emerald-500", 
+    featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuC35pYO9-YsLqstNwOSo1jCqS90DbXJsJr6bTSa5rEwvlYTqoGsrvVC-WA-irMqs0BZC3OVy5BtBmc1xX4nd-orqmKO_oZ2s5BIYU2-ghdLW4-jzmkQMNXhqhb4hAcrzeVfecKHGVzMFSDoJpkSbfJwvTqhOykKtyUPJnbjevA-IeoG2cT6XgVhgmI545NX7h0bNW2eQgPvT0M-e6ripxxosippnDQERrD4M6ncszC-", 
+    tagline: "Turn browsers into buyers with frictionless storefronts.", 
+    description: "Whether you need a custom Shopify build or a fully bespoke headless commerce architecture, we build online stores that convert. We integrate seamless payment gateways (Paystack, Flutterwave, Stripe), inventory management, and automated email flows to maximize your average order value.", 
+    features: ["Shopify & WooCommerce Development", "Custom Headless Commerce", "Payment Gateway Integration", "Inventory & CRM Automation", "Conversion Rate Optimization (CRO)"], 
+    mediaPartners: [] 
+  },
+  "digital-marketing": { 
+    title: "Digital Marketing", 
+    icon: Megaphone, 
+    color: "bg-purple-500", 
+    featuredImage: "https://lh3.googleusercontent.com/aida/AEtjO1VUxqxWTheCKdKtDDAOBI_Ku18CcQMrVxuurCE72VDI1SFpHd5PvELQ_bdkCVLWwDeFIOvrX9bJJBQCn5RaXsqEesfO2zpHL_MvQGosY2cTXQeEccNQPalFBvVJV15D98aKwoviHRdFK4B_vB-3SNzxtgPdEJuy98AuMBKBlGJix1BMnwrBlNEZ0Txn13QQCrmndNL3djTKTRD9uaBPkg3nvT8G-sy0zdBbD6uMi3ip", 
+    tagline: "Data-driven campaigns that dominate your market.", 
+    description: "Visibility is currency. Our digital marketing frameworks combine technical SEO, high-ROAS paid advertising, and strategic email marketing to put your brand in front of the right audience at the exact moment they are ready to buy.", 
+    features: ["Search Engine Optimization (SEO)", "Social Media Marketing & Ads", "Email Marketing Automation", "Pay-Per-Click (PPC) Management", "Content Marketing Strategy"], 
+    mediaPartners: [] 
+  },
+  "creative-design-and-branding": { 
+    title: "Creative Design & Branding", 
+    icon: Palette, 
+    color: "bg-pink-500", 
+    featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuDHKuoa8TSKUZaD7__ApNBsYQ-mqptRELM3QbkfZogQsI10fTrjZNrb3K3CoDmwQZbbxC7-y6iuzYsW23ZLyLiNI_dzjD8etpz9UNOLUx1eKBT6G24iaY1SEVLZGnTowCoCu2mnrcY653Zy7fujYa3JkO2NRrUBbe1yy-mQMCeNwAChp9THYm8-TLIqU5GirXmlLbKarVuD06cedOx2MmZkEvG1apa6V5VoS4QWBBDbqIJBlkO2IKE_iUSMmg3un-ay0fSaYwpvC_S2NQA", 
+    tagline: "Identities that command authority and trust.", 
+    description: "Your brand is more than a logo; it's the psychological footprint you leave on your audience. We craft comprehensive brand identity systems—from logo design and typography to full brand guidelines—that ensure you look like the market leader you are.", 
+    features: ["Logo & Visual Identity Design", "Complete Brand Guidelines", "UI/UX Design Systems", "Marketing Collateral & Print", "Motion Graphics & 3D Assets"], 
+    mediaPartners: [] 
+  },
+  "media-publications": { 
+    title: "Media Publications & Reputation", 
+    icon: Newspaper, 
+    color: "bg-orange-500", 
+    featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuAGXyBSWAAlSJOTBZU_STe60Uiq924sbsXXOjuYD2Al1GIo_tJ1j8eA66ClO1KTF7vdEo840XuXhTI0VFzQ4fVMj9sKpCrO2qsg-uaXRpy6lmejCvy9QrNalY8nfMbmnaBLyj4zbxk-NnrgLd9eO9fXTDOF-pqpE-6s3iU-E3wB7Jt1lEPBGukIFYaO4uzjbnmNvvf0MlNwkPbvl1-PlHNyvAYuf8mk2lARXQCczvQy", 
+    tagline: "Strategic visibility in Africa's top news outlets.", 
+    description: "We secure high-authority press coverage for your brand. Through our deep relationships with Nigeria's leading news platforms, we publish strategic interviews, press releases, and thought-leadership articles that build instant credibility and manage your online reputation.", 
+    features: ["Press Release Distribution", "Executive Interview Placements", "Online Reputation Management (ORM)", "Strategic News Coverage", "Crisis Communication Support"], 
+    mediaPartners: ["/Punch.png", "/Tribune.png", "/Guardianng.png", "/nation.png", "/Vanguard.png", "/BusinessDay.png", "/Independent.png", "/The_Sun.png", "/pmnews.png", "/Telegraph.png"] 
+  },
+  "ai-and-it-solutions": { 
+    title: "AI & IT Solutions", 
+    icon: Bot, 
+    color: "bg-cyan-500", 
+    featuredImage: "https://lh3.googleusercontent.com/aida-public/AB6AXuC35pYO9-YsLqstNwOSo1jCqS90DbXJsJr6bTSa5rEwvlYTqoGsrvVC-WA-irMqs0BZC3OVy5BtBmc1xX4nd-orqmKO_oZ2s5BIYU2-ghdLW4-jzmkQMNXhqhb4hAcrzeVfecKHGVzMFSDoJpkSbfJwvTqhOykKtyUPJnbjevA-IeoG2cT6XgVhgmI545NX7h0bNW2eQgPvT0M-e6ripxxosippnDQERrD4M6ncszC-", 
+    tagline: "Automate the mundane. Scale the exceptional.", 
+    description: "We integrate cutting-edge Artificial Intelligence into your business workflows. From custom AI chatbots and automated customer service agents to IT infrastructure consulting, we help you work smarter, faster, and with fewer overhead costs.", 
+    features: ["AI Automation Systems", "Custom AI Chatbots & Agents", "IT Infrastructure Consulting", "Cloud Architecture & Security", "Workflow Automation (Zapier/Make)"], 
+    mediaPartners: [] 
+  }
 };
 
-export default async function SolutionPage({ params }: { params: Promise<{ slug: string }> }) {
-  const { slug } = await params;
-  const solution = solutionsData[slug];
+// DYNAMIC SEO METADATA GENERATOR
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+  const solution = solutionsData[params.slug];
+  
+  if (!solution) {
+    return { title: "Solution Not Found | Rush Technomedia" };
+  }
+
+  const baseUrl = "https://rushtechnomedia.com";
+  const url = `${baseUrl}/solutions/${params.slug}`;
+  
+  // Generate unique keywords based on the solution title
+  const baseKeywords = "Rush Technomedia, Aliyu Abdulkareem, digital agency Nigeria, tech solutions Africa";
+  const specificKeywords = `${solution.title}, ${solution.title.replace(/ & /g, ' ').replace(/-/g, ' ')}, professional services Lagos`;
+
+  return {
+    title: `${solution.title} | Rush Technomedia`,
+    description: solution.tagline,
+    keywords: `${specificKeywords}, ${baseKeywords}`,
+    alternates: { canonical: url },
+    openGraph: {
+      title: `${solution.title} | Rush Technomedia`,
+      description: solution.tagline,
+      url: url,
+      siteName: "Rush Technomedia",
+      images: [{ url: solution.featuredImage, width: 1200, height: 630, alt: solution.title }],
+      locale: "en_US",
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${solution.title} | Rush Technomedia`,
+      description: solution.tagline,
+      images: [solution.featuredImage],
+    },
+  };
+}
+
+export default async function SolutionPage({ params }: { params: { slug: string } }) {
+  const solution = solutionsData[params.slug];
   if (!solution) notFound();
   
   const allSlugs = Object.keys(solutionsData);
-  const otherSolutions = allSlugs.filter(s => s !== slug).map(s => solutionsData[s]);
+  const otherSolutions = allSlugs.filter(s => s !== params.slug).map(s => solutionsData[s]);
 
   return (
     <section className="pt-32 pb-16 px-6 md:px-12 max-w-7xl mx-auto">
@@ -75,16 +150,14 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
                 {solution.mediaPartners.map((partner: string, i: number) => (
                   <a 
                     key={i} 
-                    href={getPartnerUrl(partner)} 
+                    href={partner.startsWith('/') ? getPartnerUrl(partner) : "#"} 
                     target="_blank" 
                     rel="noopener noreferrer" 
                     className="flex items-center justify-center p-4 bg-white rounded-xl border border-slate-200 shadow-sm h-20 hover:shadow-md transition-all duration-300 group"
                   >
                     {partner.startsWith('/') ? (
-
-                     <img src={partner} alt="Media Partner Logo" className="h-full w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300" loading="lazy" />
-                  
-                  ) : (
+                      <img src={partner} alt="Media Partner Logo" className="h-full w-auto object-contain grayscale opacity-60 hover:grayscale-0 hover:opacity-100 transition-all duration-300" loading="lazy" />
+                    ) : (
                       <span className="text-slate-600 font-bold text-sm md:text-base text-center">{partner}</span>
                     )}
                   </a>
@@ -119,3 +192,20 @@ export default async function SolutionPage({ params }: { params: Promise<{ slug:
     </section>
   );
 }
+
+// Helper to map filenames to their correct, official URLs
+const getPartnerUrl = (filename: string) => {
+  const map: Record<string, string> = {
+    "/Punch.png": "https://punchng.com",
+    "/Tribune.png": "https://tribuneonlineng.com",
+    "/Guardianng.png": "https://guardian.ng",
+    "/nation.png": "https://thenationonlineng.net",
+    "/Vanguard.png": "https://vanguardngr.com",
+    "/BusinessDay.png": "https://businessday.ng",
+    "/Independent.png": "https://independent.ng",
+    "/The_Sun.png": "https://sunnewsonline.com",
+    "/pmnews.png": "https://pmnewsnigeria.com",
+    "/Telegraph.png": "https://newtelegraphng.com"
+  };
+  return map[filename] || "#";
+};
